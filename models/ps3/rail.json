@@ -1,0 +1,54 @@
+{
+  "task": "rail",
+  "git_rev": "83a5696",
+  "saved_at": "2026-09-18T14:14:53+00:00",
+  "bytes": 794225,
+  "stage": "coherence-ladder-winner",
+  "scheme": "stratified",
+  "macro_f1_mean": 0.8440869856747256,
+  "macro_f1_sd": 0.10586334203881143,
+  "macro_f1_speed_matched_mean": 0.8508399702578483,
+  "feature_version": "v3",
+  "model": "lgbm",
+  "opts": {
+    "wavelength": false,
+    "hz": true,
+    "v2_normalise": false,
+    "contrast": true,
+    "speed": true,
+    "time": true,
+    "discriminators": true,
+    "votes": true,
+    "spectra_series": false,
+    "shock": false,
+    "robust_time": false,
+    "hz_p10": false,
+    "coherence": true
+  },
+  "boosts": [
+    1.0,
+    1.25
+  ],
+  "tta": true,
+  "augment": true,
+  "low_speed_rule": true,
+  "n_features": 201,
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "honest_headline": {
+    "scheme": "nested stratified grouped 5-fold x seeds; complete ladder selected by grouped inner 3-fold",
+    "macro_f1_mean": 0.8050532685206158,
+    "macro_f1_sd": 0.12908768499059922,
+    "n_folds": 15,
+    "seeds": [
+      0,
+      1,
+      2
+    ]
+  },
+  "selection_status": "post-hoc artefact; headline is the nested outer estimate",
+  "prior_organiser_macro_f1": 0.7994152046783626
+}

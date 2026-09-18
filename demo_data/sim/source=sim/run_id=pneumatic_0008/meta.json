@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "nebulax_version": "0.1.0",
+  "source": "sim",
+  "run_id": "pneumatic_0008",
+  "written_at": "2026-09-14T22:46:52.047527+00:00",
+  "rows": {
+    "long": 2527160,
+    "features": 217,
+    "events": 1576,
+    "fault_log": 1
+  },
+  "generator": "scripts/generate.py",
+  "subsystem": "pneumatic",
+  "train_id": "T09",
+  "car": 0,
+  "component_id": "apu_1",
+  "healthy": false,
+  "days": 30,
+  "scenario_seed": 1670782873,
+  "train_seed": 1785399957,
+  "store_every": 10,
+  "fault_types": [
+    "air_leak"
+  ],
+  "elapsed_sim_s": 25.54024469900469,
+  "sample_window": {
+    "start": "2026-09-12T00:00:00+00:00",
+    "end_exclusive": "2026-09-14T00:00:00+00:00"
+  }
+}

@@ -1,0 +1,304 @@
+{
+  "signature": "921555ce0d50077e2578d67708f824938be14178",
+  "feature_version": "v3",
+  "selected_names": [
+    "lgbm_windows / sub-window voting: 3 x 0.5 s windows, Hz bands + speed, + mirror TTA"
+  ],
+  "folds": [
+    {
+      "fold": "seed1_fold0",
+      "n_train": 217,
+      "n_test": 55,
+      "selected_row_index": 21,
+      "selected_arm": "sub-window voting: 3 x 0.5 s windows, Hz bands + speed, + mirror TTA",
+      "selected_model": "lgbm_windows",
+      "inner_macro_f1_mean": 0.825572102130029,
+      "inner_macro_f1_sd": 0.08780929751865578,
+      "macro_f1": 0.6615942028985509,
+      "macro_f1_speed_matched": 0.6545876887340302,
+      "class_f1": {
+        "Normal": 0.9347826086956522,
+        "Side I": 0.25,
+        "Side II": 0.8000000000000002
+      },
+      "fit_seconds": 110.17438817024231,
+      "held_predictions": [
+        {
+          "file_id": "Train17.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train18.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train19.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train20.csv",
+          "truth": "Normal",
+          "prediction": "Side I"
+        },
+        {
+          "file_id": "Train40.csv",
+          "truth": "Normal",
+          "prediction": "Side I"
+        },
+        {
+          "file_id": "Train43.csv",
+          "truth": "Side II",
+          "prediction": "Side II"
+        },
+        {
+          "file_id": "Train47.csv",
+          "truth": "Normal",
+          "prediction": "Side I"
+        },
+        {
+          "file_id": "Train57.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train64.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train69.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train70.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train74.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train77.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train85.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train90.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train91.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train93.csv",
+          "truth": "Side II",
+          "prediction": "Side II"
+        },
+        {
+          "file_id": "Train96.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train101.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train105.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train112.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train118.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train124.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train134.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train144.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train147.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train150.csv",
+          "truth": "Side I",
+          "prediction": "Side II"
+        },
+        {
+          "file_id": "Train154.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train158.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train163.csv",
+          "truth": "Side I",
+          "prediction": "Side I"
+        },
+        {
+          "file_id": "Train165.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train166.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train167.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train168.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train170.csv",
+          "truth": "Side I",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train171.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train178.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train187.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train190.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train198.csv",
+          "truth": "Side II",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train200.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train207.csv",
+          "truth": "Side II",
+          "prediction": "Side II"
+        },
+        {
+          "file_id": "Train208.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train220.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train229.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train231.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train238.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train246.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train248.csv",
+          "truth": "Side II",
+          "prediction": "Side II"
+        },
+        {
+          "file_id": "Train251.csv",
+          "truth": "Normal",
+          "prediction": "Side I"
+        },
+        {
+          "file_id": "Train257.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train258.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train259.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train263.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        },
+        {
+          "file_id": "Train268.csv",
+          "truth": "Normal",
+          "prediction": "Normal"
+        }
+      ]
+    }
+  ]
+}

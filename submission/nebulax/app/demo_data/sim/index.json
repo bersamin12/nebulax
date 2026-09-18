@@ -1,0 +1,129 @@
+{
+  "generated_at": "2026-09-18T17:44:55.482037+00:00",
+  "source": "synthetic research fleet excerpt",
+  "sample_window": {
+    "start": "2026-09-12T00:00:00+00:00",
+    "end_exclusive": "2026-09-14T00:00:00+00:00"
+  },
+  "runs_per_train": {
+    "pneumatic": 1,
+    "bearing": 2
+  },
+  "totals": {
+    "n_runs": 6,
+    "n_long": 8481296,
+    "n_features": 18785,
+    "n_events": 2579,
+    "n_fault_log": 5
+  },
+  "runs": [
+    {
+      "run_id": "pneumatic_0003",
+      "subsystem": "pneumatic",
+      "train_id": "T04",
+      "car": 0,
+      "component_id": "apu_1",
+      "healthy": false,
+      "fault_types": [
+        "valve_leak_inlet"
+      ],
+      "days": 2,
+      "n_long": 313520,
+      "n_features": 136,
+      "n_events": 982,
+      "n_fault_log": 1,
+      "elapsed_sim_s": 27.460425823010155,
+      "path": "source=sim/run_id=pneumatic_0003"
+    },
+    {
+      "run_id": "pneumatic_0008",
+      "subsystem": "pneumatic",
+      "train_id": "T09",
+      "car": 0,
+      "component_id": "apu_1",
+      "healthy": false,
+      "fault_types": [
+        "air_leak"
+      ],
+      "days": 2,
+      "n_long": 2527160,
+      "n_features": 217,
+      "n_events": 1576,
+      "n_fault_log": 1,
+      "elapsed_sim_s": 25.54024469900469,
+      "path": "source=sim/run_id=pneumatic_0008"
+    },
+    {
+      "run_id": "bearing_0003",
+      "subsystem": "bearing",
+      "train_id": "T04",
+      "car": 4,
+      "component_id": "axlebox_2R",
+      "healthy": false,
+      "fault_types": [
+        "hot_axle_box"
+      ],
+      "days": 2,
+      "n_long": 1929160,
+      "n_features": 4608,
+      "n_events": 9,
+      "n_fault_log": 1,
+      "elapsed_sim_s": 62.25702807502239,
+      "path": "source=sim/run_id=bearing_0003"
+    },
+    {
+      "run_id": "bearing_0008",
+      "subsystem": "bearing",
+      "train_id": "T09",
+      "car": 3,
+      "component_id": "axlebox_1L",
+      "healthy": false,
+      "fault_types": [
+        "outer_race"
+      ],
+      "days": 2,
+      "n_long": 765136,
+      "n_features": 4608,
+      "n_events": 2,
+      "n_fault_log": 1,
+      "elapsed_sim_s": 63.58494172000792,
+      "path": "source=sim/run_id=bearing_0008"
+    },
+    {
+      "run_id": "bearing_0013",
+      "subsystem": "bearing",
+      "train_id": "T04",
+      "car": 2,
+      "component_id": "axlebox_3R",
+      "healthy": false,
+      "fault_types": [
+        "bearing_degradation"
+      ],
+      "days": 2,
+      "n_long": 2181176,
+      "n_features": 4608,
+      "n_events": 7,
+      "n_fault_log": 1,
+      "elapsed_sim_s": 59.216205569013255,
+      "path": "source=sim/run_id=bearing_0013"
+    },
+    {
+      "run_id": "bearing_0018",
+      "subsystem": "bearing",
+      "train_id": "T09",
+      "car": 1,
+      "component_id": "axlebox_2L",
+      "healthy": false,
+      "fault_types": [
+        "outer_race"
+      ],
+      "days": 2,
+      "n_long": 765144,
+      "n_features": 4608,
+      "n_events": 3,
+      "n_fault_log": 0,
+      "elapsed_sim_s": 63.113703627022915,
+      "path": "source=sim/run_id=bearing_0018"
+    }
+  ]
+}

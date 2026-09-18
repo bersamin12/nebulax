@@ -1,0 +1,3311 @@
+meta:
+  version: 1
+  date: 2026-09-14
+  hardware: 1x RTX A4500 20GB, Linux
+  team_size: 3
+  total_must_implement_hours: 81.5
+  must_hours_breakdown:
+    pneumatic: 12.0
+    bearing: 17.0
+    cross_subsystem: 0.0
+    evaluation_harness: 6.5
+    note: implement_hours is booked ONCE, in the first subsystem that lists a model;
+      later subsystems carry 0.0 for the same name. The door subtotal is therefore
+      large because most shared models are booked there, not because the door is the
+      hardest subsystem.
+    trim_note: '14 Sep: user trimmed to core; RUL/survival and most CPD rows demoted
+      to nice (see demoted_by on each row).'
+  w1_update:
+    date: 2026-09-14
+    added_families:
+    - change_point_detection
+    - concept_drift
+    - stochastic_degradation_rul
+    - survival_analysis
+    added_hours: 22.5
+    rationale: V4 made change-point scoring the central design decision but no change-point
+      model existed in the ladder, and task:rul rows existed for the door only while
+      three bearing run-to-failure datasets were being ingested for a capability nothing
+      delivered. Both are now closed. See docs/research/model_ladder.md sections 1d,
+      2c, 2d, 3c, 3d, 6.6 and 6.7.
+  primary_metric: vus_pr
+  secondary_metrics:
+  - event_recall
+  - false_alarms_per_train_day
+  - lead_time_distribution
+  - affiliation_f
+  - range_based_f
+  - pa_k
+  - auroc
+  - auprc
+  cpd_metrics:
+  - covering_metric
+  - f1_at_annotation_margin
+  - affiliation_f
+  rul_metrics:
+  - alpha_lambda
+  - prognostic_horizon
+  - cumulative_relative_accuracy
+  - monotonicity
+  - rmse
+  - cmapss_asymmetric_score
+  forbidden:
+  - point_adjustment
+  - best_of_n_reporting
+  - test_data_in_threshold_calibration
+  runs_per_config: 1
+  cost_columns:
+  - fit_seconds
+  - score_seconds_per_10k
+  - params
+  - peak_ram_mb
+  - peak_vram_mb
+  - state_dict_mb
+  sanity_anchor:
+    tsb_ad_m_best_vus_pr: 0.3539
+    tsb_ad_u_best_vus_pr: 0.4399
+    note: A MetroPT F1 near 1.0 is not a win — a single-feature threshold already
+      achieves it (R93).
+  research_scope: brake air supply and axle bearing; PS3 tracks remain in ps3 block
+operating_environment:
+  site: Singapore
+  reference_id:
+  - R152
+  - R153
+  - R163
+  ambient_temp_c:
+    mean_24h:
+      min: 26.8
+      max: 28.6
+    mean_daily_max:
+      min: 30.5
+      max: 32.4
+    mean_daily_min:
+      min: 24.3
+      max: 25.7
+    record:
+      min: 19.0
+      max: 37.0
+    simulator_sweep:
+      routine:
+      - 24
+      - 33
+      stress:
+      - 19
+      - 37
+    regulatory_envelope_T1:
+    - -25
+    - 40
+    diurnal_shape_required: true
+  relative_humidity_pct:
+    annual_mean: 82
+    daily_max:
+      min: 93.0
+      max: 96.5
+    daily_min:
+      min: 61.4
+      max: 68.0
+  consequences:
+    bearing: 'A healthy box at a 25 K rise sits at 53 C (annual mean ambient), 57
+      C (daily max) and 62 C on the record day, against the published Netherlands
+      Railways level-4 absolute line of 80 C [R151]. Absolute thresholds are therefore
+      far weaker here than in a temperate fleet: the peer-relative feature is the
+      primary detector, not a nicety.'
+    pneumatic: Dryer ratings are based on SATURATED inlet air, so a tropical inlet
+      is the RATED case and the dryer sits at rated load year-round with no seasonal
+      relief [R155]. Drive dryer load from inlet TEMPERATURE (moisture carrying capacity),
+      not from RH alone.
+  unverified:
+  - No published LTA/SMRT rolling-stock environmental design specification was found.
+  - No measured Singapore MRT TUNNEL temperature or humidity figures were found. Say
+    'surface climate normals' on the slide.
+pneumatic:
+  signals:
+  - TP2
+  - TP3
+  - H1
+  - DV_pressure
+  - Reservoirs
+  - Oil_temperature
+  - Motor_current
+  - COMP
+  - DV_eletric
+  - Towers
+  - MPG
+  - LPS
+  - Pressure_switch
+  - Oil_level
+  - Caudal_impulses
+  - Flowmeter
+  n_channels: 15
+  unit_of_analysis: compressor_cycle
+  datasets:
+  - metropt3
+  - metropt2
+  - metropt1
+  - sim_pneumatic
+  splits:
+  - temporal
+  protocol_note: Train on failure-free data up to a cutoff; 30-min windows, 5-min
+    stride (L=1800, d=300); declare failure at p>0.5 — protocol from R93.
+  models:
+  - name: single_feature_threshold
+    family: control
+    tier: statistical
+    priority: must
+    source: sklearn
+    impl: numpy
+    input_kind: window_stats
+    implement_hours: 1.0
+    reference_id:
+    - R93
+    note: Flowmeter_max > 16.05 (air leak) / > 16.18 (oil leak) reaches F1=1.0 on
+      MetroPT-2; every model must beat this
+  - name: duty_cycle_ratio_cusum
+    family: physics_feature
+    tier: statistical
+    priority: must
+    source: sklearn
+    impl: numpy
+    input_kind: cycle_features
+    implement_hours: 2.0
+    reference_id:
+    - R101
+    note: idle_run_ratio = t_off/t_loaded; alarm when 6 h rolling median < healthy
+      validation 5th percentile
+  - name: per_channel_or_aggregate
+    family: control
+    tier: statistical
+    priority: must
+    source: sklearn
+    impl: numpy
+    input_kind: window_stats
+    implement_hours: 1.0
+    reference_id:
+    - R21
+    note: N univariate detectors aggregated by max/OR; justifies any multivariate
+      model
+  - name: moving_window_variance
+    family: one_liner
+    tier: statistical
+    priority: must
+    source: sklearn
+    impl: numpy
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R35
+  - name: squared_difference
+    family: one_liner
+    tier: statistical
+    priority: must
+    source: sklearn
+    impl: numpy
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R35
+  - name: trivial_baseline_set
+    family: trivial
+    tier: statistical
+    priority: must
+    source: sklearn
+    impl: QuoVadisTAD
+    input_kind: window_stats
+    implement_hours: 0.0
+    reference_id:
+    - R5
+    - R2
+  - name: robust_z_ewma_window
+    family: threshold
+    tier: statistical
+    priority: must
+    source: sklearn
+    impl: numpy
+    input_kind: window_stats
+    implement_hours: 0.0
+    reference_id:
+    - R1
+  - name: pca_spe_t2
+    family: subspace
+    tier: statistical
+    priority: must
+    source: sklearn
+    impl: sklearn
+    input_kind: window_stats
+    implement_hours: 0.0
+    reference_id:
+    - R1
+  - name: mahalanobis_mincovdet
+    family: subspace
+    tier: statistical
+    priority: must
+    source: sklearn
+    impl: sklearn
+    input_kind: window_stats
+    implement_hours: 0.0
+    reference_id:
+    - R1
+  - name: matrix_profile_discord
+    family: matrix_profile
+    tier: classical_ml
+    priority: must
+    source: sklearn
+    impl: stumpy.gpu_stump
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R11
+    params:
+      d: 0.7
+      k: 15
+  - name: halfspace_trees_ocknn
+    family: streaming_outlier
+    tier: classical_ml
+    priority: must
+    source: sklearn
+    impl: river
+    input_kind: window_stats
+    implement_hours: 2.0
+    reference_id:
+    - R99
+    note: highest value-per-hour item in the rail-pneumatic literature; online, CPU-only
+  - name: isolation_forest
+    family: ensemble_outlier
+    tier: classical_ml
+    priority: must
+    source: pyod
+    impl: pyod
+    input_kind: window_stats
+    implement_hours: 0.0
+    reference_id:
+    - R1
+  - name: ecod
+    family: ecdf_outlier
+    tier: classical_ml
+    priority: must
+    source: pyod
+    impl: pyod
+    input_kind: window_stats
+    implement_hours: 0.0
+    reference_id:
+    - R1
+  - name: copod
+    family: copula_outlier
+    tier: classical_ml
+    priority: must
+    source: pyod
+    impl: pyod
+    input_kind: window_stats
+    implement_hours: 0.0
+    reference_id:
+    - R1
+  - name: knn_outlier
+    family: distance_outlier
+    tier: classical_ml
+    priority: must
+    source: pyod
+    impl: pyod
+    input_kind: window_stats
+    implement_hours: 0.0
+    reference_id:
+    - R1
+  - name: cblof
+    family: cluster_outlier
+    tier: classical_ml
+    priority: must
+    source: pyod
+    impl: pyod
+    input_kind: window_stats
+    implement_hours: 0.0
+    reference_id:
+    - R1
+  - name: kmeans_ad
+    family: cluster_outlier
+    tier: classical_ml
+    priority: must
+    source: sklearn
+    impl: sklearn
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R1
+  - name: ocsvm
+    family: one_class
+    tier: classical_ml
+    priority: must
+    source: sklearn
+    impl: sklearn
+    input_kind: window_stats
+    implement_hours: 0.0
+    reference_id:
+    - R37
+  - name: lgbm_residual
+    family: residual_model
+    tier: boosting
+    priority: must
+    source: lightgbm
+    impl: lightgbm
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R21
+    - R93
+    note: must clear the single-feature and per-channel-OR controls before being called
+      a winner
+  - name: shallow_rule_learner
+    family: interpretable_rule
+    tier: boosting
+    priority: must
+    source: sklearn
+    impl: sklearn
+    input_kind: cycle_features
+    implement_hours: 2.0
+    reference_id:
+    - R93
+    - R98
+    note: depth<=3; report rule support over the WHOLE failure episode
+  - name: sparse_autoencoder
+    family: autoencoder
+    tier: deep
+    priority: must
+    source: torch-handwritten
+    impl: torch
+    input_kind: window_stats
+    implement_hours: 2.0
+    reference_id:
+    - R91
+    - R88
+    note: reference MetroPT-3 baseline; smooth the error signal
+  - name: lstm_ae
+    family: autoencoder
+    tier: deep
+    priority: must
+    source: torch-handwritten
+    impl: torch
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R92
+    - R1
+  - name: tcn_ae
+    family: autoencoder
+    tier: deep
+    priority: must
+    source: torch-handwritten
+    impl: torch
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R37
+  - name: usad
+    family: adversarial_ae
+    tier: deep
+    priority: must
+    source: torch-handwritten
+    impl: torch
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R16
+    - R1
+  - name: k_of_n_corroboration
+    family: wrapper
+    tier: deep
+    priority: must
+    source: sklearn
+    impl: numpy
+    input_kind: window_stats
+    implement_hours: 1.0
+    reference_id:
+    - R95
+    note: raise only when >=3 of {TP2,TP3,Motor_current,Oil_temperature,idle_run_ratio}
+      are anomalous
+  - name: gdn_mtad_gat
+    family: graph_ad
+    tier: deep
+    priority: nice
+    source: torch-handwritten
+    impl: TimeSeAD
+    input_kind: raw_window
+    implement_hours: 6.0
+    reference_id:
+    - R22
+    - R4
+    - R21
+    note: bought for interpretability (sensor-dependency graph in the twin), not VUS-PR
+  - name: tranad
+    family: transformer_ad
+    tier: deep
+    priority: nice
+    source: torch-handwritten
+    impl: imperial-qore/TranAD
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R17
+  - name: dcdetector
+    family: contrastive_ad
+    tier: deep
+    priority: nice
+    source: torch-handwritten
+    impl: DAMO-DI-ML/KDD2023-DCdetector
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R15
+    - R2
+  - name: wae_gan
+    family: adversarial_ae
+    tier: deep
+    priority: skip
+    source: torch-handwritten
+    impl: unavailable
+    input_kind: raw_window
+    implement_hours: 8.0
+    reference_id:
+    - R94
+    - R93
+    skip_reason: Most expensive item to reimplement (~8 h) and a one-feature threshold
+      already reaches F1=1.0 on the same failure family; poorest return per hour in
+      the set.
+  - name: cnn_mamba_transformer
+    family: state_space_ad
+    tier: deep
+    priority: skip
+    source: torch-handwritten
+    impl: unavailable
+    input_kind: raw_window
+    implement_hours: 10.0
+    reference_id:
+    - R100
+    - R93
+    skip_reason: Only Crossref metadata verified — dataset and numbers unconfirmed
+      — and given the one-feature rule result it is certainly overkill.
+  - name: imdiffusion
+    family: diffusion_ad
+    tier: deep
+    priority: skip
+    source: torch-handwritten
+    impl: 17000cyh/IMDiffusion
+    input_kind: raw_window
+    implement_hours: 8.0
+    reference_id:
+    - R18
+    skip_reason: Diffusion inference is too slow for a 48 h build and for the live
+      replay loop.
+  - name: catch
+    family: frequency_patch
+    tier: deep
+    priority: skip
+    source: torch-handwritten
+    impl: decisionintelligence/CATCH
+    input_kind: raw_window
+    implement_hours: 6.0
+    reference_id:
+    - R12
+    skip_reason: Bi-level optimisation is training-unstable and needs a dedicated
+      owner; numbers unverified.
+  - name: anomaly_transformer
+    family: transformer_ad
+    tier: deep
+    priority: skip
+    source: torch-handwritten
+    impl: thuml/Anomaly-Transformer
+    input_kind: raw_window
+    implement_hours: 4.0
+    reference_id:
+    - R2
+    - R1
+    skip_reason: Point-adjusted headline results; absent from the TSB-AD-M top-10.
+  - name: tspulse_zeroshot
+    family: tsfm_ad
+    tier: foundation
+    priority: must
+    source: hf
+    impl: granite-tsfm
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R30
+    params:
+      context_points: 512
+    note: 1800 s at 1 Hz = the 30-min window used by R93
+  - name: conformal_threshold
+    family: calibration
+    tier: foundation
+    priority: must
+    source: sklearn
+    impl: granite (R42)
+    input_kind: window_stats
+    implement_hours: 0.0
+    reference_id:
+    - R42
+  - name: chronos2_covariate_cpd
+    family: tsfm_forecast
+    tier: foundation
+    priority: nice
+    source: hf
+    impl: chronos-forecasting>=2.0
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R24
+    - R36
+    note: COMP/DV_eletric/Towers as known-future covariates; score change points only
+  - name: dada_zeroshot
+    family: tsfm_ad
+    tier: foundation
+    priority: nice
+    source: hf
+    impl: iambowen/DADA
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R14
+  - name: timesfm_25
+    family: tsfm_forecast
+    tier: foundation
+    priority: skip
+    source: hf
+    impl: timesfm
+    input_kind: raw_window
+    implement_hours: 3.0
+    reference_id:
+    - R36
+    - R25
+    skip_reason: 'Direct negative result on SWaT: error stays LOW during persistent
+      anomalies and peaks only at boundaries, which is exactly the MetroPT leak shape.'
+  - name: moment_zeroshot
+    family: tsfm_ad
+    tier: foundation
+    priority: skip
+    source: hf
+    impl: momentfm
+    input_kind: raw_window
+    implement_hours: 3.0
+    reference_id:
+    - R19
+    - R30
+    - R35
+    skip_reason: Univariate evidence only, indistinguishable from a one-liner, and
+      superseded by TSPulse at 1/385th the parameters.
+  - name: ttm_r2
+    family: tsfm_forecast
+    tier: foundation
+    priority: skip
+    source: hf
+    impl: granite-tsfm
+    input_kind: raw_window
+    implement_hours: 2.0
+    reference_id:
+    - R31
+    skip_reason: TTM is a forecaster, not an AD model; TSPulse from the same package
+      covers the AD slot.
+  - name: time_moe
+    family: tsfm_forecast
+    tier: foundation
+    priority: skip
+    source: hf
+    impl: Time-MoE
+    input_kind: raw_window
+    implement_hours: 4.0
+    reference_id:
+    - R26
+    - R35
+    skip_reason: One-Liners failure case; appears only as a zero-shot baseline, never
+      a winner.
+  - name: moirai_2
+    family: tsfm_forecast
+    tier: foundation
+    priority: skip
+    source: hf
+    impl: uni2ts
+    input_kind: raw_window
+    implement_hours: 4.0
+    reference_id:
+    - R27
+    skip_reason: CC-BY-NC-4.0 non-commercial licence.
+  - name: toto
+    family: tsfm_forecast
+    tier: foundation
+    priority: skip
+    source: hf
+    impl: DataDog/toto
+    input_kind: raw_window
+    implement_hours: 4.0
+    reference_id:
+    - R29
+    skip_reason: AD claim is vendor blog framing of residual thresholding with no
+      independent benchmark evidence.
+  - name: sundial
+    family: tsfm_forecast
+    tier: foundation
+    priority: skip
+    source: hf
+    impl: thuml/Sundial
+    input_kind: raw_window
+    implement_hours: 4.0
+    reference_id:
+    - R33
+    skip_reason: No verified AD or industrial fault-detection evaluation.
+  - name: page_hinkley_residual
+    family: drift_detector
+    tier: statistical
+    priority: must
+    source: sklearn
+    impl: river.drift
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R178
+    - R180
+    - R193
+    - R36
+    task: cpd
+    licence: BSD-3-Clause
+    output: boolean_plus_cumulative_statistic
+    score_adapter: cumulative_statistic
+    params:
+      targets:
+      - TP2
+      - TP3
+      - Motor_current
+    note: the V4 design change, implemented with a maintained detector; performance-aware
+      drift detection on a residual stream is an established family with its own survey
+      (R193)
+  - name: adwin_residual
+    family: drift_detector
+    tier: statistical
+    priority: must
+    source: sklearn
+    impl: river.drift
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R178
+    - R179
+    task: cpd
+    licence: BSD-3-Clause
+    output: boolean_plus_estimation
+    score_adapter: drift_magnitude
+    note: zero new dependencies — river already imported for HalfSpaceTrees (R99)
+  - name: kswin_duty_ratio
+    family: drift_detector
+    tier: statistical
+    priority: nice
+    source: sklearn
+    impl: river.drift
+    input_kind: cycle_features
+    implement_hours: 0.0
+    reference_id:
+    - R181
+    - R101
+    task: cpd
+    licence: BSD-3-Clause
+    score_adapter: drift_magnitude
+    params:
+      targets:
+      - idle_run_ratio
+      - Flowmeter_max
+    note: distribution-free two-sample test on REAL values; a principled competitor
+      to the hand-written duty_cycle_ratio_cusum row, on the feature with 1-4 week
+      lead time
+    demoted_by: 'user decision 14 Sep: trim to core AD+CLS; only Page-Hinkley/ADWIN/transition
+      mask kept as MUST cpd'
+  - name: ruptures_pelt_binseg_raw
+    family: offline_cpd
+    tier: statistical
+    priority: nice
+    source: sklearn
+    impl: ruptures
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R173
+    - R174
+    - R175
+    task: cpd
+    licence: BSD-2-Clause
+    output: discrete_breakpoints
+    score_adapter: kernel_on_distance_to_breakpoint
+    note: run over the 15-channel panel AND over the residual panel; penalty calibrated
+      on validation only
+    demoted_by: 'user decision 14 Sep: trim to core AD+CLS; only Page-Hinkley/ADWIN/transition
+      mask kept as MUST cpd'
+  - name: changeforest_raw
+    family: offline_cpd
+    tier: classical_ml
+    priority: nice
+    source: sklearn
+    impl: changeforest
+    input_kind: raw_window
+    implement_hours: 2.0
+    reference_id:
+    - R187
+    task: cpd
+    licence: BSD
+    output: discrete_breakpoints
+    score_adapter: kernel_on_distance_to_breakpoint
+    note: 'best-evidenced MULTIVARIATE option (JMLR 2023, random-forest classifier
+      log-likelihood ratio, built for high dimension). Matters because MetroPT-3 is
+      15-channel and ruptures CostRbf on 15 channels carries distance-concentration
+      risk. Caveat: evidence is a SIMULATION study, not industrial data.'
+    demoted_by: 'user decision 14 Sep: trim to core AD+CLS; only Page-Hinkley/ADWIN/transition
+      mask kept as MUST cpd'
+  - name: transition_mask
+    family: exclusion_rule
+    tier: statistical
+    priority: must
+    source: sklearn
+    impl: numpy
+    input_kind: raw_window
+    implement_hours: 1.0
+    reference_id:
+    - R105
+    - R155
+    - R87
+    task: cpd
+    note: 'not a detector — emit is_transition and exclude +/-5 s around Towers flips
+      and COMP load/offload edges from POINT scoring, scoring those regions with a
+      change-point detector instead. Mask width is physically grounded: sump relief
+      on unload ~40 s, reload repressurise ~3 s (R155).'
+  - name: streaming_clasp
+    family: segmentation
+    tier: classical_ml
+    priority: nice
+    source: sklearn
+    impl: claspy
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R176
+    - R177
+    task: cpd
+    licence: BSD-3-Clause
+    note: hyper-parameter-free online segmentation; direct competitor to the river
+      HalfSpaceTrees row, free once claspy is installed for the door
+  - name: bocpd_raw
+    family: bayesian_online_cpd
+    tier: classical_ml
+    priority: nice
+    source: torch-handwritten
+    impl: TCPDBench (MIT)
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R185
+    - R175
+    task: cpd
+    output: run_length_posterior
+    score_adapter: none_required
+  - name: ddm_eddm_fhddm_hddm
+    family: drift_detector
+    tier: statistical
+    priority: skip
+    source: sklearn
+    impl: river.drift.binary
+    input_kind: window_stats
+    implement_hours: 0.5
+    reference_id:
+    - R182
+    - R183
+    - R178
+    task: cpd
+    skip_reason: Binary-error-stream detectors requiring a supervised classifier underneath;
+      unusable as unsupervised triggers on APU telemetry.
+  - name: bayesian_changepoint_detection_pkg
+    family: bayesian_online_cpd
+    tier: classical_ml
+    priority: skip
+    source: sklearn
+    impl: hildensia/bayesian_changepoint_detection
+    input_kind: raw_window
+    implement_hours: 4.0
+    reference_id:
+    - R186
+    task: cpd
+    skip_reason: No licence declared on PyPI; unmaintained since 2019.
+  - name: rank_cpd_on_localisation_only
+    family: methodology
+    tier: statistical
+    priority: skip
+    source: sklearn
+    impl: n/a
+    input_kind: window_stats
+    implement_hours: 0.0
+    reference_id:
+    - R184
+    task: cpd
+    skip_reason: 'SKIP AS A METHODOLOGY, not a model. A large-scale comparison of
+      14 drift detectors explicitly challenges the belief that the best detectors
+      are those that localise every drift most precisely and only those — localisation
+      accuracy is not downstream utility. Therefore report the covering metric and
+      affiliation ALONGSIDE F1-at-margin, never F1-at-margin alone. Caveat: that study
+      used artificial fully-labelled streams, so it is a methodological warning, not
+      rail evidence.'
+  - name: general_path_model_rul_cycle
+    family: degradation_path
+    tier: statistical
+    priority: nice
+    source: sklearn
+    impl: scipy.optimize.curve_fit
+    input_kind: cycle_features
+    implement_hours: 2.0
+    reference_id:
+    - R199
+    - R101
+    task: rul
+    note: fit a functional form to the idle_run_ratio severity index and extrapolate
+      to the next level threshold. NEEDS ONLY A MONOTONIC HI AND A THRESHOLD — no
+      run-to-failure labels. ~100 lines.
+    demoted_by: 'user decision 14 Sep: trim to core AD+CLS; only Page-Hinkley/ADWIN/transition
+      mask kept as MUST cpd'
+  - name: gamma_process_rul_cycle
+    family: stochastic_degradation
+    tier: statistical
+    priority: nice
+    source: sklearn
+    impl: scipy.stats.gamma
+    input_kind: cycle_features
+    implement_hours: 1.5
+    reference_id:
+    - R197
+    task: rul
+    note: a gamma process FORBIDS the health index from improving, which is physically
+      right for cumulative leak growth and fouling; gives a predictive DISTRIBUTION,
+      which alpha-lambda accuracy requires (R215). ~40 lines.
+    demoted_by: 'user decision 14 Sep: trim to core AD+CLS; only Page-Hinkley/ADWIN/transition
+      mask kept as MUST cpd'
+  - name: hi_suitability_screening_cycle
+    family: health_index
+    tier: statistical
+    priority: nice
+    source: sklearn
+    impl: handwritten
+    input_kind: cycle_features
+    implement_hours: 1.0
+    reference_id:
+    - R218
+    task: rul
+    note: score candidate HIs on monotonicity / prognosability / trendability BEFORE
+      fitting any RUL model; label-free. Exact metric definitions UNVERIFIED — read
+      the PDF before quoting formulas.
+    demoted_by: 'user decision 14 Sep: trim to core AD+CLS; only Page-Hinkley/ADWIN/transition
+      mask kept as MUST cpd'
+  - name: cox_ph_fleet
+    family: survival
+    tier: classical_ml
+    priority: nice
+    source: sklearn
+    impl: lifelines
+    input_kind: window_stats
+    implement_hours: 1.0
+    reference_id:
+    - R205
+    - R211
+    - R134
+    - R209
+    task: rul
+    licence: MIT
+    note: 'the family that fits when there are NO run-to-failure trajectories but
+      there ARE maintenance records: needs only per-unit duration, an event indicator
+      and covariates. This is the row that makes SCANIA Component X earn its ingest.'
+    demoted_by: 'user decision 14 Sep: trim to core AD+CLS; only Page-Hinkley/ADWIN/transition
+      mask kept as MUST cpd'
+  - name: wiener_process_rul_cycle
+    family: stochastic_degradation
+    tier: statistical
+    priority: nice
+    source: sklearn
+    impl: scipy.stats.invgauss
+    input_kind: cycle_features
+    implement_hours: 1.5
+    reference_id:
+    - R196
+    - R195
+    task: rul
+    note: for a non-monotone index; first-hitting-time RUL has a closed-form inverse-Gaussian
+      density with mean (w - x_t)/mu, giving a free predictive interval. ~40 lines.
+  - name: random_survival_forest
+    family: survival
+    tier: classical_ml
+    priority: nice
+    source: lightgbm
+    impl: xgbse
+    input_kind: window_stats
+    implement_hours: 1.0
+    reference_id:
+    - R206
+    - R213
+    - R212
+    task: rul
+    licence: Apache-2.0
+    note: PREFER xgbse (Apache-2.0) over scikit-survival, which is GPL-3.0-or-later
+      and would make the deliverable a derived work (R212). Returns calibrated survival
+      curves that map directly onto 'probability of reaching severity level k within
+      h days' in the twin UI.
+  - name: survloss_censored_regression
+    family: survival
+    tier: deep
+    priority: nice
+    source: torch-handwritten
+    impl: handwritten
+    input_kind: window_stats
+    implement_hours: 1.5
+    reference_id:
+    - R208
+    - R210
+    task: rul
+    note: '~30 lines on an existing regression loss, not a new model: penalise predictions
+      outside the censoring region and skip them otherwise, so censored samples become
+      training signal. Supported by the SCANIA-fleet finding that including assets
+      that did NOT fail improves prediction (R210).'
+  - name: weibull_population_baseline
+    family: survival
+    tier: statistical
+    priority: nice
+    source: sklearn
+    impl: surpyval
+    input_kind: window_stats
+    implement_hours: 0.5
+    reference_id:
+    - R204
+    - R203
+    task: rul
+    licence: MIT
+    note: the 'what would you predict knowing nothing about this unit?' control —
+      the RUL analogue of the random-score row. SurPyval uniquely also handles TRUNCATION,
+      which matters because fleet observation windows are left-truncated.
+  - name: wtte_rnn
+    family: survival
+    tier: deep
+    priority: skip
+    source: torch-handwritten
+    impl: ragulpr/wtte-rnn
+    input_kind: raw_window
+    implement_hours: 3.0
+    reference_id:
+    - R210
+    - R221
+    task: rul
+    skip_reason: Right idea (a network optimising a Weibull survival function handles
+      censoring natively) and the closest published fleet-prognostics precedent, but
+      the reference implementation was last pushed 2020-08-07 so the Weibull log-likelihood
+      must be ported by hand, and V7 puts us in the small-n regime where a deep RUL
+      net is not sample-efficient (R221). SurvLoss buys the same censoring capability
+      for a third of the effort.
+  - name: pycox_discrete_hazard
+    family: survival
+    tier: deep
+    priority: skip
+    source: torch-handwritten
+    impl: pycox
+    input_kind: window_stats
+    implement_hours: 2.0
+    reference_id:
+    - R214
+    task: rul
+    skip_reason: The discrete-time hazard is the cleanest probabilistic form of 'time
+      to next severity level' and composes with our ordinal staging, but the model
+      list on the retrieved page is UNVERIFIED and a hand-written discrete-time hazard
+      head is ~60 lines, cheaper than the dependency. Revisit only if the Cox arm
+      underperforms.
+  - name: bayesnet_brake_pipe_leak
+    family: bayesian_network
+    tier: classical_ml
+    priority: skip
+    source: sklearn
+    impl: unavailable
+    input_kind: window_stats
+    implement_hours: 3.0
+    reference_id:
+    - R230
+    task: rul
+    skip_reason: CONTENT UNVERIFIED (title/venue/DOI only, zero recorded citations,
+      low-profile venue) and it is DETECTION, not RUL, so it does not fill this gap.
+bearing:
+  signals:
+  - T_box
+  - vib_rms
+  - vib_kurt
+  - vib_crest
+  - vib_bpfo
+  - T_amb
+  - speed
+  - load_frac
+  n_channels: 5
+  unit_of_analysis: window_5min
+  datasets:
+  - ottawa_variable_speed
+  - ottawa_uored_vafcls
+  - sim_bearing
+  splits:
+  - bearing_wise
+  - recording_level
+  - window_random_leaky_upper_bound
+  note: 2-5 channels is the regime where matrix profile leads the best neural baseline
+    by +0.2517 VUS-PR (R11).
+  models:
+  - name: kurtogram_envelope_bpfo
+    family: physics_feature
+    tier: statistical
+    priority: must
+    source: sklearn
+    impl: scipy
+    input_kind: raw_window
+    implement_hours: 5.0
+    reference_id:
+    - R117
+    note: spectral kurtosis band -> Hilbert envelope -> BPFO/BPFI/BSF/FTF harmonics;
+      emit sk_band_fc, sk_band_bw, sk_max
+  - name: thermal_residual_model
+    family: physics_residual
+    tier: statistical
+    priority: must
+    source: sklearn
+    impl: sklearn
+    input_kind: window_stats
+    implement_hours: 3.0
+    reference_id:
+    - R110
+    note: 'inputs: speed, ambient, load, adjacent and opposite axlebox temperatures'
+  - name: peer_delta_temperature
+    family: physics_feature
+    tier: statistical
+    priority: must
+    source: sklearn
+    impl: numpy
+    input_kind: window_stats
+    implement_hours: 1.0
+    reference_id:
+    - R112
+    - R113
+    - R114
+  - name: moving_window_variance
+    family: one_liner
+    tier: statistical
+    priority: must
+    source: sklearn
+    impl: numpy
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R35
+  - name: squared_difference
+    family: one_liner
+    tier: statistical
+    priority: must
+    source: sklearn
+    impl: numpy
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R35
+  - name: trivial_baseline_set
+    family: trivial
+    tier: statistical
+    priority: must
+    source: sklearn
+    impl: QuoVadisTAD
+    input_kind: window_stats
+    implement_hours: 0.0
+    reference_id:
+    - R5
+    - R2
+  - name: envelope_band_id_tacholess
+    family: physics_feature
+    tier: statistical
+    priority: nice
+    source: sklearn
+    impl: scipy
+    input_kind: raw_window
+    implement_hours: 4.0
+    reference_id:
+    - R122
+  - name: computed_order_tracking
+    family: physics_feature
+    tier: statistical
+    priority: nice
+    source: sklearn
+    impl: scipy
+    input_kind: raw_window
+    implement_hours: 3.0
+    reference_id:
+    - R118
+    - R122
+    note: tacho vs tacholess ablation using the 1024-CPR encoder channel
+  - name: matrix_profile_discord
+    family: matrix_profile
+    tier: classical_ml
+    priority: must
+    source: sklearn
+    impl: stumpy.gpu_stump
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R11
+    params:
+      k: 5
+  - name: ocsvm_mfcc_ams
+    family: one_class
+    tier: classical_ml
+    priority: must
+    source: sklearn
+    impl: librosa+sklearn
+    input_kind: raw_window
+    implement_hours: 4.0
+    reference_id:
+    - R120
+    - R121
+    note: healthy-only training; verified on real commuter railway bearings
+  - name: isolation_forest
+    family: ensemble_outlier
+    tier: classical_ml
+    priority: must
+    source: pyod
+    impl: pyod
+    input_kind: window_stats
+    implement_hours: 0.0
+    reference_id:
+    - R1
+  - name: ecod
+    family: ecdf_outlier
+    tier: classical_ml
+    priority: must
+    source: pyod
+    impl: pyod
+    input_kind: window_stats
+    implement_hours: 0.0
+    reference_id:
+    - R1
+  - name: knn_outlier
+    family: distance_outlier
+    tier: classical_ml
+    priority: must
+    source: pyod
+    impl: pyod
+    input_kind: window_stats
+    implement_hours: 0.0
+    reference_id:
+    - R1
+  - name: kmeans_ad
+    family: cluster_outlier
+    tier: classical_ml
+    priority: must
+    source: sklearn
+    impl: sklearn
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R1
+  - name: lgbm_envelope
+    family: gradient_boosting
+    tier: boosting
+    priority: must
+    source: lightgbm
+    impl: lightgbm
+    input_kind: window_stats
+    implement_hours: 2.0
+    reference_id:
+    - R58
+    - R59
+    task: cls
+  - name: litetime
+    family: deep_conv
+    tier: deep
+    priority: must
+    source: aeon
+    impl: aeon
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R53
+    - R60
+    task: cls
+  - name: resnet1d
+    family: deep_conv
+    tier: deep
+    priority: must
+    source: torch-handwritten
+    impl: torch
+    input_kind: raw_window
+    implement_hours: 2.0
+    reference_id:
+    - R60
+    task: cls
+  - name: rocket_cnn_ensemble
+    family: ensemble
+    tier: deep
+    priority: nice
+    source: aeon
+    impl: aeon+torch
+    input_kind: raw_window
+    implement_hours: 3.0
+    reference_id:
+    - R60
+    task: cls
+  - name: drsn_lstm_health_index
+    family: health_index
+    tier: deep
+    priority: nice
+    source: torch-handwritten
+    impl: torch
+    input_kind: raw_window
+    implement_hours: 6.0
+    reference_id:
+    - R123
+    task: rul
+  - name: pseudo_anomaly_contrastive
+    family: augmentation
+    tier: deep
+    priority: nice
+    source: torch-handwritten
+    impl: torch
+    input_kind: raw_window
+    implement_hours: 5.0
+    reference_id:
+    - R23
+    note: borrow the boundary-adjacent pseudo-anomaly generator idea; no code and
+      no verified numbers, so do not reproduce the paper
+  - name: logreg_envelope
+    family: linear
+    tier: statistical
+    priority: must
+    source: sklearn
+    impl: sklearn
+    input_kind: window_stats
+    implement_hours: 0.0
+    reference_id:
+    - R117
+    task: cls
+  - name: multirocket_ridge
+    family: convolution_kernel
+    tier: classical_ml
+    priority: must
+    source: aeon
+    impl: aeon
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R47
+    - R43
+    task: cls
+  - name: multirocket_hydra
+    family: convolution_kernel
+    tier: classical_ml
+    priority: must
+    source: aeon
+    impl: aeon
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R48
+    - R43
+    task: cls
+  - name: quant
+    family: interval
+    tier: classical_ml
+    priority: must
+    source: aeon
+    impl: aeon
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R49
+    task: cls
+  - name: shapelet_envelope
+    family: shapelet
+    tier: classical_ml
+    priority: nice
+    source: aeon
+    impl: aeon
+    input_kind: raw_window
+    implement_hours: 4.0
+    reference_id:
+    - R58
+    task: cls
+    note: recording-level CV; matches ROCKET while staying interpretable
+  - name: self_rocket
+    family: convolution_kernel
+    tier: classical_ml
+    priority: nice
+    source: aeon
+    impl: unavailable
+    input_kind: raw_window
+    implement_hours: 3.0
+    reference_id:
+    - R59
+    task: cls
+  - name: udtl_transfer
+    family: domain_adaptation
+    tier: deep
+    priority: nice
+    source: torch-handwritten
+    impl: ZhaoZhibin/UDTL
+    input_kind: raw_window
+    implement_hours: 6.0
+    reference_id:
+    - R116
+    task: cls
+    note: simulator as source domain, Ottawa as target
+  - name: hive_cote_v2
+    family: hybrid_ensemble
+    tier: classical_ml
+    priority: skip
+    source: aeon
+    impl: aeon
+    input_kind: raw_window
+    implement_hours: 1.0
+    reference_id:
+    - R52
+    task: cls
+    skip_reason: ~340 h to train over the UCR benchmark; compute-bounded.
+  - name: wayside_acoustic_doppler
+    family: acoustic
+    tier: classical_ml
+    priority: skip
+    source: sklearn
+    impl: unavailable
+    input_kind: raw_window
+    implement_hours: 3.0
+    reference_id:
+    - R127
+    - R109
+    skip_reason: Needs a trackside microphone array and Doppler-removal resampling;
+      out of scope for a telemetry-only build, and wayside acoustics miss incipient
+      defects.
+  - name: tspulse_zeroshot
+    family: tsfm_ad
+    tier: foundation
+    priority: must
+    source: hf
+    impl: granite-tsfm
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R30
+    params:
+      context_points: 512
+  - name: conformal_threshold
+    family: calibration
+    tier: foundation
+    priority: must
+    source: sklearn
+    impl: granite (R42)
+    input_kind: window_stats
+    implement_hours: 0.0
+    reference_id:
+    - R42
+  - name: moment_zeroshot
+    family: tsfm_ad
+    tier: foundation
+    priority: nice
+    source: hf
+    impl: momentfm
+    input_kind: raw_window
+    implement_hours: 3.0
+    reference_id:
+    - R19
+    - R1
+    note: 0.3790 VUS-PR zero-shot on TSB-AD-U (7th), ahead of USAD; fine-tuning adds
+      only +0.007 so DO NOT fine-tune
+  - name: frozen_forecaster_embed_head
+    family: tsfm_embedding
+    tier: foundation
+    priority: nice
+    source: hf
+    impl: chronos-forecasting+sklearn
+    input_kind: raw_window
+    implement_hours: 3.0
+    reference_id:
+    - R28
+    - R38
+    task: cls
+    note: spectrum-as-pseudo-time-series trick sidesteps the kHz sampling-rate mismatch
+  - name: timerep_intermediate_layer
+    family: tsfm_embedding
+    tier: foundation
+    priority: nice
+    source: hf
+    impl: momentfm
+    input_kind: raw_window
+    implement_hours: 3.0
+    reference_id:
+    - R41
+    note: score from intermediate layers + core-set reference bank; cheapest way to
+      make a frozen TSFM competitive
+  - name: chronos2_embed_rul_head
+    family: tsfm_embedding
+    tier: foundation
+    priority: nice
+    source: hf
+    impl: chronos-forecasting+torch
+    input_kind: raw_window
+    implement_hours: 3.0
+    reference_id:
+    - R40
+    task: rul
+    note: frozen backbone + Wide&Deep head; RMSE 10.32 on full C-MAPSS with no fine-tuning
+  - name: dada_zeroshot
+    family: tsfm_ad
+    tier: foundation
+    priority: nice
+    source: hf
+    impl: iambowen/DADA
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R14
+  - name: tirex
+    family: tsfm_forecast
+    tier: foundation
+    priority: skip
+    source: hf
+    impl: tirex-ts
+    input_kind: raw_window
+    implement_hours: 2.0
+    reference_id:
+    - R28
+    skip_reason: NXAI Community Licence is not OSI and we may need to hand this code
+      over.
+  - name: tsfm_in_context_bearing
+    family: tsfm_cls
+    tier: foundation
+    priority: skip
+    source: hf
+    impl: unavailable
+    input_kind: raw_window
+    implement_hours: 3.0
+    reference_id:
+    - R38
+    task: cls
+    skip_reason: The abstract names neither the TSFM nor the bearing datasets and
+      reports no numbers, so there is nothing to reproduce; we keep only the spectrum-as-pseudo-series
+      trick.
+  - name: ruptures_regime_segmentation
+    family: offline_cpd
+    tier: statistical
+    priority: nice
+    source: sklearn
+    impl: ruptures
+    input_kind: window_stats
+    implement_hours: 0.0
+    reference_id:
+    - R173
+    - R175
+    - R151
+    - R159
+    task: cpd
+    licence: BSD-2-Clause
+    output: discrete_breakpoints
+    score_adapter: kernel_on_distance_to_breakpoint
+    params:
+      targets:
+      - speed
+      - dwell_fraction
+    note: segment the run into speed/dwell regimes, then detect within regime. Ottawa
+      records sweep 13.7-28.9 Hz shaft speed WITHIN a single 10 s record (R159), so
+      a global threshold is meaningless.
+    demoted_by: 'user decision 14 Sep: trim to core AD+CLS; only Page-Hinkley/ADWIN/transition
+      mask kept as MUST cpd'
+  - name: page_hinkley_thermal_residual
+    family: drift_detector
+    tier: statistical
+    priority: must
+    source: sklearn
+    impl: river.drift
+    input_kind: window_stats
+    implement_hours: 0.0
+    reference_id:
+    - R178
+    - R180
+    - R110
+    - R193
+    - R151
+    task: cpd
+    licence: BSD-3-Clause
+    score_adapter: cumulative_statistic
+    note: applied to thermal_residual = T_box - T_box_pred. Benchmark it DIRECTLY
+      against the published Netherlands Railways slow-degradation rule, which is itself
+      a sequential deviation test (3.5 sigma over >=10 measurements in 30 days, R151)
+      — that comparison is a strong slide.
+  - name: fluss_segmentation
+    family: segmentation
+    tier: classical_ml
+    priority: nice
+    source: aeon
+    impl: aeon.segmentation
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R188
+    - R11
+    task: cpd
+    licence: BSD-3-Clause
+    note: reuses the matrix-profile machinery already installed for kurtogram/discord
+      work; the natural segmenter when the regime boundary is a change in SHAPE rather
+      than in mean
+  - name: clasp_envelope_segmentation
+    family: segmentation
+    tier: classical_ml
+    priority: nice
+    source: sklearn
+    impl: claspy
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R176
+    - R177
+    task: cpd
+    licence: BSD-3-Clause
+  - name: changeforest_raw
+    family: offline_cpd
+    tier: classical_ml
+    priority: skip
+    source: sklearn
+    impl: changeforest
+    input_kind: raw_window
+    implement_hours: 2.0
+    reference_id:
+    - R187
+    - R11
+    task: cpd
+    skip_reason: Its advantage is the high-dimensional multivariate case; the bearing
+      panel is 2-5 channels, which is the regime where matrix profile leads the best
+      neural baseline by +0.2517 VUS-PR (R11). It is MUST on the pneumatic track instead.
+  - name: ddm_eddm_fhddm_hddm
+    family: drift_detector
+    tier: statistical
+    priority: skip
+    source: sklearn
+    impl: river.drift.binary
+    input_kind: window_stats
+    implement_hours: 0.5
+    reference_id:
+    - R182
+    - R183
+    task: cpd
+    skip_reason: Binary-error-stream detectors; there is no unsupervised classifier
+      error to feed them.
+  - name: gamma_process_rul_window
+    family: stochastic_degradation
+    tier: statistical
+    priority: nice
+    source: sklearn
+    impl: scipy.stats.gamma
+    input_kind: window_stats
+    implement_hours: 0.0
+    reference_id:
+    - R197
+    - R221
+    - R215
+    task: rul
+    note: 'on the envelope-band-energy / RMS health index; spall growth is strictly
+      monotone so a gamma process is the right form. V7: at n ~ 15 trajectories this
+      is the sample-efficient family, not a deep net (R221). Hours shared with the
+      pneumatic row.'
+    demoted_by: 'user decision 14 Sep: trim to core AD+CLS; only Page-Hinkley/ADWIN/transition
+      mask kept as MUST cpd'
+  - name: similarity_rul_bearing
+    family: similarity_rul
+    tier: classical_ml
+    priority: nice
+    source: sklearn
+    impl: handwritten
+    input_kind: window_stats
+    implement_hours: 2.0
+    reference_id:
+    - R200
+    - R70
+    - R124
+    - R143
+    task: rul
+    requires_run_to_failure: true
+    note: match the partial trajectory against the XJTU-SY / FEMTO library and aggregate
+      matched remaining lives; the published ancestor of the door similarity_ensemble_rul
+      row, so mostly reuse. ~100 lines with DTW or Euclidean matching over a smoothed
+      HI.
+    demoted_by: 'user decision 14 Sep: trim to core AD+CLS; only Page-Hinkley/ADWIN/transition
+      mask kept as MUST cpd'
+  - name: general_path_model_rul_window
+    family: degradation_path
+    tier: statistical
+    priority: nice
+    source: sklearn
+    impl: scipy.optimize.curve_fit
+    input_kind: window_stats
+    implement_hours: 0.0
+    reference_id:
+    - R199
+    - R140
+    task: rul
+    note: threshold-extrapolation form needing NO run-to-failure labels, so it also
+      runs on our simulator and on the CITEF F0-F4 graded severity ladder (R140) where
+      no trajectory library exists
+    demoted_by: 'user decision 14 Sep: trim to core AD+CLS; only Page-Hinkley/ADWIN/transition
+      mask kept as MUST cpd'
+  - name: hi_suitability_screening_window
+    family: health_index
+    tier: statistical
+    priority: nice
+    source: sklearn
+    impl: handwritten
+    input_kind: window_stats
+    implement_hours: 0.0
+    reference_id:
+    - R218
+    task: rul
+    note: score vib_rms, kurtosis and band energy on monotonicity / prognosability
+      / trendability before committing GPU time
+    demoted_by: 'user decision 14 Sep: trim to core AD+CLS; only Page-Hinkley/ADWIN/transition
+      mask kept as MUST cpd'
+  - name: wiener_process_rul_window
+    family: stochastic_degradation
+    tier: statistical
+    priority: nice
+    source: sklearn
+    impl: scipy.stats.invgauss
+    input_kind: window_stats
+    implement_hours: 0.0
+    reference_id:
+    - R196
+    - R195
+    task: rul
+    note: vibration HIs are noisy and non-monotone before the spall stabilises
+  - name: inverse_gaussian_rul
+    family: stochastic_degradation
+    tier: statistical
+    priority: nice
+    source: sklearn
+    impl: scipy.stats.invgauss
+    input_kind: window_stats
+    implement_hours: 1.0
+    reference_id:
+    - R198
+    task: rul
+    note: third member of the standard trio, for when the gamma fit is poor. ~30 lines.
+  - name: particle_filter_rul
+    family: state_tracking
+    tier: classical_ml
+    priority: nice
+    source: sklearn
+    impl: progpy
+    input_kind: window_stats
+    implement_hours: 3.0
+    reference_id:
+    - R201
+    - R202
+    - R215
+    task: rul
+    licence: NASA-1.3 — NOT OSI-permissive; check NEBULA X IP rules before shipping
+    note: 'our simulator IS a state-space degradation model, so wrapping it as a progpy
+      PrognosticsModel gives particle-filter RUL with uncertainty bands PLUS alpha_lambda
+      / prognostic_horizon / cumulative_relative_accuracy / monotonicity for free.
+      Strong twin demo: a widening RUL band, not a point estimate. MIT fallback: filterpy
+      (Kalman only, no particle filter) or ~60 lines of bootstrap resampling.'
+  - name: lgbm_rul_regression
+    family: gradient_boosting
+    tier: boosting
+    priority: nice
+    source: lightgbm
+    impl: lightgbm
+    input_kind: window_stats
+    implement_hours: 2.0
+    reference_id:
+    - R222
+    task: rul
+    note: 'evidence, not habit: on C-MAPSS FD003 XGBoost RMSE 13.36 beats a 1D CNN
+      (15.68) and an LSTM (14.20). The cheap supervised RUL row the deep arm must
+      clear.'
+  - name: weibull_population_baseline
+    family: survival
+    tier: statistical
+    priority: nice
+    source: sklearn
+    impl: surpyval
+    input_kind: window_stats
+    implement_hours: 0.0
+    reference_id:
+    - R204
+    - R203
+    task: rul
+    licence: MIT
+  - name: tabular_fm_incontext_rul
+    family: tsfm_embedding
+    tier: foundation
+    priority: nice
+    source: hf
+    impl: tabpfn
+    input_kind: window_stats
+    implement_hours: 3.0
+    reference_id:
+    - R223
+    task: rul
+    note: 'needs NO training run on the A4500 and reports the best average ranks across
+      prognostic and diagnostic PHM tasks specifically in LOW-DATA regimes, which
+      is our regime. UNVERIFIED: the benchmark datasets are not named on the abstract
+      page, so whether bearing run-to-failure sets are among them is unknown. NICE,
+      never MUST.'
+  - name: deep_sequence_rul
+    family: deep_regression
+    tier: deep
+    priority: skip
+    source: torch-handwritten
+    impl: torch
+    input_kind: raw_window
+    implement_hours: 6.0
+    reference_id:
+    - R221
+    - R222
+    task: rul
+    skip_reason: 'V7: the generalization bound O(B^2*sqrt(p/n)) in the NUMBER OF RUN-TO-FAILURE
+      TRAJECTORIES puts n ~ 15 (XJTU-SY) far outside a deep net''s sample-efficient
+      regime, while embedding degradation physics can cut data requirements by up
+      to two orders of magnitude (R221); and a boosted tree already beats both a CNN
+      and an LSTM on C-MAPSS FD003 (R222), which has MORE data than we do. The drsn_lstm_health_index
+      NICE row is the one deep exception, kept for its learned denoising on railway
+      axle-box signals.'
+cross_subsystem:
+  models:
+  - name: msad_model_selection
+    family: model_selection
+    tier: classical_ml
+    priority: nice
+    source: aeon
+    impl: boniolp/MSAD
+    input_kind: window_stats
+    implement_hours: 4.0
+    reference_id:
+    - R20
+    - R1
+    note: selection outperforms every individual detector; Averaging Ensemble is the
+      trivial fallback
+  - name: averaging_ensemble
+    family: ensemble
+    tier: classical_ml
+    priority: nice
+    source: sklearn
+    impl: numpy
+    input_kind: window_stats
+    implement_hours: 1.0
+    reference_id:
+    - R20
+    note: requires running every method
+  - name: detach_rocket_channel_ablation
+    family: feature_selection
+    tier: classical_ml
+    priority: nice
+    source: aeon
+    impl: gon-uri/detach_rocket
+    input_kind: raw_window
+    implement_hours: 0.0
+    reference_id:
+    - R57
+    note: surviving kernels/channels answer 'which sensor carries the fault' and 'can
+      we drop a sensor'
+  - name: ordinal_severity_staging
+    family: health_index
+    tier: statistical
+    priority: nice
+    source: sklearn
+    impl: sklearn
+    input_kind: window_stats
+    implement_hours: 1.0
+    reference_id:
+    - R72
+    - R81
+    - R101
+    - R123
+    - R199
+    task: rul
+    note: build a degradation indicator, cluster it into ordinal severity levels,
+      estimate time-to-next-level. FOUR independent lines converge on this (two door
+      groups, the brake-pipe leak work, the axle-box health-index work) and R199 is
+      its published name (General Path Model). One implementation serves door, pneumatic
+      and bearing, and it feeds both the CBM step display and every RUL row.
+    demoted_by: 'user decision 14 Sep: trim to core AD+CLS; only Page-Hinkley/ADWIN/transition
+      mask kept as MUST cpd'
+  - name: peer_normalisation_shared
+    family: wrapper
+    tier: statistical
+    priority: must
+    source: sklearn
+    impl: numpy
+    input_kind: window_stats
+    implement_hours: 0.0
+    reference_id:
+    - R78
+    - R110
+    - R112
+    - R151
+    - R150
+    note: 'W1 CORRECTION to the door-booked implementation: axle boxes must be compared
+      against the median of peers on the SAME SIDE of the train (R151), not pooled
+      across the car, because on a motor car bearing 1 carries 13.5% (200 km/h) higher
+      roller-raceway contact force than bearing 2 and runs measurably hotter, while
+      trailer-car bearings of a wheelset are thermally identical (R150). Compare like-for-like
+      positions.'
+evaluation:
+  primary_metric: vus_pr
+  metric_implementations:
+    vus_pr:
+      source: vendored_from_tsb_ad
+      reference_id:
+      - R7
+      - R1
+    affiliation_f:
+      source: tsb_ad
+      reference_id:
+      - R8
+      role: secondary
+      caveat: gameable at N~3 under best-of-N (R10)
+    range_based_f:
+      source: tsb_ad
+      reference_id:
+      - R9
+      role: secondary
+      caveat: fix position/cardinality weights once and state them
+    pa_k:
+      source: tadpak
+      reference_id:
+      - R2
+      - R10
+      role: secondary_axis
+    event_metrics:
+      source: handwritten
+      reference_id:
+      - R90
+      - R93
+      - R101
+      role: primary_operational
+    taxonomy_check:
+      source: tsadmetrics
+      reference_id:
+      - R102
+      licence: GPL-3.0
+      note: harness only; state the taxonomy class of every reported metric and that
+        TPDM / point-adjusted variants are excluded
+  excluded:
+  - name: point_adjusted_f1
+    reference_id:
+    - R2
+    - R1
+    reason: A random anomaly score attains SOTA PA-F1; TSB-AD removes point adjustment
+      entirely.
+  - name: vus_roc
+    reference_id:
+    - R10
+    reason: ROC-based metrics become gameable at N~9-11 under best-of-N; PR-based
+      stay near-flat.
+  - name: best_of_n
+    reference_id:
+    - R10
+    reason: Single honest runs with fixed, stated seeds only.
+  episode_definition:
+    min_consecutive_windows: 3
+    merge_gap_hours: 1
+  threshold_calibration:
+    fit_on: validation_only
+    false_alarm_budget: <=1 episode per 7 train-days
+    also_report_quantiles:
+    - 0.995
+    - 0.999
+    adaptive:
+      method: weighted_quantile_conformal
+      reference_id:
+      - R42
+  cpd_score_adapter:
+    why: VUS-PR requires a CONTINUOUS per-timestamp score (R7), but ruptures/claspy/changeforest/aeon
+      segmenters emit DISCRETE breakpoints and river drift detectors emit BOOLEANS.
+      Written once, reused by every task:cpd row.
+    implement_hours: 2.0
+    mapping:
+      offline_cpd: exponential kernel on distance to the nearest breakpoint, or the
+        cost-improvement curve
+      segmentation_clasp: the ClaSP profile itself (already a per-timestamp curve)
+      drift_page_hinkley: the running cumulative statistic
+      drift_adwin: the `estimation` drift magnitude
+      bayesian_online_cpd: run-length posterior — natively continuous, no adapter
+        needed
+  cpd_metrics:
+    covering_metric:
+      source: port from TCPDBench (MIT)
+      reference_id:
+      - R175
+      formula: C(G,G') = (1/T) * sum_{A in G} |A| * max_{A' in G'} J(A,A')
+      role: primary_segmentation
+      implement_hours: 1.0
+    f1_at_annotation_margin:
+      source: port from TCPDBench (MIT)
+      reference_id:
+      - R175
+      params:
+        margin_timesteps: 5
+      role: primary_segmentation
+      implement_hours: 1.0
+      caveat: integrate over the margin rather than fixing one value, by the same
+        argument VUS makes for its tolerance buffer (R7)
+    affiliation_f:
+      source: tsb_ad
+      reference_id:
+      - R8
+      role: cross_family_bridge
+      note: defined by TEMPORAL DISTANCE between predicted and true event sets, so
+        it scores discrete CPD output and discrete AD output on identical footing
+        with NO adapter; also normalises against a random baseline
+    excluded:
+    - name: f1_at_margin_reported_alone
+      reference_id:
+      - R184
+      reason: 'Localisation accuracy is not the same objective as downstream utility;
+        report covering and affiliation alongside it. Caveat: R184 used artificial
+        fully-labelled streams, so this is a methodological warning, not rail evidence.'
+    evidence_limit: 'No change-point benchmark on rail or industrial compressor telemetry
+      was found. TCPD is 37 general real-world series (R175), the ClaSP benchmark
+      is 107 segmentation datasets (R177), and changeforest''s evidence is a SIMULATION
+      study (R187). The one rail-adjacent signal is indirect: TimesFM failed at multivariate
+      AD on SWaT but the authors concluded it is "promising for change-point detection"
+      (R36). Say that plainly; do not imply a rail benchmark exists.'
+  rul_metrics:
+    alpha_lambda:
+      source: progpy
+      reference_id:
+      - R215
+      - R216
+      - R201
+      role: primary
+      requires: predictive_distribution
+    prognostic_horizon:
+      source: progpy
+      reference_id:
+      - R215
+      - R201
+      role: primary
+    cumulative_relative_accuracy:
+      source: progpy
+      reference_id:
+      - R215
+      - R201
+      role: primary
+    monotonicity:
+      source: progpy
+      reference_id:
+      - R215
+      - R201
+      - R218
+      role: primary
+    rmse:
+      source: sklearn
+      role: primary
+    cmapss_asymmetric_score:
+      source: handwritten
+      reference_id:
+      - R217
+      role: secondary
+      implement_hours: 0.25
+      caveat: UNNORMALISED and exponential — one badly-late unit dominates the fleet
+        total and it is NOT comparable across datasets with different unit counts
+        or life lengths. Report BESIDE rmse and a per-unit error distribution, NEVER
+        alone. This is the RUL-side analogue of the no-point-adjustment rule.
+    metric_definitions_status: NUMBERS UNVERIFIED — the R215 landing-page abstract
+      does not enumerate the metric names; our mapping rests on ProgPy implementing
+      exactly these four. Read the PDF before quoting definitions verbatim.
+  rul_splits:
+    rule: leave_one_unit_out
+    reference_id:
+    - R219
+    - R220
+    detail: Leave-one-bearing-out on XJTU-SY and FEMTO; never random window splits.
+      Fit scalers and health- index normalisation on TRAINING bearings only. Device-level
+      leakage optimistically biases RUL benchmarks (R219), and naive splitting inflates
+      accuracy from a genuine 20-60% to 99.9% on the same data (R220). Both sources
+      are NOT PEER-REVIEWED preprints — cite them for the protocol, not for a number.
+    seeds: 5
+    population_baseline:
+      model: weibull_population_baseline
+      reference_id:
+      - R204
+      role: the 'knowing nothing about this unit' control — RUL analogue of the random-score
+        row
+  reporting:
+    critical_difference_diagram:
+      source: aeon
+      reference_id:
+      - R63
+      - R43
+    cost_table:
+      reference_id:
+      - R37
+      - R189
+      columns:
+      - latency_ms
+      - peak_vram_mb
+      - state_dict_mb
+      - fit_seconds
+      note: TimeEval (R189) is the one peer-reviewed source systematically reporting
+        runtime alongside accuracy across 71 detectors and 976 datasets; NUMBERS UNVERIFIED,
+        do not quote its per-algorithm winners
+ps3:
+  meta:
+    added: 2026-09-17
+    source_doc: docs/research/ps3_addendum.md
+    references: docs/research/references.md section L (R231-R314)
+    note: Problem Statement 3 released four supervised tasks with their own metrics;
+      these four blocks are the machine-readable mirror of the addendum's ladder tables.
+      implement_hours here are PS3-specific and are NOT booked against the door/pneumatic/bearing
+      totals in meta.must_hours_breakdown.
+    must_implement_hours:
+      door: 10.5
+      rail: 12.5
+      acv: 9.0
+      shm: 13.0
+      note: SHM includes the 3.0 h conditional FDS row (MUST only if the rainflow
+        diagnostic shows scatter tracking the irregularity factor); 10.0 h without
+        it.
+    fold_local_rule: Every scaler, threshold, template, band edge, rule weight, sign,
+      bias correction, feature selection and augmentation is fitted INSIDE the training
+      fold; model selection is nested or on a frozen outer split, never on the CV
+      used for the headline; augmented children stay in their source file's fold;
+      held-out files are never augmented.
+    fold_local_reference_id:
+    - R303
+    - R220
+    - R115
+    forbidden:
+    - augmenting_before_the_split
+    - transductive_normalisation_in_a_headline_row
+    - test_data_in_threshold_calibration
+    - selecting_on_the_reported_cv
+    refuted_citation:
+      identifier: 10.1016/j.apenergy.2025.126786
+      claim: few-shot adaptive weighted prototype network, mean F1 73.77% on ASHRAE
+        RP-1043 severity 1 / 67.22% on RP-1312 AHU summer
+      verdict: REFUTED — the DOI resolves to an unrelated fuel-cell paper and the
+        numbers could not be located in any paper. NEVER cite it or its numbers. Use
+        R268 for a verified limited-labels HVAC-FDD citation.
+  door:
+    task: seg_cls
+    signals:
+    - time
+    - motor_current_mA
+    - motor_voltage_10mV
+    - back_emf
+    - opening_time_0p1s
+    - closing_time_0p1s
+    - close_command
+    - open_command
+    - DCSR
+    - DCSL
+    - DLSR
+    - DLSL
+    - door_opened
+    - door_locked
+    - opening
+    - closing
+    - door_position
+    n_channels: 17
+    sample_rate_hz: 50
+    unit_of_analysis: door_cycle
+    labels:
+    - Normal
+    - Abnormal resistance
+    datasets:
+    - ps3_door
+    primary_metric: iou_weighted_f1
+    splits:
+    - ps3_door_blocks
+    validation:
+      scheme: 5 contiguous time blocks of the raw Train stream; segmentation AND classification
+        re-run end to end on each held block
+      diagnostics:
+      - oracle_segment_f1
+      pitfalls:
+      - Tune the decision threshold on fold IoU-F1 of the FULL pipeline, never on
+        cycle-level F1 — over-segmentation is free under one and charged under the
+        other.
+      - Matching is one-to-one and greedy by IoU, so never emit overlapping candidate
+        segments.
+      - A wrong label costs a miss AND a false positive; it is not a partial credit
+        case.
+      - The within-block batch-normalisation variant is TRANSDUCTIVE (it reads the
+        held-out block's own statistics) — ablation row only, labelled as such.
+      pitfall_reference_id:
+      - R303
+    models:
+    - name: gap_segmenter
+      family: segmentation
+      tier: statistical
+      priority: must
+      task: seg
+      source: handwritten
+      impl: numpy
+      input_kind: raw_stream
+      implement_hours: 0.5
+      note: new cycle where dt > 0.5 s; ms-exact; never trim. 109/110 Train cycle
+        starts coincide with a gap, but the metric charges for boundaries so the rule
+        must be exact.
+    - name: command_position_state_machine
+      family: segmentation
+      tier: statistical
+      priority: must
+      task: seg
+      source: handwritten
+      impl: numpy
+      input_kind: raw_stream
+      implement_hours: 2.0
+      note: fallback segmenter with hysteresis; gaps are a dataset artefact, not a
+        controller guarantee. Test it on Train with the gaps removed.
+    - name: ps3_door_clasp_cycle_segmentation
+      family: segmentation
+      tier: statistical
+      priority: nice
+      task: seg
+      source: claspy
+      impl: BinaryClaSPSegmentation
+      input_kind: cycle_window
+      implement_hours: 2.0
+      reference_id:
+      - R176
+      - R177
+      - R64
+      note: hyper-parameter-free, so nothing to calibrate under the fold-local rule;
+        the learned alternative to the fixed three-regime split.
+    - name: fold_local_operation_baseline
+      family: peer_normalisation
+      tier: statistical
+      priority: must
+      task: features
+      source: nebulax
+      impl: features.peer_normalise
+      input_kind: cycle_features
+      implement_hours: 1.0
+      reference_id:
+      - R78
+      note: per-operation (Open/Close) baseline fitted on the training fold plus a
+        robust peer z; cancels per-door distribution shift without a labelled normal
+        period. Info kit core problem 2.
+    - name: physics_cycle_features
+      family: feature_set
+      tier: statistical
+      priority: must
+      task: features
+      source: handwritten
+      impl: numpy+pywt
+      input_kind: cycle_window
+      implement_hours: 0.0
+      reference_id:
+      - R64
+      - R66
+      - R67
+      note: per-regime current stats on the accelerate/cruise/decelerate split, i_mid
+        over 15-85% travel, back-EMF residual V - i*R - k*omega, energy proxy sum(i*dpos),
+        peak position, current-vs-position template distance (template fitted in-fold),
+        duration vs the commanded open/close registers, DWT detail-band L1 norms at
+        the two coarsest levels, starting-current peak.
+    - name: logreg_cycle
+      family: linear
+      tier: statistical
+      priority: must
+      task: cls
+      source: sklearn
+      impl: LogisticRegression
+      input_kind: cycle_features
+      implement_hours: 1.0
+      note: honest floor, and the calibrated head of the stacking row.
+    - name: ps3_door_lgbm_three_regime
+      family: boosting
+      tier: boosting
+      priority: must
+      task: cls
+      source: lightgbm
+      impl: nebulax.models.boosting.LGBMThreeRegime
+      input_kind: cycle_features
+      implement_hours: 2.0
+      reference_id:
+      - R64
+      note: the published traditional door pipeline; the only arm that yields a trendable
+        per-fault health index.
+    - name: stacking_rf_xgb_logreg
+      family: stacking
+      tier: boosting
+      priority: must
+      task: cls
+      source: sklearn+xgboost
+      impl: StackingClassifier
+      input_kind: cycle_features
+      implement_hours: 3.0
+      reference_id:
+      - R68
+      note: Spearman+VIF screening, F1-max threshold on validation, SHAP audit, PR-AUC
+        reported beside ROC-AUC. Reference result under 7.3:1 imbalance was ROC-AUC
+        0.977 / PR-AUC 0.913.
+    - name: ps3_door_multirocket_ridge
+      family: convolution
+      tier: classical
+      priority: must
+      task: cls
+      source: aeon
+      impl: MultiRocketHydraClassifier or Rocket+RidgeClassifierCV
+      input_kind: raw_cycle_50hz
+      implement_hours: 1.0
+      reference_id:
+      - R43
+      - R47
+      - R48
+      budget_minutes: 5
+    - name: ps3_door_quant
+      family: interval
+      tier: classical
+      priority: nice
+      task: cls
+      source: aeon
+      impl: QUANTClassifier
+      input_kind: raw_cycle_50hz
+      implement_hours: 1.0
+      reference_id:
+      - R49
+    - name: ps3_door_litetime
+      family: deep_cnn
+      tier: deep
+      priority: nice
+      task: cls
+      source: aeon
+      impl: LITETimeClassifier
+      input_kind: raw_cycle_50hz
+      implement_hours: 3.0
+      reference_id:
+      - R53
+      budget_minutes: 5
+    - name: ps3_door_hive_cote_v2
+      family: hybrid
+      tier: classical
+      priority: skip
+      task: cls
+      source: aeon
+      impl: HIVECOTEV2
+      input_kind: raw_cycle_50hz
+      implement_hours: 0.0
+      reference_id:
+      - R52
+      - R43
+      skip_reason: Nominally the accuracy ceiling but reported at ~340 h to train
+        over the benchmark; compute-bounded. Cite as the ceiling we consciously did
+        not buy.
+    - name: ps3_door_audio_mnpe_svm
+      family: audio
+      tier: classical
+      priority: skip
+      task: cls
+      source: handwritten
+      impl: EMD+permutation_entropy+SVM
+      input_kind: audio
+      implement_hours: 0.0
+      reference_id:
+      - R75
+      skip_reason: No microphone channel exists in the door controller stream.
+    augmentation:
+    - name: window_warping
+      priority: must
+      applies_to: raw_cycle_rows_only
+      preserves: class label; NOT duration or phase
+      fold_only: true
+      reference_id:
+      - R292
+      - R293
+      note: highest average rank for VGG/ResNet/LSTM in the 128-dataset survey; gain
+        is largest at small training-set size.
+    - name: magnitude_warping_jitter
+      priority: must
+      applies_to: raw_cycle_rows_only
+      preserves: class label and temporal order; changes amplitude scale
+      fold_only: true
+      reference_id:
+      - R292
+    - name: wdba_barycentre
+      priority: nice
+      applies_to: abnormal_class_only
+      preserves: the DTW-space average shape of the class; assumes warping invariance
+      fold_only: true
+      reference_id:
+      - R297
+      - R292
+      note: generates low-diversity samples; complement to window warping, not a replacement.
+        Pattern-mixing costs 60+ s per generated sample.
+    - name: physical_consistency_pass_rate
+      priority: nice
+      applies_to: injected_cycles
+      preserves: kinematic consistency (travel, dwell, velocity/acceleration envelope)
+      fold_only: true
+      reference_id:
+      - R68
+      - R306
+      note: report the pass rate as a number, the way the door reference pipeline
+        reports 98.8 %. This is the differentiating contribution, not any generic
+        transform.
+    - name: rotation_flip
+      priority: skip
+      reference_id:
+      - R292
+      skip_reason: Door motor current has a physical sign; rotation/flipping decreased
+        accuracy for all six architectures tested.
+    - name: permutation
+      priority: skip
+      reference_id:
+      - R292
+      - R295
+      skip_reason: Cycle phases are ordered (unlock, open, dwell, close, lock); permuting
+        them creates a cycle that could not physically occur. R295 reports permutation
+        as a winner — the conflict is named in the addendum and R292 is the larger
+        study.
+    - name: window_slicing
+      priority: skip
+      reference_id:
+      - R293
+      skip_reason: The fault signature lives in one phase of the cycle, so the label
+        is not sub-window stationary; slicing is label noise.
+  rail:
+    task: cls
+    signals:
+    - speed_pulse_90_tooth
+    - car{1..8}_pos{1..8}_vibration
+    - car{1..8}_pos{1..8}_shock
+    n_channels: 129
+    sample_rate_hz: 10000
+    record_seconds: 1.0
+    unit_of_analysis: file
+    labels:
+    - Normal
+    - Side I
+    - Side II
+    class_counts:
+      Normal: 234
+      Side I: 14
+      Side II: 24
+    geometry:
+      wheel_diameter_m: 0.85
+      wheel_circumference_m: 2.67
+      tacho_teeth: 90
+      travel_per_pulse_mm: 29.67
+      spatial_sample_at_67kmh_mm: 1.86
+      target_wavelength_mm:
+      - 25
+      - 80
+      passing_frequency_hz_over_0_to_67kmh:
+      - 35
+      - 744
+      reference_id:
+      - R248
+      - R237
+    datasets:
+    - ps3_rail
+    primary_metric: macro_f1
+    splits:
+    - ps3_rail_sgkf5
+    - contiguous_filename_blocks
+    - leave_speed_range_out
+    validation:
+      scheme: stratified 5-fold by file x 3 seeds, plus two stress splits
+      report:
+      - all_files_macro_f1
+      - speed_matched_macro_f1_v_ge_35
+      - per_class_f1
+      - no_speed_feature_ablation
+      - duplicate_fingerprint_check
+      expected_band:
+      - 0.7
+      - 0.85
+      expected_band_reference_id:
+      - R241
+      pitfalls:
+      - 'SPEED CONFOUND: Normal spans 0-65 km/h and faults 35-67, so a speed-only
+        classifier scores well and means nothing. Speed-matched macro F1 and a no-speed-feature
+        ablation are mandatory, not optional.'
+      - 14 Side I examples means ~2.8 per fold and macro F1 is dominated by that class
+        — report mean +/- sd over 3 seeds, never a point estimate.
+      - Never normalise per file with statistics pooled across folds.
+      - Mirror-augmented children must stay in their parent file's fold.
+      - The v < 20 km/h -> Normal rule is a documented dataset shortcut, not a model.
+      pitfall_reference_id:
+      - R58
+      - R115
+      - R303
+    models:
+    - name: tacho_distance_resampling
+      family: order_tracking
+      tier: statistical
+      priority: must
+      task: features
+      source: handwritten
+      impl: numpy
+      input_kind: raw_10khz
+      implement_hours: 3.0
+      reference_id:
+      - R245
+      - R239
+      note: cumulative pulse count IS a distance encoder — integrate it, never differentiate
+        it. Linear interpolation of pulse edges to constant dx ~ 1 mm; computed order
+        tracking with a real keyphasor, ~60 lines of numpy, no library.
+    - name: wavelength_third_octave_psd
+      family: spectral
+      tier: statistical
+      priority: must
+      task: features
+      source: handwritten
+      impl: scipy.signal.welch + band integration
+      input_kind: distance_resampled
+      implement_hours: 1.5
+      reference_id:
+      - R233
+      - R250
+      - R239
+      note: 1/3-octave WAVELENGTH bands over ~8-500 mm. Fixed-Hz bands cannot work
+        — the passing frequency sweeps 35-744 Hz over the speed range.
+    - name: v_squared_normalisation
+      family: normalisation
+      tier: statistical
+      priority: must
+      task: features
+      source: handwritten
+      impl: numpy
+      input_kind: band_levels
+      implement_hours: 0.5
+      reference_id:
+      - R237
+      note: ABA amplitude scales as v^2 for fixed roughness; without this the classifier
+        learns speed.
+    - name: side_contrast_features
+      family: feature_set
+      tier: statistical
+      priority: must
+      task: features
+      source: handwritten
+      impl: numpy
+      input_kind: band_levels
+      implement_hours: 1.0
+      reference_id:
+      - R235
+      note: per-side median and 90th percentile over the 32 odd (Side I) and 32 even
+        (Side II) channels, plus the Side I - Side II contrast in dB. The label IS
+        a side, and the contrast removes speed, track type and sensor gain as common
+        mode.
+    - name: impulsive_vs_sustained_discriminators
+      family: feature_set
+      tier: statistical
+      priority: must
+      task: features
+      source: handwritten
+      impl: numpy
+      input_kind: band_levels
+      implement_hours: 1.5
+      reported_features:
+      - spectral_flatness
+      - harmonic_peak_prominence
+      - bandpass_envelope_duty_cycle
+      - within_side_channel_agreement
+      reference_id:
+      - R235
+      - R246
+      note: wheel flats, switches, crossings and structural resonances occupy the
+        SAME wavelength range as corrugation. Corrugation is sustained, periodic and
+        side-wide; a wheel defect is impulsive and one channel.
+    - name: hand_feature_set_26
+      family: feature_set
+      tier: statistical
+      priority: must
+      task: features
+      source: handwritten
+      impl: numpy+pywt
+      input_kind: distance_resampled
+      implement_hours: 1.0
+      reference_id:
+      - R232
+      - R236
+      note: 14 time-domain + 6 frequency-domain + 6 wavelet-band features, with the
+        published fixed Hz bands replaced by wavelength bands. Keep vibration and
+        shock channel types separate.
+    - name: hierarchical_present_then_side
+      family: decomposition
+      tier: statistical
+      priority: must
+      task: cls
+      source: handwritten
+      impl: two binary heads
+      input_kind: band_features
+      implement_hours: 0.5
+      note: (a) corrugation present/absent, (b) which side. 38 positives support one
+        binary decision far better than three classes.
+    - name: logreg_lgbm_band_features
+      family: linear_and_boosting
+      tier: boosting
+      priority: must
+      task: cls
+      source: sklearn+lightgbm
+      impl: LogisticRegression / LGBMClassifier(class_weight=balanced)
+      input_kind: band_features
+      implement_hours: 1.0
+      reference_id:
+      - R232
+      note: honest baseline. On a comparable metro problem four very different classifiers
+        landed within 1.6 points of each other, so the transform carries the accuracy.
+    - name: ps3_rail_multirocket_ridge
+      family: convolution
+      tier: classical
+      priority: must
+      task: cls
+      source: aeon
+      impl: Rocket/MultiRocket + RidgeClassifierCV
+      input_kind: side_aggregated_2ch_distance_resampled
+      implement_hours: 1.5
+      reference_id:
+      - R249
+      - R43
+      - R47
+      note: run on the per-side order-resampled, v^2-normalised 2-channel signal —
+        NOT on pooled raw 10 kHz samples.
+    - name: tree_on_hz_bands_plus_speed
+      family: boosting
+      tier: boosting
+      priority: must
+      task: cls
+      source: lightgbm
+      impl: LGBMClassifier
+      input_kind: hz_band_features_plus_speed
+      implement_hours: 1.0
+      reference_id:
+      - R234
+      note: the counter-design ablation — give the model speed explicitly instead
+        of normalising it away. This is where the plan's original 20-5000 Hz band
+        set belongs.
+    - name: wheel_rail_comb_filter
+      family: spectral
+      tier: classical
+      priority: nice
+      task: features
+      source: handwritten
+      impl: notch at multiples of 1/2.670 m^-1
+      input_kind: distance_resampled
+      implement_hours: 4.0
+      reference_id:
+      - R238
+      note: separates wheel-fixed from track-fixed roughness. The side-contrast feature
+        gets most of the benefit for a tenth of the work.
+    - name: cnn1d_with_speed_input
+      family: deep_cnn
+      tier: deep
+      priority: nice
+      task: cls
+      source: torch-handwritten
+      impl: 1D CNN + speed auxiliary input
+      input_kind: distance_resampled
+      implement_hours: 4.0
+      reference_id:
+      - R240
+      note: its >95 % is a scaled test rig, not a metro line — do not let it set expectations
+        for a 14-sample class.
+    - name: log_speed_covariate
+      family: feature_set
+      tier: statistical
+      priority: nice
+      task: features
+      source: handwritten
+      impl: numpy
+      input_kind: band_features
+      implement_hours: 0.25
+      reference_id:
+      - R242
+    - name: adaptive_mode_decomposition_family
+      family: decomposition
+      tier: classical
+      priority: skip
+      task: features
+      source: handwritten
+      impl: VMD / CEEMDAN / EWT / SPWVD
+      input_kind: raw_10khz
+      implement_hours: 8.0
+      reference_id:
+      - R247
+      skip_reason: Per-record, parameter-heavy and slow; no evidence they beat a wavelength-band
+        PSD for a 3-class macro-F1 task at n=272. Naming the family and saying why
+        is worth more than implementing one.
+    - name: model_based_roughness_inversion
+      family: physics_inversion
+      tier: classical
+      priority: skip
+      task: features
+      source: handwritten
+      impl: track receptance inversion
+      input_kind: distance_resampled
+      implement_hours: 8.0
+      reference_id:
+      - R238
+      - R239
+      skip_reason: Needs track receptance and rail-pad stiffness we do not have; the
+        source's own sensitivity analysis says a 20 % pad-stiffness error moves estimated
+        roughness by up to 3.5 dB (NUMBERS UNVERIFIED).
+    - name: moco_contrastive_pretraining
+      family: self_supervised
+      tier: deep
+      priority: skip
+      task: cls
+      source: torch-handwritten
+      impl: MoCo on synchrosqueezed spectrograms
+      input_kind: raw_10khz
+      implement_hours: 10.0
+      reference_id:
+      - R244
+      skip_reason: The right shape of solution for 14 labels, but 234 unlabelled records
+        are far too few for contrastive pre-training to pay, and it is a full day
+        on its own.
+    - name: sim_pretrain_finetune
+      family: transfer
+      tier: deep
+      priority: skip
+      task: cls
+      source: torch-handwritten
+      impl: pretrain on simulation, fine-tune on field labels
+      input_kind: raw_10khz
+      implement_hours: 16.0
+      reference_id:
+      - R243
+      skip_reason: No corrugation simulator exists in this repo and building a vehicle-track
+        model is not a 12 h job.
+    augmentation:
+    - name: mirror_side_swap
+      priority: must
+      applies_to: all_classes
+      preserves: EXACT — swapping the odd/even channel index map maps a Side I record
+        to a valid Side II record; label swaps with it
+      fold_only: true
+      note: not from a paper — it follows from the sensor layout. Turns 14/24 into
+        38/38 and imposes the left-right equivariance the physics demands. Highest-value
+        augmenter in the whole addendum because it is exact rather than approximate.
+    - name: subcrop_0p6_to_0p8s
+      priority: nice
+      applies_to: distance_resampled_signal
+      preserves: class label — corrugation is sustained, so the label IS sub-window
+        stationary here
+      fold_only: true
+      reference_id:
+      - R293
+    - name: specaugment_band_masking
+      priority: nice
+      applies_to: wavelength_spectra
+      preserves: class label if mask widths stay small relative to the corrugation
+        band
+      fold_only: true
+      reference_id:
+      - R298
+    - name: per_side_sensor_dropout
+      priority: nice
+      applies_to: channel_axis
+      preserves: side identity; doubles as the sensor-redundancy ablation
+      fold_only: true
+      reference_id:
+      - R57
+    - name: morse_wavelet_scalogram_variation
+      priority: nice
+      applies_to: scalogram_route_only
+      preserves: the time-frequency ridge structure; needs no separate generative
+        training stage
+      fold_only: true
+      reference_id:
+      - R305
+    - name: smote_on_spectra
+      priority: skip
+      reference_id:
+      - R302
+      skip_reason: The mirror swap is exact and free; SMOTE on 14 spectra is strictly
+        worse and adds a failure mode. Balancing also gives no gain for strong tuned
+        classifiers.
+    - name: gan_diffusion_synthesis
+      priority: skip
+      reference_id:
+      - R307
+      - R308
+      - R304
+      skip_reason: With 14 positives a generator has nothing to learn that is not
+        memorisation; the field needed a benchmark because generated-series quality
+        is contested and rankings unstable across measures.
+  acv:
+    task: rank
+    signals:
+    - setting_mode
+    - running_mode
+    - control_temperature_cooling
+    - control_temperature_heating
+    - indoor_average_temperature
+    - outdoor_average_temperature
+    - load_halved
+    - information_valid
+    n_channels: 8
+    n_cars: 8
+    sample_period_s: 30
+    record_days:
+    - 3
+    - 4
+    unit_of_analysis: car_within_case
+    datasets:
+    - ps3_acv
+    primary_metric: rank_decay
+    chance_floor: 0.5625
+    chance_floor_note: mean of (8-(r-1))/8 over r=1..8 = 36/64. Correct-first 1.000,
+      second 0.875, third 0.750. At or below the floor is a bug, not a result.
+    splits:
+    - leave_one_case_out
+    validation:
+      scheme: leave-one-case-out over the 6 labelled cases, ranker + weights + signs
+        frozen on the 5 training cases before each held-out case
+      status: EXPLORATORY — 6 cases is both the selection set and the reported number
+      report:
+      - loco_rank_decay_per_case
+      - chance_floor
+      - faulty_car_index_distribution
+      pitfalls:
+      - Six cases is the entire CV; anything selected on it is optimistic. Label the
+        result exploratory.
+      - Never use a car-ID prior. If the faulty-car index is not uniform across cases
+        there is a position confound (end cars carry more solar and door load) and
+        peer exchangeability is violated — subtract a per-position offset estimated
+        across training cases.
+      - Peer normalisation at TEST time is legitimate — it reads only the held-out
+        file's own 8 cars and no labels. What must be frozen is the feature set, the
+        signs and the weights.
+      - Case 4 carries 60 params/car with cars 05-08 entirely NaN; do not use extra
+        columns that the test file may not have.
+      - load_halved is a legitimate capacity reduction that mimics a leak — condition
+        on it, never pool it.
+      pitfall_reference_id:
+      - R256
+      - R263
+      expected_band:
+      - 0.75
+      - 0.95
+    models:
+    - name: validity_and_mode_gate
+      family: preprocessing
+      tier: statistical
+      priority: must
+      task: features
+      source: handwritten
+      impl: pandas
+      input_kind: telemetry_rows
+      implement_hours: 1.0
+      reference_id:
+      - R259
+      note: drop information_valid=0 and Stop rows, keep cooling-mode rows, flag load_halved
+        separately, and gate steady vs pull-down with a rolling sigma over a 5-10
+        min window plus a same-mode-for-the-window condition. Deviation from the source,
+        stated deliberately — gate to SEPARATE the two regimes, not to discard the
+        transient, because the pull-down slope is itself a capacity feature.
+    - name: duty_cycle_features
+      family: feature_set
+      tier: statistical
+      priority: must
+      task: features
+      source: handwritten
+      impl: pandas
+      input_kind: gated_rows
+      implement_hours: 1.5
+      reference_id:
+      - R253
+      note: fraction of cooling time in Full Cooling and Half Cooling, mode-transition
+        count per hour, mean on-time per cooling episode. Runtime fraction is the
+        one ORNL key variable PS3 still exposes and it rises monotonically with undercharge.
+    - name: pulldown_features
+      family: feature_set
+      tier: statistical
+      priority: must
+      task: features
+      source: handwritten
+      impl: pandas
+      input_kind: gated_rows
+      implement_hours: 1.5
+      reference_id:
+      - R254
+      note: d(T_indoor)/dt over the first N minutes of each Full-Cooling episode,
+        time-to-setpoint, T_indoor - T_outdoor lift achieved.
+    - name: unmet_degree_minutes
+      family: feature_set
+      tier: statistical
+      priority: must
+      task: features
+      source: handwritten
+      impl: pandas
+      input_kind: gated_rows
+      implement_hours: 0.5
+      reference_id:
+      - R253
+      note: the CONFIRMING, late-stage feature — indoor air temperature barely sees
+        low-intensity undercharge and unmet hours appear only at 40-50 % charge loss.
+        Never the primary ranker.
+    - name: robust_peer_z
+      family: peer_normalisation
+      tier: statistical
+      priority: must
+      task: rank
+      source: nebulax
+      impl: features.peer_normalise
+      input_kind: car_features
+      implement_hours: 1.0
+      reference_id:
+      - R251
+      - R78
+      note: median/MAD of the 7 sibling cars within ambient bins. 7 peers, not 9,000
+        — use median/MAD, never mean/sigma.
+    - name: peer_regression_median_residual
+      family: peer_fleet
+      tier: classical
+      priority: must
+      task: rank
+      source: sklearn
+      impl: Ridge or GaussianProcessRegressor per peer, median of peer predictions
+      input_kind: car_features
+      implement_hours: 2.0
+      reference_id:
+      - R251
+      note: fit each peer's feature on (T_outdoor, T_control, load_halved), predict
+        the target car from each peer's model, take the MEDIAN (robust with up to
+        1/3 of training peers faulty), residual = measured - predicted.
+    - name: signed_iqr_fault_index
+      family: rule
+      tier: statistical
+      priority: must
+      task: rank
+      source: handwritten
+      impl: I = sum_k sign_k * (R_k / IQR(R_k))^2 * IQR(SND)
+      input_kind: peer_residuals
+      implement_hours: 1.0
+      reference_id:
+      - R251
+      - R252
+      - R263
+      note: sign_k is the known thermodynamic direction of that feature under undercharge.
+        Write the fault x feature direction matrix down BEFORE modelling and check
+        no other plausible cause shares the signature.
+    - name: per_position_offset_correction
+      family: rule
+      tier: statistical
+      priority: must
+      task: rank
+      source: handwritten
+      impl: pandas
+      input_kind: car_features
+      implement_hours: 0.5
+      reference_id:
+      - R256
+      note: tests the peer-exchangeability assumption the whole method rests on.
+    - name: modified_mann_kendall_tiebreak
+      family: trend_test
+      tier: statistical
+      priority: nice
+      task: rank
+      source: handwritten
+      impl: autocorrelation-corrected Mann-Kendall
+      input_kind: peer_normalised_index
+      implement_hours: 1.0
+      reference_id:
+      - R266
+      note: tie-breaker only. 3-4 days is short for a trend test and a pre-existing
+        leak shows as a level, not a slope. 30 s telemetry is heavily autocorrelated,
+        hence the modified form.
+    - name: within_system_over_time
+      family: peer_fleet
+      tier: statistical
+      priority: nice
+      task: rank
+      source: handwritten
+      impl: pandas
+      input_kind: car_features
+      implement_hours: 1.5
+      reference_id:
+      - R256
+      - R265
+    - name: lbnl_fdd_dryrun
+      family: validation
+      tier: statistical
+      priority: nice
+      task: features
+      source: external_data
+      impl: LBNL FDD RTU subset
+      input_kind: telemetry_rows
+      implement_hours: 2.0
+      reference_id:
+      - R264
+      note: validates the feature-direction matrix before touching 6 precious cases.
+        UNVERIFIED whether the RTU subset contains refrigerant undercharge specifically,
+        and the licence is unstated.
+    - name: virtual_refrigerant_charge_sensor
+      family: virtual_sensor
+      tier: classical
+      priority: skip
+      task: rank
+      source: handwritten
+      impl: subcooling/superheat regression
+      input_kind: refrigerant_side_temperatures
+      implement_hours: 6.0
+      reference_id:
+      - R262
+      - R257
+      skip_reason: PS3 exposes no pressures, no superheat/subcooling, no power and
+        no supply-air temperature. The entire virtual-charge-sensor family is inapplicable
+        — say so explicitly, because it is the first thing an HVAC reviewer looks
+        for.
+    - name: rc_greybox_ekf
+      family: physics_greybox
+      tier: classical
+      priority: skip
+      task: rank
+      source: handwritten
+      impl: 3R2C + extended Kalman filter
+      input_kind: gated_rows
+      implement_hours: 6.0
+      reference_id:
+      - R254
+      - R255
+      skip_reason: The parameter identification is highly non-convex with several
+        local optima and needs a model-selection stage per vehicle; the 7 peer cars
+        do the same job for free.
+    - name: few_shot_metric_learning
+      family: similarity_learning
+      tier: deep
+      priority: skip
+      task: rank
+      source: torch-handwritten
+      impl: similarity/prototype network
+      input_kind: car_features
+      implement_hours: 5.0
+      reference_id:
+      - R268
+      skip_reason: 6 cases x 8 cars = 48 rows with one positive each. Few-shot methods
+        presuppose more labelled episodes than exist, and they target fault typing
+        rather than localisation of one known fault type; the peer structure is a
+        stronger and cheaper inductive bias.
+    - name: physics_simulation_hybrid
+      family: hybrid
+      tier: classical
+      priority: skip
+      task: rank
+      source: handwritten
+      impl: physics model generates faulty data, fused with measurements
+      input_kind: telemetry_rows
+      implement_hours: 8.0
+      reference_id:
+      - R267
+      skip_reason: Right vehicle and subsystem, wrong fault (air filter), and building
+        a physics model of the ACV cycle is well beyond 12 h. Cite it for why train-HVAC
+        fault data is scarce and will stay scarce.
+    augmentation:
+    - name: none
+      priority: must
+      rationale: The label is "car k of this train is the leaking one". No transform
+        of an 8-car train preserves that without also fabricating thermodynamics,
+        and synthetic cases would be scored by the same 6-fold CV that selects the
+        rule.
+      reference_id:
+      - R303
+    - name: peer_order_shuffle_invariance_check
+      priority: nice
+      applies_to: test_time_only
+      preserves: nothing — it is a symmetry check, not training data
+      fold_only: true
+      note: the ranker must be invariant to car ordering.
+  shm:
+    task: reg
+    signals:
+    - dynamic_stress
+    n_channels: 1
+    samples_per_file: 581120
+    sample_rate_hz: null
+    sample_rate_note: unstated by the organisers; the resulting free constant in (nu0+
+      * T / C) is harmless — fit it.
+    unit_of_analysis: file
+    label_range:
+    - 0.029
+    - 0.928
+    label_shape: bimodal, median ~0.10
+    datasets:
+    - ps3_shm
+    primary_metric: mape_score
+    primary_metric_formula: max(0, 1 - MAPE)
+    splits:
+    - leave_one_out
+    - ps3_shm_rkf
+    validation:
+      scheme: LOO plus repeated 5x10-fold outer with nested inner selection; winner
+        chosen on the nested CV, not on LOO
+      report:
+      - mape_overall
+      - mape_by_mode_lt_0p25
+      - mape_by_mode_ge_0p25
+      - bootstrap_noise_floor
+      pitfalls:
+      - 'MAPE ON SMALL DAMAGES IS THE TRAP: an absolute error of 0.03 is 100 % relative
+        error on the smallest file and 3 % on the largest, so the low-damage mode
+        decides the score. Always report MAPE split by mode.'
+      - Fit log(damage), not damage — OLS in log space approximately minimises relative
+        error and matches the power-law physics.
+      - Bias correction, including the log->linear retransformation correction, is
+        a fitted quantity and belongs INSIDE the fold, as do the S-N exponent and
+        the scale constant.
+      - Clip predictions to positive finite values.
+      - Quote the bootstrap noise floor beside the score so "we stopped here" is a
+        measured statement.
+      pitfall_reference_id:
+      - R269
+      - R271
+      - R289
+    models:
+    - name: rainflow_variant_diagnostic
+      family: diagnostic
+      tier: statistical
+      priority: must
+      task: diagnostic
+      source: handwritten
+      impl: own 3-point (ASTM E1049) and 4-point rainflow, numpy
+      input_kind: raw_stress
+      implement_hours: 1.5
+      reference_id:
+      - R270
+      - R290
+      - R269
+      - R291
+      note: residue conventions {discard, half-cycles, full, repeat-history} x exponent
+        grid x Miner variants {original, elementary, knee} x mean-stress {none, Goodman,
+        SWT}, plotted as log damage vs log label for all 64 files. Parallel-but-offset
+        = free constant; different slope = wrong k; scatter tracking the irregularity
+        factor = SDOF/FDS transform; scatter tracking kurtosis = non-Gaussian correction.
+        The Haibach k* = 2k-1 rule is SECONDARY-SOURCE (R291) and must not reach a
+        deliverable unverified.
+    - name: rainflow_sn_fold_calibrated
+      family: physics
+      tier: statistical
+      priority: must
+      task: reg
+      source: handwritten
+      impl: numpy
+      input_kind: raw_stress
+      implement_hours: 1.5
+      reference_id:
+      - R269
+      - R290
+      note: scale and exponent fitted on the training fold. The honest physics row
+        the ML must beat.
+    - name: dirlik_and_tovo_benasciutti
+      family: spectral
+      tier: statistical
+      priority: must
+      task: reg
+      source: handwritten
+      impl: numpy — implement the closed forms; NO installs (FLife/fatpack unavailable)
+      input_kind: psd
+      implement_hours: 2.0
+      reference_id:
+      - R269
+      - R275
+      - R276
+      note: best spectral methods sit within ~7 % relative life error for steel (k
+        = 3.324) in the reference review.
+    - name: log_space_feature_set
+      family: feature_set
+      tier: statistical
+      priority: must
+      task: features
+      source: handwritten
+      impl: numpy+scipy
+      input_kind: raw_stress
+      implement_hours: 2.0
+      reference_id:
+      - R269
+      - R277
+      note: ~30 features — RMS (sqrt m0), p2p, p99-p01, rainflow-range percentiles,
+        kurtosis, skewness, spectral moments m0/m1/m2/m4, nu0+, nup, irregularity
+        factor, Vanmarcke bandwidth, spectral damage at 3-4 candidate k, block maxima,
+        level crossings.
+    - name: ridge_lasso_log
+      family: linear
+      tier: statistical
+      priority: must
+      task: reg
+      source: sklearn
+      impl: RidgeCV / LassoCV on log damage
+      input_kind: log_features
+      implement_hours: 2.0
+      reference_id:
+      - R269
+      - R272
+      note: at n=64 anything deeper overfits — the closest published comparison gets
+        R^2 = 0.988 from three scalars and a temporal-convolution network on the raw
+        series adds only ~0.003.
+    - name: realisation_noise_floor_bootstrap
+      family: diagnostic
+      tier: statistical
+      priority: must
+      task: diagnostic
+      source: handwritten
+      impl: numpy
+      input_kind: raw_stress
+      implement_hours: 1.0
+      reference_id:
+      - R271
+      - R269
+      - R289
+      note: damage from one realisation is a draw from a distribution; RFC damage
+        converged within 2 % of the 1 h value only after ~2 s (k=3.3), ~150 s (k=7.3),
+        ~2600 s (k=11.8). Bounds the achievable 1-MAPE before you optimise against
+        it.
+    - name: fatigue_damage_spectrum_bands
+      family: feature_set
+      tier: statistical
+      priority: must
+      task: features
+      source: handwritten
+      impl: SDOF filter bank (Q~10, octave-spaced) + rainflow per band
+      input_kind: raw_stress
+      implement_hours: 3.0
+      conditional: MUST only if the rainflow diagnostic shows scatter tracking the
+        irregularity factor; NICE otherwise
+      reference_id:
+      - R274
+      note: if the organiser label was computed on an SDOF-transformed channel, raw-channel
+        rainflow will never match at any exponent but FDS features will. ~40 lines.
+    - name: kurtosis_non_gaussian_correction
+      family: feature_set
+      tier: statistical
+      priority: nice
+      task: features
+      source: handwritten
+      impl: numpy
+      input_kind: raw_stress
+      implement_hours: 1.0
+      reference_id:
+      - R277
+    - name: lgbm_or_small_nn_regressor
+      family: boosting
+      tier: boosting
+      priority: nice
+      task: reg
+      source: lightgbm
+      impl: LGBMRegressor on log damage
+      input_kind: log_features
+      implement_hours: 3.0
+      reference_id:
+      - R273
+      - R272
+      - R280
+      - R281
+    - name: damage_consistency_calibration_framing
+      family: framing
+      tier: statistical
+      priority: nice
+      task: reg
+      source: handwritten
+      impl: per-amplitude calibration coefficients
+      input_kind: rainflow_histogram
+      implement_hours: 2.0
+      reference_id:
+      - R283
+      - R282
+      - R285
+      note: the closest published precedent to fitting a correction so a spectrum
+        reproduces a reference damage, and the rail-engineering vocabulary (EN 13749
+        / EN 12663) for the write-up.
+    - name: deep_sequence_on_raw_samples
+      family: deep
+      tier: deep
+      priority: skip
+      task: reg
+      source: torch-handwritten
+      impl: 1D CNN / LSTM on 581,120 samples
+      input_kind: raw_stress
+      implement_hours: 8.0
+      reference_id:
+      - R272
+      skip_reason: 64 training examples, and the closest published comparison shows
+        the time-series network buys ~0.3 % over three scalars.
+    - name: multiaxial_critical_plane
+      family: physics
+      tier: classical
+      priority: skip
+      task: reg
+      source: handwritten
+      impl: critical-plane criteria
+      input_kind: multi_channel_stress
+      implement_hours: 6.0
+      skip_reason: There is one channel, so there is no second channel to be multiaxial
+        with.
+    - name: rainflow_matrix_extrapolation
+      family: statistical
+      tier: statistical
+      priority: skip
+      task: reg
+      source: handwritten
+      impl: WAFO-style load-spectrum extrapolation
+      input_kind: rainflow_matrix
+      implement_hours: 3.0
+      reference_id:
+      - R279
+      skip_reason: We are not extrapolating to a longer life; the record IS the label's
+        domain. (WAFO is GPL.)
+    - name: ffpack
+      family: library
+      tier: statistical
+      priority: skip
+      task: reg
+      source: pypi
+      impl: ffpack
+      input_kind: raw_stress
+      implement_hours: 0.0
+      reference_id:
+      - R269
+      skip_reason: GPL-3.0 would infect a shipped deliverable, and no installs are
+        permitted in this build anyway. Use it only to cross-check offline.
+    augmentation:
+    - name: c_mixup
+      priority: must
+      applies_to: whole_files_in_log_feature_space
+      preserves: the label under local linearity — pairs are sampled by label similarity,
+        so the interpolated damage is meaningful
+      fold_only: true
+      implement_hours: 2.5
+      reference_id:
+      - R299
+      note: vanilla mixup on regression labels can produce arbitrarily incorrect labels;
+        C-Mixup is the published fix. One ablation row; report whether it changed
+        LOO MAPE.
+    - name: anchor_data_augmentation
+      priority: nice
+      applies_to: whole_files_in_log_feature_space
+      preserves: the causal/invariant part of the regression function; assumes a meaningful
+        clustering of the 64 files exists
+      fold_only: true
+      implement_hours: 3.0
+      reference_id:
+      - R300
+      note: run ONLY if C-Mixup's kernel bandwidth proves fiddly — they solve the
+        same problem and doing both wastes the budget.
+    - name: cropping_slicing
+      priority: skip
+      reference_id:
+      - R293
+      skip_reason: Damage is cumulative over the whole record, so no sub-window carries
+        the label. Cropping is label noise, not augmentation.
+    - name: vanilla_mixup
+      priority: skip
+      reference_id:
+      - R299
+      skip_reason: Mixing regression labels linearly without label-similarity weighting
+        can produce arbitrarily incorrect labels.
+    - name: tvar_generative_synthesis
+      priority: skip
+      reference_id:
+      - R313
+      skip_reason: NOT PEER-REVIEWED, and its reported effect sizes rest on n=5 experiments.
+    - name: gan_diffusion_synthesis
+      priority: skip
+      reference_id:
+      - R307
+      - R308
+      - R304
+      skip_reason: 64 files is far too few to fit a generator that is not memorising,
+        and generated-series quality is contested across measures.

@@ -1,0 +1,15 @@
+FROM python:3.11-slim-bookworm
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+WORKDIR /app
+
+COPY submission/nebulax/app/requirements.lock.txt requirements-cloud-batch.txt /tmp/
+RUN python -m pip install --no-cache-dir -r /tmp/requirements.lock.txt -r /tmp/requirements-cloud-batch.txt
+COPY nebulax/ ./nebulax/
+COPY models/ps3/ ./models/ps3/
+COPY scripts/cloud_batch_predict.py ./scripts/cloud_batch_predict.py
+
+RUN useradd --create-home --uid 10001 appuser
+USER appuser
+ENTRYPOINT ["python", "scripts/cloud_batch_predict.py"]

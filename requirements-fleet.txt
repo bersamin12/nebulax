@@ -1,0 +1,9 @@
+# Additional dependencies for the optional Fleet twin scoring winners and model registry.
+# Normal PS3 app startup uses the smaller submission/nebulax/app/requirements.lock.txt.
+torch
+pyod
+stumpy
+river
+xgboost
+aeon
+pyyaml

@@ -1,0 +1,58 @@
+version: 1
+runs:
+- name: ottawa_cls_window_stats
+  dataset: ottawa
+  task: cls
+  model:
+  - name: lgbm_envelope
+    params:
+      n_jobs: 4
+  - logreg_envelope
+  feature_set:
+  - time
+  - time+env
+  window:
+  - 0.25
+  - 1.0
+  split: ottawa_sgkf5
+- name: ottawa_cls_raw_window
+  dataset: ottawa
+  task: cls
+  model:
+  - name: multirocket_hydra
+    params:
+      n_jobs: 4
+  - name: multirocket_ridge
+    params:
+      n_jobs: 4
+  - quant
+  window:
+  - 0.25
+  - 1.0
+  split: ottawa_sgkf5
+- name: ottawa_cls_deep
+  dataset: ottawa
+  task: cls
+  model:
+  - litetime
+  - resnet1d
+  window: 1.0
+  split: ottawa_sgkf5
+  max_minutes: 10
+- name: ottawa_ad_window_stats
+  dataset: ottawa
+  task: ad
+  train_regime: normal_only
+  model:
+  - isolation_forest
+  - ecod
+  - copod
+  - knn_outlier
+  - pca_spe_t2
+  - mahalanobis_mincovdet
+  - robust_z_ewma_window
+  - sparse_autoencoder
+  split: ottawa_sgkf5
+  window: 1.0
+  feature_set: time+env
+  max_minutes: 10

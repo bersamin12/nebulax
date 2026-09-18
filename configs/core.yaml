@@ -1,0 +1,419 @@
+# Generated from MetroPT, Ottawa and pneumatic/bearing synthetic research presets.
+version: 1
+runs:
+- name: metropt_ad_window_stats_clean
+  dataset: metropt3
+  task: ad
+  model: &id001
+  - conformal_threshold
+  - cblof
+  - per_channel_or_aggregate
+  - random_score
+  - single_feature_threshold
+  - copod
+  - knn_outlier
+  - ecod
+  - isolation_forest
+  - ocsvm
+  - halfspace_trees_ocknn
+  - mahalanobis_mincovdet
+  - pca_spe_t2
+  - robust_z_ewma_window
+  - sensor_range_baseline
+  - trivial_baseline_set
+  - k_of_n_corroboration
+  window: &id002
+  - 60
+  - 360
+  split: metropt_temporal
+  H: 172800.0
+  train_regime: normal_only
+- name: metropt_ad_window_stats_contaminated
+  dataset: metropt3
+  task: ad
+  model: *id001
+  window: *id002
+  split: metropt_contaminated
+  H: 172800.0
+  train_regime: all
+  comment: 'the plan''s contaminated regime: train Feb-May on ALL rows (failures included),
+    val 1-3 Jun, test 4 Jun onward'
+- name: metropt_ad_raw_window_clean
+  dataset: metropt3
+  task: ad
+  model:
+  - kmeans_ad
+  - ocsvm_mfcc_ams
+  - moving_window_variance
+  - squared_difference
+  - name: lgbm_residual
+    params:
+      n_jobs: 4
+      channels:
+      - 0
+      - 2
+      - 4
+      - 6
+      - 8
+      - 10
+      - 12
+    comment: targets = the 7 analog *_mean channels (TP2, TP3, H1, DV_pressure, Reservoirs,
+      Oil_temperature, Motor_current); all 22 channels stay as regressors
+  - l2_norm_channels
+  - nn1_distance
+  - dwt_w8w9_startpeak
+  window: &id003
+  - 60
+  - 360
+  split: metropt_temporal
+  H: 172800.0
+  train_regime: normal_only
+- name: metropt_ad_raw_window_contaminated
+  dataset: metropt3
+  task: ad
+  model:
+  - kmeans_ad
+  - ocsvm_mfcc_ams
+  - moving_window_variance
+  - squared_difference
+  - name: lgbm_residual
+    params:
+      n_jobs: 4
+      channels:
+      - 0
+      - 2
+      - 4
+      - 6
+      - 8
+      - 10
+      - 12
+    comment: targets = the 7 analog *_mean channels (TP2, TP3, H1, DV_pressure, Reservoirs,
+      Oil_temperature, Motor_current); all 22 channels stay as regressors
+  - l2_norm_channels
+  - nn1_distance
+  - dwt_w8w9_startpeak
+  window: *id003
+  split: metropt_contaminated
+  H: 172800.0
+  train_regime: all
+  comment: 'the plan''s contaminated regime: train Feb-May on ALL rows (failures included),
+    val 1-3 Jun, test 4 Jun onward'
+- name: metropt_ad_deep
+  dataset: metropt3
+  task: ad
+  model:
+  - sparse_autoencoder
+  - usad
+  - lstm_ae
+  - tcn_ae
+  - name: tspulse_zeroshot
+    params:
+      context_points: 512
+  window: 360
+  split: metropt_temporal
+  H: 172800.0
+  max_minutes: 10
+- name: metropt_cpd_raw_window_clean
+  dataset: metropt3
+  task: cpd
+  model: &id004
+  - adwin_residual
+  - page_hinkley_residual
+  - transition_mask
+  window: &id005
+  - 60
+  - 360
+  split: metropt_temporal
+  H: 172800.0
+  train_regime: normal_only
+- name: metropt_cpd_raw_window_contaminated
+  dataset: metropt3
+  task: cpd
+  model: *id004
+  window: *id005
+  split: metropt_contaminated
+  H: 172800.0
+  train_regime: all
+  comment: 'the plan''s contaminated regime: train Feb-May on ALL rows (failures included),
+    val 1-3 Jun, test 4 Jun onward'
+- name: metropt_ad_raw_window_clean_matrix_profile
+  dataset: metropt3
+  task: ad
+  model:
+  - matrix_profile_discord
+  window: 360
+  split: metropt_temporal
+  H: 172800.0
+  train_regime: normal_only
+  max_minutes: 10
+  comment: 'matrix profile is O(n^2) in windows: ~194 s per 2000 windows, so only
+    the 360-step table (7,955 windows, ~13 min) is run, capped at 10 min'
+- name: metropt_ad_raw_window_contaminated_matrix_profile
+  dataset: metropt3
+  task: ad
+  model:
+  - matrix_profile_discord
+  window: 360
+  split: metropt_contaminated
+  H: 172800.0
+  train_regime: all
+  comment: 'matrix profile is O(n^2) in windows: ~194 s per 2000 windows, so only
+    the 360-step table (7,955 windows, ~13 min) is run, capped at 10 min'
+  max_minutes: 10
+- name: ottawa_cls_window_stats
+  dataset: ottawa
+  task: cls
+  model:
+  - name: lgbm_envelope
+    params:
+      n_jobs: 4
+  - logreg_envelope
+  feature_set:
+  - time
+  - time+env
+  window:
+  - 0.25
+  - 1.0
+  split: ottawa_sgkf5
+- name: ottawa_cls_raw_window
+  dataset: ottawa
+  task: cls
+  model:
+  - name: multirocket_hydra
+    params:
+      n_jobs: 4
+  - name: multirocket_ridge
+    params:
+      n_jobs: 4
+  - quant
+  window:
+  - 0.25
+  - 1.0
+  split: ottawa_sgkf5
+- name: ottawa_cls_deep
+  dataset: ottawa
+  task: cls
+  model:
+  - litetime
+  - resnet1d
+  window: 1.0
+  split: ottawa_sgkf5
+  max_minutes: 10
+- name: ottawa_ad_window_stats
+  dataset: ottawa
+  task: ad
+  train_regime: normal_only
+  model:
+  - isolation_forest
+  - ecod
+  - copod
+  - knn_outlier
+  - pca_spe_t2
+  - mahalanobis_mincovdet
+  - robust_z_ewma_window
+  - sparse_autoencoder
+  split: ottawa_sgkf5
+  window: 1.0
+  feature_set: time+env
+  max_minutes: 10
+- name: sim_pneumatic_cycle_features
+  dataset: sim
+  task: ad
+  model:
+  - shallow_rule_learner
+  - cusum_cycle_scalar
+  - robust_z_ewma_cycle
+  - duty_cycle_ratio_cusum
+  subsystem: pneumatic
+  peer_norm: false
+  contamination:
+  - 0.0
+  - 0.05
+  split: sim_loo_unit
+  data:
+    max_runs: 8
+- name: sim_pneumatic_window_stats_raw_window
+  dataset: sim
+  task: ad
+  model:
+  - conformal_threshold
+  - cblof
+  - per_channel_or_aggregate
+  - random_score
+  - single_feature_threshold
+  - copod
+  - knn_outlier
+  - ecod
+  - isolation_forest
+  - ocsvm
+  - halfspace_trees_ocknn
+  - mahalanobis_mincovdet
+  - pca_spe_t2
+  - robust_z_ewma_window
+  - sensor_range_baseline
+  - trivial_baseline_set
+  - name: k_of_n_corroboration
+    params:
+      k: 3
+      features:
+      - TP2
+      - TP3
+      - Motor_current
+      - Oil_temperature
+      - COMP
+    comment: R95 vote with this subsystem's own channels (the default members are
+      MetroPT-3 compressor signals)
+  - kmeans_ad
+  - ocsvm_mfcc_ams
+  - moving_window_variance
+  - squared_difference
+  - lgbm_residual
+  - l2_norm_channels
+  - nn1_distance
+  - dwt_w8w9_startpeak
+  subsystem: pneumatic
+  window:
+  - 60
+  - 360
+  peer_norm: false
+  contamination: 0.0
+  split: sim_loo_unit
+  data:
+    max_runs: 5
+- name: sim_pneumatic_deep
+  dataset: sim
+  task: ad
+  model:
+  - sparse_autoencoder
+  - usad
+  - lstm_ae
+  - tcn_ae
+  - name: tspulse_zeroshot
+    params:
+      context_points: 512
+  subsystem: pneumatic
+  window: 360
+  peer_norm: false
+  contamination: 0.0
+  split: sim_loo_unit
+  max_minutes: 10
+  data:
+    max_runs: 5
+- name: sim_bearing_cycle_features
+  dataset: sim
+  task: ad
+  model:
+  - shallow_rule_learner
+  - cusum_cycle_scalar
+  - robust_z_ewma_cycle
+  - peer_normalisation
+  subsystem: bearing
+  peer_norm:
+  - true
+  - false
+  contamination:
+  - 0.0
+  - 0.05
+  split: sim_loo_unit
+  data:
+    max_runs: 8
+- name: sim_bearing_window_stats_raw_window
+  dataset: sim
+  task: ad
+  model:
+  - conformal_threshold
+  - cblof
+  - per_channel_or_aggregate
+  - random_score
+  - single_feature_threshold
+  - copod
+  - knn_outlier
+  - ecod
+  - isolation_forest
+  - ocsvm
+  - halfspace_trees_ocknn
+  - mahalanobis_mincovdet
+  - pca_spe_t2
+  - robust_z_ewma_window
+  - sensor_range_baseline
+  - trivial_baseline_set
+  - name: k_of_n_corroboration
+    params:
+      k: 3
+      features:
+      - T_box
+      - vib_rms
+      - vib_kurt
+      - vib_crest
+      - vib_bpfo
+    comment: R95 vote with this subsystem's own channels (the default members are
+      MetroPT-3 compressor signals)
+  - peer_delta_temperature
+  - thermal_residual_model
+  - peer_normalisation_shared
+  - kmeans_ad
+  - ocsvm_mfcc_ams
+  - moving_window_variance
+  - squared_difference
+  - lgbm_residual
+  - l2_norm_channels
+  - nn1_distance
+  - kurtogram_envelope_bpfo
+  subsystem: bearing
+  window:
+  - 60
+  - 360
+  peer_norm: false
+  contamination: 0.0
+  split: sim_loo_unit
+  data:
+    max_runs: 5
+  note: dwt_w8w9_startpeak is a door-motor start-peak current rule (R-ladder door
+    row); the bearing table has no current channel, so it is not run here.
+- name: sim_bearing_deep
+  dataset: sim
+  task: ad
+  model:
+  - sparse_autoencoder
+  - usad
+  - lstm_ae
+  - tcn_ae
+  - name: tspulse_zeroshot
+    params:
+      context_points: 512
+  subsystem: bearing
+  window: 360
+  peer_norm: false
+  contamination: 0.0
+  split: sim_loo_unit
+  max_minutes: 10
+  data:
+    max_runs: 5
+- name: sim_pneumatic_matrix_profile
+  dataset: sim
+  task: ad
+  model:
+  - matrix_profile_discord
+  subsystem: pneumatic
+  window: 360
+  peer_norm: false
+  contamination: 0.0
+  split: sim_loo_unit
+  data:
+    max_runs: 2
+  max_minutes: 10
+  comment: 'window 360 only, 10-min cap: matrix profile is O(n^2) in windows'
+- name: sim_bearing_matrix_profile
+  dataset: sim
+  task: ad
+  model:
+  - matrix_profile_discord
+  subsystem: bearing
+  window: 360
+  peer_norm: false
+  contamination: 0.0
+  split: sim_loo_unit
+  data:
+    max_runs: 2
+  max_minutes: 10
+  comment: 'window 360 only, 10-min cap: matrix profile is O(n^2) in windows'

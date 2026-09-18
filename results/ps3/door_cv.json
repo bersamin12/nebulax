@@ -1,0 +1,2163 @@
+{
+  "task": "door",
+  "scheme": "5 contiguous time blocks of the raw stream, end to end",
+  "n_blocks": 5,
+  "seeds": [
+    0
+  ],
+  "git_rev": "24f6755",
+  "feature_version": "door-f1",
+  "metric": "iou_f1",
+  "winner": {
+    "kind": "logreg",
+    "features": [
+      "i_mean_cruise_rel",
+      "i_mean_cruise_z",
+      "i_mean_opening_rel",
+      "i_mean_closing_rel",
+      "i_max_cruise_rel",
+      "i_mean_rel",
+      "i_peak_rel",
+      "i_peak_frac",
+      "i_std_cruise_rel",
+      "charge_rel",
+      "energy_rel",
+      "v_mean_rel",
+      "v_mean_cruise_rel",
+      "emf_mean_cruise_rel",
+      "r_proxy_rel",
+      "i_per_speed_rel",
+      "emf_per_speed_rel",
+      "emf_residual_z",
+      "speed_cruise_rel",
+      "duration_rel",
+      "duration_vs_cmd_rel",
+      "dwt_coarse1_rel",
+      "dwt_coarse2_rel",
+      "prof_dist"
+    ],
+    "separate": true,
+    "baseline_mode": "fold",
+    "augment": "none"
+  },
+  "winner_selection_status": "post-hoc: selected after ranking the full ladder on the frozen outer CV",
+  "selection_cv": {
+    "name": "logreg (physics features, separate)",
+    "row_index": 1,
+    "iou_f1_mean": 1.0,
+    "iou_f1_sd": 0.0
+  },
+  "headline": {
+    "scheme": "nested model selection over addendum-MUST rows; 5 contiguous outer blocks",
+    "selection_status": "candidate set pre-registered by docs/research/ps3_addendum.md section 1.3; selected inside each outer fold",
+    "candidate_rows": [
+      "logreg (baseline features, separate)",
+      "logreg (physics features, separate)",
+      "lgbm_three_regime (physics, regime-named features)",
+      "stacking RF+XGB -> calibrated logreg (physics)",
+      "multirocket_ridge (raw cycle, aug=none)"
+    ],
+    "seeds": [
+      0
+    ],
+    "n_folds": 5,
+    "folds": [
+      {
+        "seed": 0,
+        "block": 0,
+        "selected_row": "logreg (baseline features, separate)",
+        "inner_iou_f1_mean": 1.0,
+        "inner_iou_f1_sd": 0.0,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 0.9090909090909091,
+        "soft_recall": 0.9090909090909091,
+        "soft_precision": 0.9090909090909091,
+        "n_misses": 2,
+        "n_false_positives": 2,
+        "oracle_macro_f1": 0.8854166666666666,
+        "margin_mean": 0.2285561075528505,
+        "pr_auc": 0.9999999999999998,
+        "threshold": 0.5059984760723677,
+        "n_wrong_label": 2,
+        "fit_seconds": 5.329328648978844,
+        "n_features": 5,
+        "held_predictions": {
+          "truth": [
+            {
+              "start_time": "2023-7-5-0-0-0-0",
+              "end_time": "2023-7-5-0-0-3-700",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-0-23-999",
+              "end_time": "2023-7-5-0-0-26-839",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-0-51-266",
+              "end_time": "2023-7-5-0-0-53-986",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-1-33-989",
+              "end_time": "2023-7-5-0-1-37-709",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-2-24-608",
+              "end_time": "2023-7-5-0-2-28-308",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-2-59-77",
+              "end_time": "2023-7-5-0-3-1-937",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-3-56-723",
+              "end_time": "2023-7-5-0-3-59-503",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-4-37-800",
+              "end_time": "2023-7-5-0-4-40-680",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-5-4-993",
+              "end_time": "2023-7-5-0-5-8-713",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-5-45-986",
+              "end_time": "2023-7-5-0-5-48-826",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-6-41-261",
+              "end_time": "2023-7-5-0-6-44-961",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-7-14-763",
+              "end_time": "2023-7-5-0-7-17-563",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-7-33-804",
+              "end_time": "2023-7-5-0-7-36-524",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-7-58-252",
+              "end_time": "2023-7-5-0-8-1-812",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-8-17-730",
+              "end_time": "2023-7-5-0-8-21-410",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-8-44-405",
+              "end_time": "2023-7-5-0-8-47-205",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-9-11-186",
+              "end_time": "2023-7-5-0-9-14-46",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-9-56-76",
+              "end_time": "2023-7-5-0-9-58-996",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-10-35-983",
+              "end_time": "2023-7-5-0-10-39-683",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-11-23-203",
+              "end_time": "2023-7-5-0-11-26-903",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-11-42-400",
+              "end_time": "2023-7-5-0-11-45-220",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-12-17-355",
+              "end_time": "2023-7-5-0-12-20-215",
+              "prediction": "Normal"
+            }
+          ],
+          "predicted": [
+            {
+              "start_time": "2023-7-5-0-0-0-0",
+              "end_time": "2023-7-5-0-0-3-700",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-0-23-999",
+              "end_time": "2023-7-5-0-0-26-839",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-0-51-266",
+              "end_time": "2023-7-5-0-0-53-986",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-1-33-989",
+              "end_time": "2023-7-5-0-1-37-709",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-2-24-608",
+              "end_time": "2023-7-5-0-2-28-308",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-2-59-77",
+              "end_time": "2023-7-5-0-3-1-937",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-3-56-723",
+              "end_time": "2023-7-5-0-3-59-503",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-4-37-800",
+              "end_time": "2023-7-5-0-4-40-680",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-5-4-993",
+              "end_time": "2023-7-5-0-5-8-713",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-5-45-986",
+              "end_time": "2023-7-5-0-5-48-826",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-6-41-261",
+              "end_time": "2023-7-5-0-6-44-961",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-7-14-763",
+              "end_time": "2023-7-5-0-7-17-563",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-7-33-804",
+              "end_time": "2023-7-5-0-7-36-524",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-7-58-252",
+              "end_time": "2023-7-5-0-8-1-812",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-8-17-730",
+              "end_time": "2023-7-5-0-8-21-410",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-8-44-405",
+              "end_time": "2023-7-5-0-8-47-205",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-9-11-186",
+              "end_time": "2023-7-5-0-9-14-46",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-9-56-76",
+              "end_time": "2023-7-5-0-9-58-996",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-10-35-983",
+              "end_time": "2023-7-5-0-10-39-683",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-11-23-203",
+              "end_time": "2023-7-5-0-11-26-903",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-11-42-400",
+              "end_time": "2023-7-5-0-11-45-220",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-12-17-355",
+              "end_time": "2023-7-5-0-12-20-215",
+              "prediction": "Normal"
+            }
+          ]
+        }
+      },
+      {
+        "seed": 0,
+        "block": 1,
+        "selected_row": "logreg (physics features, separate)",
+        "inner_iou_f1_mean": 1.0,
+        "inner_iou_f1_sd": 0.0,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.40349271091603467,
+        "pr_auc": 1.0,
+        "threshold": 0.5212768982283593,
+        "n_wrong_label": 0,
+        "fit_seconds": 5.214181033021305,
+        "n_features": 24,
+        "held_predictions": {
+          "truth": [
+            {
+              "start_time": "2023-7-5-0-13-19-38",
+              "end_time": "2023-7-5-0-13-22-718",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-13-40-783",
+              "end_time": "2023-7-5-0-13-43-543",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-14-37-719",
+              "end_time": "2023-7-5-0-14-40-539",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-15-37-485",
+              "end_time": "2023-7-5-0-15-40-325",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-15-58-428",
+              "end_time": "2023-7-5-0-16-1-288",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-16-53-605",
+              "end_time": "2023-7-5-0-16-56-385",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-17-6-600",
+              "end_time": "2023-7-5-0-17-10-280",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-18-5-449",
+              "end_time": "2023-7-5-0-18-9-169",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-18-34-44",
+              "end_time": "2023-7-5-0-18-37-724",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-19-30-17",
+              "end_time": "2023-7-5-0-19-32-817",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-20-23-918",
+              "end_time": "2023-7-5-0-20-26-758",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-21-20-453",
+              "end_time": "2023-7-5-0-21-24-133",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-22-16-540",
+              "end_time": "2023-7-5-0-22-19-400",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-22-46-759",
+              "end_time": "2023-7-5-0-22-50-439",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-23-18-200",
+              "end_time": "2023-7-5-0-23-21-980",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-24-11-124",
+              "end_time": "2023-7-5-0-24-13-944",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-25-10-422",
+              "end_time": "2023-7-5-0-25-13-282",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-25-50-832",
+              "end_time": "2023-7-5-0-25-53-652",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-26-38-238",
+              "end_time": "2023-7-5-0-26-41-998",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-26-53-854",
+              "end_time": "2023-7-5-0-26-56-654",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-27-40-473",
+              "end_time": "2023-7-5-0-27-43-333",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-28-20-800",
+              "end_time": "2023-7-5-0-28-23-620",
+              "prediction": "Normal"
+            }
+          ],
+          "predicted": [
+            {
+              "start_time": "2023-7-5-0-13-19-38",
+              "end_time": "2023-7-5-0-13-22-718",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-13-40-783",
+              "end_time": "2023-7-5-0-13-43-543",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-14-37-719",
+              "end_time": "2023-7-5-0-14-40-539",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-15-37-485",
+              "end_time": "2023-7-5-0-15-40-325",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-15-58-428",
+              "end_time": "2023-7-5-0-16-1-288",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-16-53-605",
+              "end_time": "2023-7-5-0-16-56-385",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-17-6-600",
+              "end_time": "2023-7-5-0-17-10-280",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-18-5-449",
+              "end_time": "2023-7-5-0-18-9-169",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-18-34-44",
+              "end_time": "2023-7-5-0-18-37-724",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-19-30-17",
+              "end_time": "2023-7-5-0-19-32-817",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-20-23-918",
+              "end_time": "2023-7-5-0-20-26-758",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-21-20-453",
+              "end_time": "2023-7-5-0-21-24-133",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-22-16-540",
+              "end_time": "2023-7-5-0-22-19-400",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-22-46-759",
+              "end_time": "2023-7-5-0-22-50-439",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-23-18-200",
+              "end_time": "2023-7-5-0-23-21-980",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-24-11-124",
+              "end_time": "2023-7-5-0-24-13-944",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-25-10-422",
+              "end_time": "2023-7-5-0-25-13-282",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-25-50-832",
+              "end_time": "2023-7-5-0-25-53-652",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-26-38-238",
+              "end_time": "2023-7-5-0-26-41-998",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-26-53-854",
+              "end_time": "2023-7-5-0-26-56-654",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-27-40-473",
+              "end_time": "2023-7-5-0-27-43-333",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-28-20-800",
+              "end_time": "2023-7-5-0-28-23-620",
+              "prediction": "Normal"
+            }
+          ]
+        }
+      },
+      {
+        "seed": 0,
+        "block": 2,
+        "selected_row": "logreg (physics features, separate)",
+        "inner_iou_f1_mean": 1.0,
+        "inner_iou_f1_sd": 0.0,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.3905335131953549,
+        "pr_auc": 0.9999999999999998,
+        "threshold": 0.5429832781891982,
+        "n_wrong_label": 0,
+        "fit_seconds": 4.879625589004718,
+        "n_features": 24,
+        "held_predictions": {
+          "truth": [
+            {
+              "start_time": "2023-7-5-0-28-51-275",
+              "end_time": "2023-7-5-0-28-55-35",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-29-31-944",
+              "end_time": "2023-7-5-0-29-34-724",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-30-26-664",
+              "end_time": "2023-7-5-0-30-30-364",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-30-43-983",
+              "end_time": "2023-7-5-0-30-46-803",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-31-3-745",
+              "end_time": "2023-7-5-0-31-6-545",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-31-59-892",
+              "end_time": "2023-7-5-0-32-3-672",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-32-43-694",
+              "end_time": "2023-7-5-0-32-47-374",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-33-29-832",
+              "end_time": "2023-7-5-0-33-33-552",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-34-11-718",
+              "end_time": "2023-7-5-0-34-15-418",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-34-44-96",
+              "end_time": "2023-7-5-0-34-47-796",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-35-1-654",
+              "end_time": "2023-7-5-0-35-4-394",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-35-40-152",
+              "end_time": "2023-7-5-0-35-43-932",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-36-41-950",
+              "end_time": "2023-7-5-0-36-45-630",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-37-13-423",
+              "end_time": "2023-7-5-0-37-17-143",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-37-39-851",
+              "end_time": "2023-7-5-0-37-43-551",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-38-15-897",
+              "end_time": "2023-7-5-0-38-19-597",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-39-11-422",
+              "end_time": "2023-7-5-0-39-15-122",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-39-40-660",
+              "end_time": "2023-7-5-0-39-44-400",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-40-22-964",
+              "end_time": "2023-7-5-0-40-25-764",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-41-6-213",
+              "end_time": "2023-7-5-0-41-8-993",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-41-59-719",
+              "end_time": "2023-7-5-0-42-2-539",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-42-42-84",
+              "end_time": "2023-7-5-0-42-44-964",
+              "prediction": "Abnormal resistance"
+            }
+          ],
+          "predicted": [
+            {
+              "start_time": "2023-7-5-0-28-51-275",
+              "end_time": "2023-7-5-0-28-55-35",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-29-31-944",
+              "end_time": "2023-7-5-0-29-34-724",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-30-26-664",
+              "end_time": "2023-7-5-0-30-30-364",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-30-43-983",
+              "end_time": "2023-7-5-0-30-46-803",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-31-3-745",
+              "end_time": "2023-7-5-0-31-6-545",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-31-59-892",
+              "end_time": "2023-7-5-0-32-3-672",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-32-43-694",
+              "end_time": "2023-7-5-0-32-47-374",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-33-29-832",
+              "end_time": "2023-7-5-0-33-33-552",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-34-11-718",
+              "end_time": "2023-7-5-0-34-15-418",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-34-44-96",
+              "end_time": "2023-7-5-0-34-47-796",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-35-1-654",
+              "end_time": "2023-7-5-0-35-4-394",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-35-40-152",
+              "end_time": "2023-7-5-0-35-43-932",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-36-41-950",
+              "end_time": "2023-7-5-0-36-45-630",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-37-13-423",
+              "end_time": "2023-7-5-0-37-17-143",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-37-39-851",
+              "end_time": "2023-7-5-0-37-43-551",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-38-15-897",
+              "end_time": "2023-7-5-0-38-19-597",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-39-11-422",
+              "end_time": "2023-7-5-0-39-15-122",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-39-40-660",
+              "end_time": "2023-7-5-0-39-44-400",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-40-22-964",
+              "end_time": "2023-7-5-0-40-25-764",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-41-6-213",
+              "end_time": "2023-7-5-0-41-8-993",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-41-59-719",
+              "end_time": "2023-7-5-0-42-2-539",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-42-42-84",
+              "end_time": "2023-7-5-0-42-44-964",
+              "prediction": "Abnormal resistance"
+            }
+          ]
+        }
+      },
+      {
+        "seed": 0,
+        "block": 3,
+        "selected_row": "logreg (physics features, separate)",
+        "inner_iou_f1_mean": 1.0,
+        "inner_iou_f1_sd": 0.0,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.39686039736780737,
+        "pr_auc": 1.0,
+        "threshold": 0.5,
+        "n_wrong_label": 0,
+        "fit_seconds": 4.992568400979508,
+        "n_features": 24,
+        "held_predictions": {
+          "truth": [
+            {
+              "start_time": "2023-7-5-0-43-27-797",
+              "end_time": "2023-7-5-0-43-30-637",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-44-14-353",
+              "end_time": "2023-7-5-0-44-17-133",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-45-5-208",
+              "end_time": "2023-7-5-0-45-8-928",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-45-39-906",
+              "end_time": "2023-7-5-0-45-42-726",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-46-11-961",
+              "end_time": "2023-7-5-0-46-15-661",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-46-55-304",
+              "end_time": "2023-7-5-0-46-58-64",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-47-26-875",
+              "end_time": "2023-7-5-0-47-29-695",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-47-46-274",
+              "end_time": "2023-7-5-0-47-49-974",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-48-25-883",
+              "end_time": "2023-7-5-0-48-29-583",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-49-0-735",
+              "end_time": "2023-7-5-0-49-4-415",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-49-41-413",
+              "end_time": "2023-7-5-0-49-44-253",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-50-34-415",
+              "end_time": "2023-7-5-0-50-37-255",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-51-23-833",
+              "end_time": "2023-7-5-0-51-26-653",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-51-54-106",
+              "end_time": "2023-7-5-0-51-57-786",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-52-32-643",
+              "end_time": "2023-7-5-0-52-35-423",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-53-1-0",
+              "end_time": "2023-7-5-0-53-4-740",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-53-43-39",
+              "end_time": "2023-7-5-0-53-46-799",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-54-11-580",
+              "end_time": "2023-7-5-0-54-15-280",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-54-41-12",
+              "end_time": "2023-7-5-0-54-44-712",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-55-30-889",
+              "end_time": "2023-7-5-0-55-34-569",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-55-57-621",
+              "end_time": "2023-7-5-0-56-1-301",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-56-13-678",
+              "end_time": "2023-7-5-0-56-17-338",
+              "prediction": "Normal"
+            }
+          ],
+          "predicted": [
+            {
+              "start_time": "2023-7-5-0-43-27-797",
+              "end_time": "2023-7-5-0-43-30-637",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-44-14-353",
+              "end_time": "2023-7-5-0-44-17-133",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-45-5-208",
+              "end_time": "2023-7-5-0-45-8-928",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-45-39-906",
+              "end_time": "2023-7-5-0-45-42-726",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-46-11-961",
+              "end_time": "2023-7-5-0-46-15-661",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-46-55-304",
+              "end_time": "2023-7-5-0-46-58-64",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-47-26-875",
+              "end_time": "2023-7-5-0-47-29-695",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-47-46-274",
+              "end_time": "2023-7-5-0-47-49-974",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-48-25-883",
+              "end_time": "2023-7-5-0-48-29-583",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-49-0-735",
+              "end_time": "2023-7-5-0-49-4-415",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-49-41-413",
+              "end_time": "2023-7-5-0-49-44-253",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-50-34-415",
+              "end_time": "2023-7-5-0-50-37-255",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-51-23-833",
+              "end_time": "2023-7-5-0-51-26-653",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-51-54-106",
+              "end_time": "2023-7-5-0-51-57-786",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-52-32-643",
+              "end_time": "2023-7-5-0-52-35-423",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-53-1-0",
+              "end_time": "2023-7-5-0-53-4-740",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-53-43-39",
+              "end_time": "2023-7-5-0-53-46-799",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-54-11-580",
+              "end_time": "2023-7-5-0-54-15-280",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-54-41-12",
+              "end_time": "2023-7-5-0-54-44-712",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-55-30-889",
+              "end_time": "2023-7-5-0-55-34-569",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-55-57-621",
+              "end_time": "2023-7-5-0-56-1-301",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-56-13-678",
+              "end_time": "2023-7-5-0-56-17-338",
+              "prediction": "Normal"
+            }
+          ]
+        }
+      },
+      {
+        "seed": 0,
+        "block": 4,
+        "selected_row": "logreg (physics features, separate)",
+        "inner_iou_f1_mean": 1.0,
+        "inner_iou_f1_sd": 0.0,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.4223094421036373,
+        "pr_auc": 0.9999999999999998,
+        "threshold": 0.5432200887465084,
+        "n_wrong_label": 0,
+        "fit_seconds": 5.1015241669956595,
+        "n_features": 24,
+        "held_predictions": {
+          "truth": [
+            {
+              "start_time": "2023-7-5-0-57-11-286",
+              "end_time": "2023-7-5-0-57-14-966",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-58-9-390",
+              "end_time": "2023-7-5-0-58-12-170",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-58-30-718",
+              "end_time": "2023-7-5-0-58-33-578",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-59-25-225",
+              "end_time": "2023-7-5-0-59-28-765",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-59-39-474",
+              "end_time": "2023-7-5-0-59-43-174",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-59-59-103",
+              "end_time": "2023-7-5-1-0-2-803",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-1-0-38-370",
+              "end_time": "2023-7-5-1-0-41-230",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-1-1-23-954",
+              "end_time": "2023-7-5-1-1-27-654",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-1-2-22-708",
+              "end_time": "2023-7-5-1-2-25-548",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-1-2-43-288",
+              "end_time": "2023-7-5-1-2-46-88",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-1-3-24-258",
+              "end_time": "2023-7-5-1-3-27-958",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-1-3-56-956",
+              "end_time": "2023-7-5-1-3-59-736",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-1-4-53-782",
+              "end_time": "2023-7-5-1-4-56-702",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-1-5-8-346",
+              "end_time": "2023-7-5-1-5-12-26",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-1-5-27-849",
+              "end_time": "2023-7-5-1-5-30-689",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-1-5-49-428",
+              "end_time": "2023-7-5-1-5-53-108",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-1-6-35-532",
+              "end_time": "2023-7-5-1-6-38-352",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-1-6-57-185",
+              "end_time": "2023-7-5-1-7-0-785",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-1-7-23-681",
+              "end_time": "2023-7-5-1-7-26-521",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-1-8-24-815",
+              "end_time": "2023-7-5-1-8-27-635",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-1-9-25-783",
+              "end_time": "2023-7-5-1-9-29-483",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-1-10-13-392",
+              "end_time": "2023-7-5-1-10-17-112",
+              "prediction": "Abnormal resistance"
+            }
+          ],
+          "predicted": [
+            {
+              "start_time": "2023-7-5-0-57-11-286",
+              "end_time": "2023-7-5-0-57-14-966",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-58-9-390",
+              "end_time": "2023-7-5-0-58-12-170",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-58-30-718",
+              "end_time": "2023-7-5-0-58-33-578",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-59-25-225",
+              "end_time": "2023-7-5-0-59-28-765",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-0-59-39-474",
+              "end_time": "2023-7-5-0-59-43-174",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-0-59-59-103",
+              "end_time": "2023-7-5-1-0-2-803",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-1-0-38-370",
+              "end_time": "2023-7-5-1-0-41-230",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-1-1-23-954",
+              "end_time": "2023-7-5-1-1-27-654",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-1-2-22-708",
+              "end_time": "2023-7-5-1-2-25-548",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-1-2-43-288",
+              "end_time": "2023-7-5-1-2-46-88",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-1-3-24-258",
+              "end_time": "2023-7-5-1-3-27-958",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-1-3-56-956",
+              "end_time": "2023-7-5-1-3-59-736",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-1-4-53-782",
+              "end_time": "2023-7-5-1-4-56-702",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-1-5-8-346",
+              "end_time": "2023-7-5-1-5-12-26",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-1-5-27-849",
+              "end_time": "2023-7-5-1-5-30-689",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-1-5-49-428",
+              "end_time": "2023-7-5-1-5-53-108",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-1-6-35-532",
+              "end_time": "2023-7-5-1-6-38-352",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-1-6-57-185",
+              "end_time": "2023-7-5-1-7-0-785",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-1-7-23-681",
+              "end_time": "2023-7-5-1-7-26-521",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-1-8-24-815",
+              "end_time": "2023-7-5-1-8-27-635",
+              "prediction": "Abnormal resistance"
+            },
+            {
+              "start_time": "2023-7-5-1-9-25-783",
+              "end_time": "2023-7-5-1-9-29-483",
+              "prediction": "Normal"
+            },
+            {
+              "start_time": "2023-7-5-1-10-13-392",
+              "end_time": "2023-7-5-1-10-17-112",
+              "prediction": "Abnormal resistance"
+            }
+          ]
+        }
+      }
+    ],
+    "iou_f1_mean": 0.9818181818181818,
+    "iou_f1_sd": 0.036363636363636376,
+    "iou_f1_min": 0.9090909090909091,
+    "oracle_macro_f1_mean": 0.9770833333333332,
+    "oracle_macro_f1_sd": 0.045833333333333344,
+    "pr_auc_mean": 0.9999999999999998,
+    "n_wrong_label": 2,
+    "fit_seconds_mean": 5.103445567796006,
+    "wall_seconds": 374.82335642701946
+  },
+  "ablations": {
+    "stump on i_mid_rel, baseline features (diagnostic)": {
+      "model": "stump",
+      "separate": true,
+      "baseline_mode": "fold",
+      "augment": "none",
+      "features": [
+        "i_mean_cruise_rel",
+        "i_mean_rel",
+        "i_peak_rel",
+        "v_mean_rel",
+        "duration_rel"
+      ],
+      "n_features": 5,
+      "seeds": [
+        0
+      ],
+      "iou_f1_mean": 1.0,
+      "iou_f1_sd": 0.0,
+      "iou_f1_min": 1.0,
+      "oracle_macro_f1_mean": 1.0,
+      "oracle_macro_f1_sd": 0.0,
+      "margin_mean": 0.5,
+      "pr_auc_mean": 1.0,
+      "thresholds": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "n_wrong_label": 0,
+      "fit_seconds_mean": 0.5099620788008906,
+      "wall_seconds": 2.701301602006424
+    },
+    "logreg, physics features (post-hoc ladder candidate)": {
+      "model": "logreg",
+      "separate": true,
+      "baseline_mode": "fold",
+      "augment": "none",
+      "features": [
+        "i_mean_cruise_rel",
+        "i_mean_cruise_z",
+        "i_mean_opening_rel",
+        "i_mean_closing_rel",
+        "i_max_cruise_rel",
+        "i_mean_rel",
+        "i_peak_rel",
+        "i_peak_frac",
+        "i_std_cruise_rel",
+        "charge_rel",
+        "energy_rel",
+        "v_mean_rel",
+        "v_mean_cruise_rel",
+        "emf_mean_cruise_rel",
+        "r_proxy_rel",
+        "i_per_speed_rel",
+        "emf_per_speed_rel",
+        "emf_residual_z",
+        "speed_cruise_rel",
+        "duration_rel",
+        "duration_vs_cmd_rel",
+        "dwt_coarse1_rel",
+        "dwt_coarse2_rel",
+        "prof_dist"
+      ],
+      "n_features": 24,
+      "seeds": [
+        0
+      ],
+      "iou_f1_mean": 1.0,
+      "iou_f1_sd": 0.0,
+      "iou_f1_min": 1.0,
+      "oracle_macro_f1_mean": 1.0,
+      "oracle_macro_f1_sd": 0.0,
+      "margin_mean": 0.40365742922267395,
+      "pr_auc_mean": 0.9999999999999998,
+      "thresholds": [
+        0.5964469524554531,
+        0.5212768982283593,
+        0.5429832781891982,
+        0.5,
+        0.5432200887465084
+      ],
+      "n_wrong_label": 0,
+      "fit_seconds_mean": 5.0395382032031195,
+      "wall_seconds": 25.352954278991092
+    },
+    "logreg, baseline features, within-block batch norm (TRANSDUCTIVE [R303], never the headline)": {
+      "model": "logreg",
+      "separate": true,
+      "baseline_mode": "batch",
+      "augment": "none",
+      "features": [
+        "i_mean_cruise_rel",
+        "i_mean_rel",
+        "i_peak_rel",
+        "v_mean_rel",
+        "duration_rel"
+      ],
+      "n_features": 5,
+      "seeds": [
+        0
+      ],
+      "iou_f1_mean": 0.9818181818181818,
+      "iou_f1_sd": 0.022268088570756142,
+      "iou_f1_min": 0.9545454545454546,
+      "oracle_macro_f1_mean": 0.9781637717121587,
+      "oracle_macro_f1_sd": 0.026743808606069473,
+      "margin_mean": 0.26987123900801385,
+      "pr_auc_mean": 0.9999999999999998,
+      "thresholds": [
+        0.5016623883419413,
+        0.43791360528663903,
+        0.2310093006897055,
+        0.4583719491353828,
+        0.45828786044131525
+      ],
+      "n_wrong_label": 2,
+      "fit_seconds_mean": 7.936543678597081,
+      "wall_seconds": 40.008027597970795
+    },
+    "logreg, baseline features, joint (not per-operation)": {
+      "model": "logreg",
+      "separate": false,
+      "baseline_mode": "fold",
+      "augment": "none",
+      "features": [
+        "i_mean_cruise_rel",
+        "i_mean_rel",
+        "i_peak_rel",
+        "v_mean_rel",
+        "duration_rel"
+      ],
+      "n_features": 6,
+      "seeds": [
+        0
+      ],
+      "iou_f1_mean": 0.990909090909091,
+      "iou_f1_sd": 0.018181818181818167,
+      "iou_f1_min": 0.9545454545454546,
+      "oracle_macro_f1_mean": 0.9890818858560794,
+      "oracle_macro_f1_sd": 0.021836228287841222,
+      "margin_mean": 0.3294837016415695,
+      "pr_auc_mean": 0.9999999999999998,
+      "thresholds": [
+        0.5046726646388957,
+        0.324594455125646,
+        0.3874416345455492,
+        0.4093692169096179,
+        0.3204504591122075
+      ],
+      "n_wrong_label": 1,
+      "fit_seconds_mean": 4.9522313384106385,
+      "wall_seconds": 24.91936238098424
+    },
+    "segmenter = hybrid, baseline features (whole pipeline re-run)": {
+      "model": "logreg",
+      "separate": true,
+      "baseline_mode": "fold",
+      "augment": "none",
+      "features": [
+        "i_mean_cruise_rel",
+        "i_mean_rel",
+        "i_peak_rel",
+        "v_mean_rel",
+        "duration_rel"
+      ],
+      "n_features": 5,
+      "seeds": [
+        0
+      ],
+      "iou_f1_mean": 0.9818181818181818,
+      "iou_f1_sd": 0.036363636363636376,
+      "iou_f1_min": 0.9090909090909091,
+      "oracle_macro_f1_mean": 0.9770833333333332,
+      "oracle_macro_f1_sd": 0.045833333333333344,
+      "margin_mean": 0.266707926467586,
+      "pr_auc_mean": 0.9999999999999998,
+      "thresholds": [
+        0.5059984760723677,
+        0.44245222463626904,
+        0.2994680338314354,
+        0.46468397795235583,
+        0.45220878962591354
+      ],
+      "n_wrong_label": 2,
+      "fit_seconds_mean": 4.913855070585851,
+      "wall_seconds": 24.717541723977774
+    },
+    "segmenter = state, baseline features (whole pipeline re-run)": {
+      "model": "logreg",
+      "separate": true,
+      "baseline_mode": "fold",
+      "augment": "none",
+      "features": [
+        "i_mean_cruise_rel",
+        "i_mean_rel",
+        "i_peak_rel",
+        "v_mean_rel",
+        "duration_rel"
+      ],
+      "n_features": 5,
+      "seeds": [
+        0
+      ],
+      "iou_f1_mean": 0.9818181818181818,
+      "iou_f1_sd": 0.036363636363636376,
+      "iou_f1_min": 0.9090909090909091,
+      "oracle_macro_f1_mean": 0.9770833333333332,
+      "oracle_macro_f1_sd": 0.045833333333333344,
+      "margin_mean": 0.266707926467586,
+      "pr_auc_mean": 0.9999999999999998,
+      "thresholds": [
+        0.5059984760723677,
+        0.44245222463626904,
+        0.2994680338314354,
+        0.46468397795235583,
+        0.45220878962591354
+      ],
+      "n_wrong_label": 2,
+      "fit_seconds_mean": 4.940246768621728,
+      "wall_seconds": 24.856556466955226
+    }
+  },
+  "ablation_folds": {
+    "stump on i_mid_rel, baseline features (diagnostic)": [
+      {
+        "seed": 0,
+        "block": 0,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.5,
+        "pr_auc": 1.0,
+        "threshold": 0.5,
+        "n_wrong_label": 0,
+        "fit_seconds": 0.4795896840514615,
+        "n_features": 5
+      },
+      {
+        "seed": 0,
+        "block": 1,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.5,
+        "pr_auc": 1.0,
+        "threshold": 0.5,
+        "n_wrong_label": 0,
+        "fit_seconds": 0.4770103070186451,
+        "n_features": 5
+      },
+      {
+        "seed": 0,
+        "block": 2,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.5,
+        "pr_auc": 1.0,
+        "threshold": 0.5,
+        "n_wrong_label": 0,
+        "fit_seconds": 0.5297061929595657,
+        "n_features": 5
+      },
+      {
+        "seed": 0,
+        "block": 3,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.5,
+        "pr_auc": 1.0,
+        "threshold": 0.5,
+        "n_wrong_label": 0,
+        "fit_seconds": 0.5313697530073114,
+        "n_features": 5
+      },
+      {
+        "seed": 0,
+        "block": 4,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.5,
+        "pr_auc": 1.0,
+        "threshold": 0.5,
+        "n_wrong_label": 0,
+        "fit_seconds": 0.5321344569674693,
+        "n_features": 5
+      }
+    ],
+    "logreg, physics features (post-hoc ladder candidate)": [
+      {
+        "seed": 0,
+        "block": 0,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.4050910825305356,
+        "pr_auc": 0.9999999999999998,
+        "threshold": 0.5964469524554531,
+        "n_wrong_label": 0,
+        "fit_seconds": 5.020884600002319,
+        "n_features": 24
+      },
+      {
+        "seed": 0,
+        "block": 1,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.40349271091603467,
+        "pr_auc": 1.0,
+        "threshold": 0.5212768982283593,
+        "n_wrong_label": 0,
+        "fit_seconds": 4.819812386005651,
+        "n_features": 24
+      },
+      {
+        "seed": 0,
+        "block": 2,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.3905335131953549,
+        "pr_auc": 0.9999999999999998,
+        "threshold": 0.5429832781891982,
+        "n_wrong_label": 0,
+        "fit_seconds": 5.170423196977936,
+        "n_features": 24
+      },
+      {
+        "seed": 0,
+        "block": 3,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.39686039736780737,
+        "pr_auc": 1.0,
+        "threshold": 0.5,
+        "n_wrong_label": 0,
+        "fit_seconds": 5.105958471016493,
+        "n_features": 24
+      },
+      {
+        "seed": 0,
+        "block": 4,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.4223094421036373,
+        "pr_auc": 0.9999999999999998,
+        "threshold": 0.5432200887465084,
+        "n_wrong_label": 0,
+        "fit_seconds": 5.080612362013198,
+        "n_features": 24
+      }
+    ],
+    "logreg, baseline features, within-block batch norm (TRANSDUCTIVE [R303], never the headline)": [
+      {
+        "seed": 0,
+        "block": 0,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 0.9545454545454546,
+        "soft_recall": 0.9545454545454546,
+        "soft_precision": 0.9545454545454546,
+        "n_misses": 1,
+        "n_false_positives": 1,
+        "oracle_macro_f1": 0.945409429280397,
+        "margin_mean": 0.33487387348304076,
+        "pr_auc": 0.9999999999999998,
+        "threshold": 0.5016623883419413,
+        "n_wrong_label": 1,
+        "fit_seconds": 8.110640147002414,
+        "n_features": 5
+      },
+      {
+        "seed": 0,
+        "block": 1,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.1694150217703649,
+        "pr_auc": 1.0,
+        "threshold": 0.43791360528663903,
+        "n_wrong_label": 0,
+        "fit_seconds": 8.204217344988137,
+        "n_features": 5
+      },
+      {
+        "seed": 0,
+        "block": 2,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 0.9545454545454546,
+        "soft_recall": 0.9545454545454546,
+        "soft_precision": 0.9545454545454546,
+        "n_misses": 1,
+        "n_false_positives": 1,
+        "oracle_macro_f1": 0.945409429280397,
+        "margin_mean": 0.3496544531966634,
+        "pr_auc": 0.9999999999999998,
+        "threshold": 0.2310093006897055,
+        "n_wrong_label": 1,
+        "fit_seconds": 7.712164289026987,
+        "n_features": 5
+      },
+      {
+        "seed": 0,
+        "block": 3,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.23793050603252464,
+        "pr_auc": 1.0,
+        "threshold": 0.4583719491353828,
+        "n_wrong_label": 0,
+        "fit_seconds": 7.720716214971617,
+        "n_features": 5
+      },
+      {
+        "seed": 0,
+        "block": 4,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.25748234055747554,
+        "pr_auc": 0.9999999999999998,
+        "threshold": 0.45828786044131525,
+        "n_wrong_label": 0,
+        "fit_seconds": 7.934980396996252,
+        "n_features": 5
+      }
+    ],
+    "logreg, baseline features, joint (not per-operation)": [
+      {
+        "seed": 0,
+        "block": 0,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 0.9545454545454546,
+        "soft_recall": 0.9545454545454546,
+        "soft_precision": 0.9545454545454546,
+        "n_misses": 1,
+        "n_false_positives": 1,
+        "oracle_macro_f1": 0.945409429280397,
+        "margin_mean": 0.4018512318982431,
+        "pr_auc": 0.9999999999999998,
+        "threshold": 0.5046726646388957,
+        "n_wrong_label": 1,
+        "fit_seconds": 4.971646137011703,
+        "n_features": 6
+      },
+      {
+        "seed": 0,
+        "block": 1,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.3505828087743485,
+        "pr_auc": 1.0,
+        "threshold": 0.324594455125646,
+        "n_wrong_label": 0,
+        "fit_seconds": 4.7587590490002185,
+        "n_features": 6
+      },
+      {
+        "seed": 0,
+        "block": 2,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.2245617428303926,
+        "pr_auc": 0.9999999999999998,
+        "threshold": 0.3874416345455492,
+        "n_wrong_label": 0,
+        "fit_seconds": 5.09947179799201,
+        "n_features": 6
+      },
+      {
+        "seed": 0,
+        "block": 3,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.26267716942404096,
+        "pr_auc": 1.0,
+        "threshold": 0.4093692169096179,
+        "n_wrong_label": 0,
+        "fit_seconds": 4.921686351997778,
+        "n_features": 6
+      },
+      {
+        "seed": 0,
+        "block": 4,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.4077455552808225,
+        "pr_auc": 0.9999999999999998,
+        "threshold": 0.3204504591122075,
+        "n_wrong_label": 0,
+        "fit_seconds": 5.009593356051482,
+        "n_features": 6
+      }
+    ],
+    "segmenter = hybrid, baseline features (whole pipeline re-run)": [
+      {
+        "seed": 0,
+        "block": 0,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 0.9090909090909091,
+        "soft_recall": 0.9090909090909091,
+        "soft_precision": 0.9090909090909091,
+        "n_misses": 2,
+        "n_false_positives": 2,
+        "oracle_macro_f1": 0.8854166666666666,
+        "margin_mean": 0.2285561075528505,
+        "pr_auc": 0.9999999999999998,
+        "threshold": 0.5059984760723677,
+        "n_wrong_label": 2,
+        "fit_seconds": 5.194656650011893,
+        "n_features": 5
+      },
+      {
+        "seed": 0,
+        "block": 1,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.18639694337336216,
+        "pr_auc": 1.0,
+        "threshold": 0.44245222463626904,
+        "n_wrong_label": 0,
+        "fit_seconds": 4.825313231965993,
+        "n_features": 5
+      },
+      {
+        "seed": 0,
+        "block": 2,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.4177453015764864,
+        "pr_auc": 0.9999999999999998,
+        "threshold": 0.2994680338314354,
+        "n_wrong_label": 0,
+        "fit_seconds": 4.91363021498546,
+        "n_features": 5
+      },
+      {
+        "seed": 0,
+        "block": 3,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.23993239839123018,
+        "pr_auc": 1.0,
+        "threshold": 0.46468397795235583,
+        "n_wrong_label": 0,
+        "fit_seconds": 4.925436122983228,
+        "n_features": 5
+      },
+      {
+        "seed": 0,
+        "block": 4,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.26090888144400093,
+        "pr_auc": 0.9999999999999998,
+        "threshold": 0.45220878962591354,
+        "n_wrong_label": 0,
+        "fit_seconds": 4.710239132982679,
+        "n_features": 5
+      }
+    ],
+    "segmenter = state, baseline features (whole pipeline re-run)": [
+      {
+        "seed": 0,
+        "block": 0,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 0.9090909090909091,
+        "soft_recall": 0.9090909090909091,
+        "soft_precision": 0.9090909090909091,
+        "n_misses": 2,
+        "n_false_positives": 2,
+        "oracle_macro_f1": 0.8854166666666666,
+        "margin_mean": 0.2285561075528505,
+        "pr_auc": 0.9999999999999998,
+        "threshold": 0.5059984760723677,
+        "n_wrong_label": 2,
+        "fit_seconds": 4.74481875699712,
+        "n_features": 5
+      },
+      {
+        "seed": 0,
+        "block": 1,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.18639694337336216,
+        "pr_auc": 1.0,
+        "threshold": 0.44245222463626904,
+        "n_wrong_label": 0,
+        "fit_seconds": 4.76032695901813,
+        "n_features": 5
+      },
+      {
+        "seed": 0,
+        "block": 2,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.4177453015764864,
+        "pr_auc": 0.9999999999999998,
+        "threshold": 0.2994680338314354,
+        "n_wrong_label": 0,
+        "fit_seconds": 5.076954533054959,
+        "n_features": 5
+      },
+      {
+        "seed": 0,
+        "block": 3,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.23993239839123018,
+        "pr_auc": 1.0,
+        "threshold": 0.46468397795235583,
+        "n_wrong_label": 0,
+        "fit_seconds": 5.095366449037101,
+        "n_features": 5
+      },
+      {
+        "seed": 0,
+        "block": 4,
+        "n_train_cycles": 88,
+        "n_true": 22,
+        "n_pred": 22,
+        "iou_f1": 1.0,
+        "soft_recall": 1.0,
+        "soft_precision": 1.0,
+        "n_misses": 0,
+        "n_false_positives": 0,
+        "oracle_macro_f1": 1.0,
+        "margin_mean": 0.26090888144400093,
+        "pr_auc": 0.9999999999999998,
+        "threshold": 0.45220878962591354,
+        "n_wrong_label": 0,
+        "fit_seconds": 5.0237671450013295,
+        "n_features": 5
+      }
+    ]
+  },
+  "segmentation": {
+    "n_train_segments": 110,
+    "n_answer_segments": 110,
+    "n_exact": 110,
+    "iou_f1_unlabelled": 1.0,
+    "n_state_segments": 110,
+    "state_iou_f1": 1.0,
+    "n_test_segments": 38
+  },
+  "n_train_cycles": 110,
+  "block_rows": [
+    [
+      0,
+      3516
+    ],
+    [
+      3516,
+      6998
+    ],
+    [
+      6998,
+      10744
+    ],
+    [
+      10744,
+      14436
+    ],
+    [
+      14436,
+      18036
+    ]
+  ],
+  "wall_seconds": 1154.712489071011,
+  "predictions_csv": "/mnt/berstorage/nebulax/results/ps3/door_predictions.csv",
+  "n_test_segments": 38,
+  "n_test_abnormal": 8,
+  "baseline_predictions_csv": "/mnt/berstorage/nebulax/results/ps3/door_predictions_baseline.csv",
+  "baseline_vs_winner_disagreements": 1
+}

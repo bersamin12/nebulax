@@ -1,0 +1,20 @@
+# gcloud builds submit uploads this source archive before Docker sees .dockerignore.
+# Keep local secrets, organiser data, environments, caches, and git history out.
+#!include:.gitignore
+.git/
+.env
+.env.*
+!.env.example
+.venv/
+.conda-app/
+data/
+readingmaterials/
+web/node_modules/
+web/dist/
+assets3d/
+tests/
+results/verify/
+results/runs/
+submission/nebulax/predictions*.zip
+**/__pycache__/
+**/*.pyc

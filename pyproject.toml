@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nebulax"
+version = "0.1.0"
+description = "NEBULA X Track 3 - predictive fault detection on rolling stock (health twin, behavioural twin, model benchmark)"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Proprietary" }
+# Deps are listed by NAME ONLY on purpose: the conda env "nebulax" is the source of
+# truth for versions and nothing in this repo may be pip/conda installed by an agent.
+dependencies = [
+    "numpy",
+    "pandas",
+    "pyarrow",
+    "scipy",
+    "scikit-learn",
+    "pyyaml",
+    "requests",
+    "ucimlrepo",
+]
+
+[project.optional-dependencies]
+models = ["lightgbm", "pyod", "aeon", "torch", "chronos-forecasting"]
+app = ["fastapi", "uvicorn", "pydantic", "anthropic", "plotly"]
+dev = ["pytest"]
+
+[tool.setuptools.packages.find]
+include = ["nebulax*"]
+namespaces = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# No editable install is allowed in this project: tests and scripts import the
+# package straight from the repo root.
+pythonpath = ["."]
+addopts = "-q --strict-markers"
+filterwarnings = ["error::FutureWarning"]

@@ -1,0 +1,40 @@
+# conda env create -f environment.yml && conda activate nebulax
+name: nebulax
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - numpy
+  - scipy
+  - pandas
+  - pyarrow
+  - scikit-learn
+  - lightgbm
+  - matplotlib
+  - plotly
+  - pyyaml
+  - tqdm
+  - pytest
+  - httpx
+  - pip
+  - pip:
+      - torch --index-url https://download.pytorch.org/whl/cu126
+      - pyod
+      - aeon
+      - chronos-forecasting
+      - fastapi
+      - "uvicorn[standard]"
+      - websockets
+      - pydantic>=2
+      - anthropic
+      - python-dotenv
+      - ucimlrepo
+      - kaggle
+      - stumpy
+      - river
+      - xgboost
+      - librosa
+      - ruptures
+      - datasets
+      # granite-tsfm (TSPulse) pins torch<2.12; install it with --no-deps after torch:
+      #   pip install --no-deps granite-tsfm

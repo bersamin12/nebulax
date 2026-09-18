@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "nebulax_version": "0.1.0",
+  "source": "sim",
+  "run_id": "pneumatic_0003",
+  "written_at": "2026-09-14T22:46:56.288046+00:00",
+  "rows": {
+    "long": 313520,
+    "features": 136,
+    "events": 982,
+    "fault_log": 1
+  },
+  "generator": "scripts/generate.py",
+  "subsystem": "pneumatic",
+  "train_id": "T04",
+  "car": 0,
+  "component_id": "apu_1",
+  "healthy": false,
+  "days": 30,
+  "scenario_seed": 1641210263,
+  "train_seed": 1674507697,
+  "store_every": 10,
+  "fault_types": [
+    "valve_leak_inlet"
+  ],
+  "elapsed_sim_s": 27.460425823010155,
+  "sample_window": {
+    "start": "2026-09-12T00:00:00+00:00",
+    "end_exclusive": "2026-09-14T00:00:00+00:00"
+  }
+}

@@ -1,0 +1,366 @@
+{
+ "ts": "2026-09-14T08:30:00Z",
+ "speed": 8640,
+ "playing": true,
+ "trains": [
+  {
+   "train_id": "T01",
+   "components": [
+    {
+     "car": 1,
+     "subsystem": "door",
+     "component_id": "door_L1",
+     "score": 3.2,
+     "threshold": 2.4,
+     "alert": true,
+     "health": "crit",
+     "model": "cusum_cycle_scalar",
+     "stale": false,
+     "top_signals": [
+      {
+       "signal": "closing_time",
+       "z": 5.1,
+       "value": 3.9
+      },
+      {
+       "signal": "i_mean_cruise",
+       "z": 3.4,
+       "value": 2.8
+      },
+      {
+       "signal": "energy_J",
+       "z": 2.2,
+       "value": 410.0
+      }
+     ]
+    },
+    {
+     "car": 5,
+     "subsystem": "door",
+     "component_id": "door_R2",
+     "score": 0.4,
+     "threshold": 2.4,
+     "alert": false,
+     "health": "ok",
+     "model": "cusum_cycle_scalar",
+     "stale": false,
+     "top_signals": []
+    },
+    {
+     "car": 3,
+     "subsystem": "pneumatic",
+     "component_id": "apu_1",
+     "score": 0.12,
+     "threshold": 0.26,
+     "alert": false,
+     "health": "ok",
+     "model": "sparse_autoencoder",
+     "stale": false,
+     "top_signals": [
+      {
+       "signal": "t_off",
+       "z": 0.8,
+       "value": 610.0
+      }
+     ]
+    },
+    {
+     "car": 1,
+     "subsystem": "bearing",
+     "component_id": "axlebox_1L",
+     "score": 1.9,
+     "threshold": 2.0,
+     "alert": false,
+     "health": "warn",
+     "model": "cusum_cycle_scalar",
+     "stale": false,
+     "top_signals": [
+      {
+       "signal": "dT_peer_same_side",
+       "z": 2.9,
+       "value": 6.4
+      },
+      {
+       "signal": "thermal_residual",
+       "z": 2.1,
+       "value": 4.1
+      }
+     ]
+    },
+    {
+     "car": 1,
+     "subsystem": "bearing",
+     "component_id": "axlebox_1R",
+     "score": 0.1,
+     "threshold": 2.0,
+     "alert": false,
+     "health": "ok",
+     "model": "cusum_cycle_scalar",
+     "stale": false,
+     "top_signals": []
+    },
+    {
+     "car": 1,
+     "subsystem": "bearing",
+     "component_id": "axlebox_2L",
+     "score": 0.1,
+     "threshold": 2.0,
+     "alert": false,
+     "health": "ok",
+     "model": "cusum_cycle_scalar",
+     "stale": false,
+     "top_signals": []
+    },
+    {
+     "car": 1,
+     "subsystem": "bearing",
+     "component_id": "axlebox_2R",
+     "score": 0.1,
+     "threshold": 2.0,
+     "alert": false,
+     "health": "ok",
+     "model": "cusum_cycle_scalar",
+     "stale": false,
+     "top_signals": []
+    },
+    {
+     "car": 1,
+     "subsystem": "bearing",
+     "component_id": "axlebox_3L",
+     "score": 0.1,
+     "threshold": 2.0,
+     "alert": false,
+     "health": "ok",
+     "model": "cusum_cycle_scalar",
+     "stale": false,
+     "top_signals": []
+    },
+    {
+     "car": 1,
+     "subsystem": "bearing",
+     "component_id": "axlebox_3R",
+     "score": 0.1,
+     "threshold": 2.0,
+     "alert": false,
+     "health": "ok",
+     "model": "cusum_cycle_scalar",
+     "stale": false,
+     "top_signals": []
+    },
+    {
+     "car": 1,
+     "subsystem": "bearing",
+     "component_id": "axlebox_4L",
+     "score": 0.1,
+     "threshold": 2.0,
+     "alert": false,
+     "health": "ok",
+     "model": "cusum_cycle_scalar",
+     "stale": false,
+     "top_signals": []
+    },
+    {
+     "car": 1,
+     "subsystem": "bearing",
+     "component_id": "axlebox_4R",
+     "score": 0.1,
+     "threshold": 2.0,
+     "alert": false,
+     "health": "ok",
+     "model": "cusum_cycle_scalar",
+     "stale": false,
+     "top_signals": []
+    },
+    {
+     "car": 5,
+     "subsystem": "bearing",
+     "component_id": "axlebox_1L",
+     "score": 0.2,
+     "threshold": 2.0,
+     "alert": false,
+     "health": "ok",
+     "model": "cusum_cycle_scalar",
+     "stale": false,
+     "top_signals": []
+    },
+    {
+     "car": 5,
+     "subsystem": "bearing",
+     "component_id": "axlebox_1R",
+     "score": 0.2,
+     "threshold": 2.0,
+     "alert": false,
+     "health": "ok",
+     "model": "cusum_cycle_scalar",
+     "stale": false,
+     "top_signals": []
+    },
+    {
+     "car": 5,
+     "subsystem": "bearing",
+     "component_id": "axlebox_2L",
+     "score": 0.2,
+     "threshold": 2.0,
+     "alert": false,
+     "health": "ok",
+     "model": "cusum_cycle_scalar",
+     "stale": false,
+     "top_signals": []
+    },
+    {
+     "car": 5,
+     "subsystem": "bearing",
+     "component_id": "axlebox_2R",
+     "score": 0.2,
+     "threshold": 2.0,
+     "alert": false,
+     "health": "ok",
+     "model": "cusum_cycle_scalar",
+     "stale": false,
+     "top_signals": []
+    },
+    {
+     "car": 5,
+     "subsystem": "bearing",
+     "component_id": "axlebox_3L",
+     "score": 0.2,
+     "threshold": 2.0,
+     "alert": false,
+     "health": "ok",
+     "model": "cusum_cycle_scalar",
+     "stale": false,
+     "top_signals": []
+    },
+    {
+     "car": 5,
+     "subsystem": "bearing",
+     "component_id": "axlebox_3R",
+     "score": 0.2,
+     "threshold": 2.0,
+     "alert": false,
+     "health": "ok",
+     "model": "cusum_cycle_scalar",
+     "stale": false,
+     "top_signals": []
+    },
+    {
+     "car": 5,
+     "subsystem": "bearing",
+     "component_id": "axlebox_4L",
+     "score": 0.2,
+     "threshold": 2.0,
+     "alert": false,
+     "health": "ok",
+     "model": "cusum_cycle_scalar",
+     "stale": false,
+     "top_signals": []
+    },
+    {
+     "car": 5,
+     "subsystem": "bearing",
+     "component_id": "axlebox_4R",
+     "score": 0.2,
+     "threshold": 2.0,
+     "alert": false,
+     "health": "ok",
+     "model": "cusum_cycle_scalar",
+     "stale": false,
+     "top_signals": []
+    }
+   ]
+  },
+  {
+   "train_id": "T02",
+   "components": [
+    {
+     "car": 6,
+     "subsystem": "door",
+     "component_id": "door_L4",
+     "score": 0.3,
+     "threshold": 2.4,
+     "alert": false,
+     "health": "ok",
+     "model": "cusum_cycle_scalar",
+     "stale": false,
+     "top_signals": []
+    },
+    {
+     "car": 3,
+     "subsystem": "pneumatic",
+     "component_id": "apu_1",
+     "score": 0.31,
+     "threshold": 0.26,
+     "alert": true,
+     "health": "crit",
+     "model": "sparse_autoencoder",
+     "stale": false,
+     "top_signals": [
+      {
+       "signal": "t_off",
+       "z": 4.2,
+       "value": 140.0
+      },
+      {
+       "signal": "duty_ratio",
+       "z": 3.9,
+       "value": 0.61
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "alerts": [
+  {
+   "episode_id": "T01-door_L1-3",
+   "train_id": "T01",
+   "car": 1,
+   "subsystem": "door",
+   "component_id": "door_L1",
+   "t_start": "2026-09-14T02:10:00Z",
+   "t_end": null,
+   "peak_score": 5.9,
+   "fault_type": "friction",
+   "lead_to_failure_h": 102.5,
+   "advisory": null
+  },
+  {
+   "episode_id": "T02-apu_1-1",
+   "train_id": "T02",
+   "car": 0,
+   "subsystem": "pneumatic",
+   "component_id": "apu_1",
+   "t_start": "2026-09-13T22:00:00Z",
+   "t_end": null,
+   "peak_score": 0.41,
+   "fault_type": "oil_leak",
+   "lead_to_failure_h": 115.7,
+   "advisory": null
+  },
+  {
+   "episode_id": "T05-axlebox_3L-1",
+   "train_id": "T05",
+   "car": 5,
+   "subsystem": "bearing",
+   "component_id": "axlebox_3L",
+   "t_start": "2026-09-12T20:00:00Z",
+   "t_end": "2026-09-13T04:00:00Z",
+   "peak_score": 3.1,
+   "fault_type": "bearing_degradation",
+   "lead_to_failure_h": 222.0,
+   "advisory": null
+  }
+ ],
+ "kpis": {
+  "open_alerts": 2,
+  "median_lead_h": 61.0,
+  "fa_per_train_day": 0.02,
+  "events_detected": 9,
+  "events_total": 14
+ },
+ "ticker": [
+  "08:29 T01 car 1 door L1 \u00b7 CUSUM 3.2 > 2.4 \u00b7 episode open 6 h",
+  "08:15 T02 APU \u00b7 SAE 0.31 > 0.26 \u00b7 episode open 10 h",
+  "04:00 T05 car 5 axlebox 3L \u00b7 episode closed after 8 h"
+ ]
+}

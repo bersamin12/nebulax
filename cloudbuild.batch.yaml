@@ -1,0 +1,6 @@
+# Build the batch worker image without the React frontend.
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args: ["build", "-f", "Dockerfile.batch", "-t", "${_IMAGE}", "."]
+images:
+  - "${_IMAGE}"

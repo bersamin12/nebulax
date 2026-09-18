@@ -1,0 +1,3666 @@
+{
+  "task": "acv",
+  "scheme": "leave-one-case-out (6 cases, exploratory)",
+  "n_cases": 6,
+  "seeds": [
+    0
+  ],
+  "git_rev": "33d00a2",
+  "feature_version": "acv-f5",
+  "metric": "rank_decay (ACV Info Kit section 4)",
+  "chance_floor": 0.6042,
+  "chance_floor_uniform": 0.5625,
+  "baseline": {
+    "row_index": 31,
+    "name": "peer_delta_hot",
+    "score": 0.9791666666666666,
+    "sd": 0.05103103630798288
+  },
+  "physics_row_index": 31,
+  "winner": {
+    "row_index": 0,
+    "name": "peer_delta_hot_loo",
+    "score": 1.0,
+    "sd": 0.0
+  },
+  "winner_selection_status": "post-hoc: selected after inspecting all six exploratory cases; not the committed artefact or headline",
+  "selected": {
+    "row_index": 31,
+    "name": "peer_delta_hot",
+    "score": 0.9791666666666666,
+    "sd": 0.05103103630798288,
+    "scheme": "pre-registered fixed rule, leave-one-case-out (6 cases, exploratory)",
+    "n_folds": 6,
+    "seeds": [0]
+  },
+  "skipped": [
+    "Virtual refrigerant charge sensor: required liquid-line/suction-line temperatures and subcooling are absent [R262][R257].",
+    "3R2C grey-box + EKF identification: non-convex per-vehicle identification is unsupported by six cases [R254][R255].",
+    "Supervised classifier / few-shot metric learning: only six labelled episodes exist [R268].",
+    "Physics-simulation hybrid: the cited rail-HVAC work addresses a different fault and a cycle model is outside budget [R267]."
+  ],
+  "wall_seconds": 4.69,
+  "wall_seconds_detail": {
+    "warm": 4.69,
+    "cold": 316.79,
+    "measured": "warm",
+    "feature_frames": 24,
+    "cache_hits": 24,
+    "feature_seconds_warm": 0.08,
+    "feature_seconds_cold": 312.18
+  },
+  "rows": [
+    {
+      "row": "peer_delta_hot_loo",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot_loo"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": true,
+      "score": 1.0,
+      "sd": 0.0,
+      "top1": 1.0,
+      "mean_rank": 1.0,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 1.0,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 1,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "peer_delta_hot_loo [all-on-rows/hot]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot_loo"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": false,
+      "score": 1.0,
+      "sd": 0.0,
+      "top1": 1.0,
+      "mean_rank": 1.0,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 1.0,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 1,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.012
+    },
+    {
+      "row": "peer_delta_hot_loo [cooling/hottest-quarter]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot_loo"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.75,
+      "cooling_only": true,
+      "score": 1.0,
+      "sd": 0.0,
+      "top1": 1.0,
+      "mean_rank": 1.0,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 1.0,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 1,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.009
+    },
+    {
+      "row": "robust_peer_z",
+      "degenerate": true,
+      "degenerate_reason": "<= 3 distinct values per case",
+      "features": [
+        "robust_peer_z"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": true,
+      "score": 1.0,
+      "sd": 0.0,
+      "top1": 1.0,
+      "mean_rank": 1.0,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 1.0,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 1,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "robust_peer_z [all-on-rows/hot]",
+      "degenerate": true,
+      "degenerate_reason": "<= 3 distinct values per case",
+      "features": [
+        "robust_peer_z"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": false,
+      "score": 1.0,
+      "sd": 0.0,
+      "top1": 1.0,
+      "mean_rank": 1.0,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 1.0,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 1,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.012
+    },
+    {
+      "row": "robust_peer_z [cooling/hottest-quarter]",
+      "degenerate": true,
+      "degenerate_reason": "<= 3 distinct values per case",
+      "features": [
+        "robust_peer_z"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.75,
+      "cooling_only": true,
+      "score": 1.0,
+      "sd": 0.0,
+      "top1": 1.0,
+      "mean_rank": 1.0,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 1.0,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 1,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.009
+    },
+    {
+      "row": "above_setpoint_frac",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "above_setpoint_frac"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "above_setpoint_frac [all-on-rows/hot]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "above_setpoint_frac"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": false,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.012
+    },
+    {
+      "row": "above_setpoint_frac [cooling/all]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "above_setpoint_frac"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.0,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "above_setpoint_frac [cooling/hottest-quarter]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "above_setpoint_frac"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.75,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "cooling_duty",
+      "degenerate": true,
+      "degenerate_reason": "constant",
+      "features": [
+        "cooling_duty"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "cooling_duty [all-on-rows/hot]",
+      "degenerate": true,
+      "degenerate_reason": "constant",
+      "features": [
+        "cooling_duty"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": false,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.011
+    },
+    {
+      "row": "cooling_duty [cooling/all]",
+      "degenerate": true,
+      "degenerate_reason": "constant",
+      "features": [
+        "cooling_duty"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.0,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "ctrl_residual",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "ctrl_residual"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "ctrl_residual [all-on-rows/hot]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "ctrl_residual"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": false,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.011
+    },
+    {
+      "row": "ctrl_residual [cooling/all]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "ctrl_residual"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.0,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "ctrl_residual_all",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "ctrl_residual_all"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "ctrl_residual_all [all-on-rows/hot]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "ctrl_residual_all"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": false,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.012
+    },
+    {
+      "row": "ctrl_residual_all [cooling/all]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "ctrl_residual_all"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.0,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "ctrl_residual_all [cooling/hottest-quarter]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "ctrl_residual_all"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.75,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.009
+    },
+    {
+      "row": "guo_residual",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "guo_residual"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "guo_residual [all-on-rows/hot]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "guo_residual"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": false,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.011
+    },
+    {
+      "row": "guo_residual [cooling/all]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "guo_residual"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.0,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "guo_residual [cooling/hottest-quarter]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "guo_residual"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.75,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.009
+    },
+    {
+      "row": "load_halved_share",
+      "degenerate": true,
+      "degenerate_reason": "constant",
+      "features": [
+        "load_halved_share"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.013
+    },
+    {
+      "row": "load_halved_share [all-on-rows/hot]",
+      "degenerate": true,
+      "degenerate_reason": "constant",
+      "features": [
+        "load_halved_share"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": false,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.011
+    },
+    {
+      "row": "load_halved_share [cooling/all]",
+      "degenerate": true,
+      "degenerate_reason": "constant",
+      "features": [
+        "load_halved_share"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.0,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "peer_delta_all",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_all"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.011
+    },
+    {
+      "row": "peer_delta_all [all-on-rows/hot]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_all"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": false,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.012
+    },
+    {
+      "row": "peer_delta_all [cooling/all]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_all"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.0,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "peer_delta_all [cooling/hottest-quarter]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_all"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.75,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.009
+    },
+    {
+      "row": "peer_delta_hot",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.058
+    },
+    {
+      "row": "peer_delta_hot [all-on-rows/hot]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": false,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.027
+    },
+    {
+      "row": "peer_delta_hot [cooling/all]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.0,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.023
+    },
+    {
+      "row": "peer_delta_hot [cooling/hottest-quarter]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.75,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.023
+    },
+    {
+      "row": "peer_delta_hot_loo [cooling/all]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot_loo"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.0,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "peer_delta_steady",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_steady"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.011
+    },
+    {
+      "row": "peer_delta_steady [all-on-rows/hot]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_steady"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": false,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.011
+    },
+    {
+      "row": "persistence_frac",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "persistence_frac"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "persistence_frac [all-on-rows/hot]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "persistence_frac"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": false,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.011
+    },
+    {
+      "row": "persistence_frac [cooling/hottest-quarter]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "persistence_frac"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.75,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.009
+    },
+    {
+      "row": "robust_peer_z [cooling/all]",
+      "degenerate": true,
+      "degenerate_reason": "<= 3 distinct values per case",
+      "features": [
+        "robust_peer_z"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.0,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "unmet_degree_min",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "unmet_degree_min"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "unmet_degree_min [all-on-rows/hot]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "unmet_degree_min"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": false,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.011
+    },
+    {
+      "row": "unmet_degree_min [cooling/all]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "unmet_degree_min"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.0,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "borda_guo_peer",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "guo_residual",
+        "peer_delta_hot"
+      ],
+      "n_features": 2,
+      "aggregation": "borda",
+      "hot_quantile": 0.5,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.016
+    },
+    {
+      "row": "borda_guo_peer [all-on-rows/hot]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "guo_residual",
+        "peer_delta_hot"
+      ],
+      "n_features": 2,
+      "aggregation": "borda",
+      "hot_quantile": 0.5,
+      "cooling_only": false,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.018
+    },
+    {
+      "row": "borda_guo_peer [cooling/all]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "guo_residual",
+        "peer_delta_hot"
+      ],
+      "n_features": 2,
+      "aggregation": "borda",
+      "hot_quantile": 0.0,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.017
+    },
+    {
+      "row": "borda_guo_peer [cooling/hottest-quarter]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "guo_residual",
+        "peer_delta_hot"
+      ],
+      "n_features": 2,
+      "aggregation": "borda",
+      "hot_quantile": 0.75,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.015
+    },
+    {
+      "row": "borda_peer_ctrl",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot",
+        "ctrl_residual"
+      ],
+      "n_features": 2,
+      "aggregation": "borda",
+      "hot_quantile": 0.5,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.016
+    },
+    {
+      "row": "borda_peer_ctrl [all-on-rows/hot]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot",
+        "ctrl_residual"
+      ],
+      "n_features": 2,
+      "aggregation": "borda",
+      "hot_quantile": 0.5,
+      "cooling_only": false,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.018
+    },
+    {
+      "row": "borda_peer_ctrl [cooling/all]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot",
+        "ctrl_residual"
+      ],
+      "n_features": 2,
+      "aggregation": "borda",
+      "hot_quantile": 0.0,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.016
+    },
+    {
+      "row": "borda_peer_ctrl [cooling/hottest-quarter]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot",
+        "ctrl_residual"
+      ],
+      "n_features": 2,
+      "aggregation": "borda",
+      "hot_quantile": 0.75,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.015
+    },
+    {
+      "row": "selected (nested, open pool (all 26 rankers))",
+      "features": [
+        "peer_delta_hot_loo",
+        "peer_delta_steady"
+      ],
+      "n_features": 2,
+      "aggregation": "per-fold",
+      "hot_quantile": 0.5,
+      "cooling_only": true,
+      "nested": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 2.685,
+      "chosen_per_fold": {
+        "acv_case_01.xlsx": "peer_delta_hot_loo",
+        "acv_case_02.xlsx": "peer_delta_hot_loo",
+        "acv_case_03.xlsx": "peer_delta_hot_loo",
+        "acv_case_04.xlsx": "peer_delta_steady",
+        "acv_case_05.xlsx": "peer_delta_hot_loo",
+        "acv_case_06.xlsx": "peer_delta_hot_loo"
+      },
+      "n_candidates": 26,
+      "tied_at_top_per_fold": {
+        "acv_case_01.xlsx": 2,
+        "acv_case_02.xlsx": 2,
+        "acv_case_03.xlsx": 2,
+        "acv_case_04.xlsx": 21,
+        "acv_case_05.xlsx": 2,
+        "acv_case_06.xlsx": 3
+      },
+      "separation_per_fold": {
+        "acv_case_01.xlsx": 4.488,
+        "acv_case_02.xlsx": 5.588591,
+        "acv_case_03.xlsx": 4.975441,
+        "acv_case_04.xlsx": 9.036702,
+        "acv_case_05.xlsx": 5.623755,
+        "acv_case_06.xlsx": 2.983509
+      }
+    },
+    {
+      "row": "selected (nested, selection pool (peer family, 5))",
+      "features": [
+        "peer_delta_hot_loo",
+        "peer_delta_steady"
+      ],
+      "n_features": 2,
+      "aggregation": "per-fold",
+      "hot_quantile": 0.5,
+      "cooling_only": true,
+      "nested": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.519,
+      "chosen_per_fold": {
+        "acv_case_01.xlsx": "peer_delta_hot_loo",
+        "acv_case_02.xlsx": "peer_delta_hot_loo",
+        "acv_case_03.xlsx": "peer_delta_hot_loo",
+        "acv_case_04.xlsx": "peer_delta_steady",
+        "acv_case_05.xlsx": "peer_delta_hot_loo",
+        "acv_case_06.xlsx": "peer_delta_hot_loo"
+      },
+      "n_candidates": 5,
+      "tied_at_top_per_fold": {
+        "acv_case_01.xlsx": 3,
+        "acv_case_02.xlsx": 3,
+        "acv_case_03.xlsx": 3,
+        "acv_case_04.xlsx": 5,
+        "acv_case_05.xlsx": 3,
+        "acv_case_06.xlsx": 3
+      },
+      "separation_per_fold": {
+        "acv_case_01.xlsx": 4.488,
+        "acv_case_02.xlsx": 5.588591,
+        "acv_case_03.xlsx": 4.975441,
+        "acv_case_04.xlsx": 9.036702,
+        "acv_case_05.xlsx": 5.623755,
+        "acv_case_06.xlsx": 2.983509
+      }
+    },
+    {
+      "row": "zsum_guo_peer",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "guo_residual",
+        "peer_delta_hot"
+      ],
+      "n_features": 2,
+      "aggregation": "zsum",
+      "hot_quantile": 0.5,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.017
+    },
+    {
+      "row": "zsum_guo_peer [all-on-rows/hot]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "guo_residual",
+        "peer_delta_hot"
+      ],
+      "n_features": 2,
+      "aggregation": "zsum",
+      "hot_quantile": 0.5,
+      "cooling_only": false,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.016
+    },
+    {
+      "row": "zsum_guo_peer [cooling/all]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "guo_residual",
+        "peer_delta_hot"
+      ],
+      "n_features": 2,
+      "aggregation": "zsum",
+      "hot_quantile": 0.0,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.02
+    },
+    {
+      "row": "zsum_guo_peer [cooling/hottest-quarter]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "guo_residual",
+        "peer_delta_hot"
+      ],
+      "n_features": 2,
+      "aggregation": "zsum",
+      "hot_quantile": 0.75,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.016
+    },
+    {
+      "row": "zsum_peer_ctrl",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot",
+        "ctrl_residual"
+      ],
+      "n_features": 2,
+      "aggregation": "zsum",
+      "hot_quantile": 0.5,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.017
+    },
+    {
+      "row": "zsum_peer_ctrl [all-on-rows/hot]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot",
+        "ctrl_residual"
+      ],
+      "n_features": 2,
+      "aggregation": "zsum",
+      "hot_quantile": 0.5,
+      "cooling_only": false,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.016
+    },
+    {
+      "row": "zsum_peer_ctrl [cooling/all]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot",
+        "ctrl_residual"
+      ],
+      "n_features": 2,
+      "aggregation": "zsum",
+      "hot_quantile": 0.0,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.017
+    },
+    {
+      "row": "zsum_peer_ctrl [cooling/hottest-quarter]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot",
+        "ctrl_residual"
+      ],
+      "n_features": 2,
+      "aggregation": "zsum",
+      "hot_quantile": 0.75,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.016
+    },
+    {
+      "row": "borda_peer_ctrl_unmet",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot",
+        "ctrl_residual",
+        "unmet_degree_min"
+      ],
+      "n_features": 3,
+      "aggregation": "borda",
+      "hot_quantile": 0.5,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.019
+    },
+    {
+      "row": "borda_peer_ctrl_unmet [all-on-rows/hot]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot",
+        "ctrl_residual",
+        "unmet_degree_min"
+      ],
+      "n_features": 3,
+      "aggregation": "borda",
+      "hot_quantile": 0.5,
+      "cooling_only": false,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.022
+    },
+    {
+      "row": "borda_peer_ctrl_unmet [cooling/all]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot",
+        "ctrl_residual",
+        "unmet_degree_min"
+      ],
+      "n_features": 3,
+      "aggregation": "borda",
+      "hot_quantile": 0.0,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.02
+    },
+    {
+      "row": "borda_peer_ctrl_unmet [cooling/hottest-quarter]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot",
+        "ctrl_residual",
+        "unmet_degree_min"
+      ],
+      "n_features": 3,
+      "aggregation": "borda",
+      "hot_quantile": 0.75,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.018
+    },
+    {
+      "row": "zsum_peer_ctrl_unmet",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot",
+        "ctrl_residual",
+        "unmet_degree_min"
+      ],
+      "n_features": 3,
+      "aggregation": "zsum",
+      "hot_quantile": 0.5,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.021
+    },
+    {
+      "row": "zsum_peer_ctrl_unmet [all-on-rows/hot]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot",
+        "ctrl_residual",
+        "unmet_degree_min"
+      ],
+      "n_features": 3,
+      "aggregation": "zsum",
+      "hot_quantile": 0.5,
+      "cooling_only": false,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.021
+    },
+    {
+      "row": "zsum_peer_ctrl_unmet [cooling/all]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot",
+        "ctrl_residual",
+        "unmet_degree_min"
+      ],
+      "n_features": 3,
+      "aggregation": "zsum",
+      "hot_quantile": 0.0,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.025
+    },
+    {
+      "row": "zsum_peer_ctrl_unmet [cooling/hottest-quarter]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot",
+        "ctrl_residual",
+        "unmet_degree_min"
+      ],
+      "n_features": 3,
+      "aggregation": "zsum",
+      "hot_quantile": 0.75,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.02
+    },
+    {
+      "row": "borda_all_five",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot",
+        "ctrl_residual",
+        "unmet_degree_min",
+        "guo_residual",
+        "pulldown_penalty"
+      ],
+      "n_features": 5,
+      "aggregation": "borda",
+      "hot_quantile": 0.5,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.025
+    },
+    {
+      "row": "borda_all_five [all-on-rows/hot]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot",
+        "ctrl_residual",
+        "unmet_degree_min",
+        "guo_residual",
+        "pulldown_penalty"
+      ],
+      "n_features": 5,
+      "aggregation": "borda",
+      "hot_quantile": 0.5,
+      "cooling_only": false,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.024
+    },
+    {
+      "row": "borda_all_five [cooling/all]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot",
+        "ctrl_residual",
+        "unmet_degree_min",
+        "guo_residual",
+        "pulldown_penalty"
+      ],
+      "n_features": 5,
+      "aggregation": "borda",
+      "hot_quantile": 0.0,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.026
+    },
+    {
+      "row": "borda_all_five [cooling/hottest-quarter]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot",
+        "ctrl_residual",
+        "unmet_degree_min",
+        "guo_residual",
+        "pulldown_penalty"
+      ],
+      "n_features": 5,
+      "aggregation": "borda",
+      "hot_quantile": 0.75,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.024
+    },
+    {
+      "row": "zsum_all_five",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot",
+        "ctrl_residual",
+        "unmet_degree_min",
+        "guo_residual",
+        "pulldown_penalty"
+      ],
+      "n_features": 5,
+      "aggregation": "zsum",
+      "hot_quantile": 0.5,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.028
+    },
+    {
+      "row": "zsum_all_five [all-on-rows/hot]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot",
+        "ctrl_residual",
+        "unmet_degree_min",
+        "guo_residual",
+        "pulldown_penalty"
+      ],
+      "n_features": 5,
+      "aggregation": "zsum",
+      "hot_quantile": 0.5,
+      "cooling_only": false,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.027
+    },
+    {
+      "row": "zsum_all_five [cooling/hottest-quarter]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot",
+        "ctrl_residual",
+        "unmet_degree_min",
+        "guo_residual",
+        "pulldown_penalty"
+      ],
+      "n_features": 5,
+      "aggregation": "zsum",
+      "hot_quantile": 0.75,
+      "cooling_only": true,
+      "score": 0.9791666666666666,
+      "sd": 0.05103103630798288,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.1666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.027
+    },
+    {
+      "row": "cooling_duty [cooling/hottest-quarter]",
+      "degenerate": true,
+      "degenerate_reason": "constant",
+      "features": [
+        "cooling_duty"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.75,
+      "cooling_only": true,
+      "score": 0.9583333333333334,
+      "sd": 0.10206207261596574,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.3333333333333333,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.75,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 3,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "ctrl_residual [cooling/hottest-quarter]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "ctrl_residual"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.75,
+      "cooling_only": true,
+      "score": 0.9583333333333334,
+      "sd": 0.10206207261596574,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.3333333333333333,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.75,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 3,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.009
+    },
+    {
+      "row": "load_halved_share [cooling/hottest-quarter]",
+      "degenerate": true,
+      "degenerate_reason": "constant",
+      "features": [
+        "load_halved_share"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.75,
+      "cooling_only": true,
+      "score": 0.9583333333333334,
+      "sd": 0.10206207261596574,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.3333333333333333,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.75,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 3,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.009
+    },
+    {
+      "row": "peer_delta_steady [cooling/hottest-quarter]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_steady"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.75,
+      "cooling_only": true,
+      "score": 0.9583333333333334,
+      "sd": 0.10206207261596574,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.3333333333333333,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.75,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 3,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.009
+    },
+    {
+      "row": "unmet_degree_min [cooling/hottest-quarter]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "unmet_degree_min"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.75,
+      "cooling_only": true,
+      "score": 0.9583333333333334,
+      "sd": 0.10206207261596574,
+      "top1": 0.8333333333333334,
+      "mean_rank": 1.3333333333333333,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.75,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 3,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.009
+    },
+    {
+      "row": "peer_delta_steady [cooling/all]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_steady"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.0,
+      "cooling_only": true,
+      "score": 0.9583333333333334,
+      "sd": 0.06454972243679027,
+      "top1": 0.6666666666666666,
+      "mean_rank": 1.3333333333333333,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 0.875,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 2,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "persistence_frac [cooling/all]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "persistence_frac"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.0,
+      "cooling_only": true,
+      "score": 0.9583333333333334,
+      "sd": 0.06454972243679027,
+      "top1": 0.6666666666666666,
+      "mean_rank": 1.3333333333333333,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 0.875,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 2,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "zsum_all_five [cooling/all]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_hot",
+        "ctrl_residual",
+        "unmet_degree_min",
+        "guo_residual",
+        "pulldown_penalty"
+      ],
+      "n_features": 5,
+      "aggregation": "zsum",
+      "hot_quantile": 0.0,
+      "cooling_only": true,
+      "score": 0.9375,
+      "sd": 0.10458250331675945,
+      "top1": 0.6666666666666666,
+      "mean_rank": 1.5,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.875,
+        "acv_case_05.xlsx": 0.75,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 2,
+        "acv_case_05.xlsx": 3,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.032
+    },
+    {
+      "row": "guo_index",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "guo_index"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": true,
+      "score": 0.9166666666666666,
+      "sd": 0.15138251770487457,
+      "top1": 0.6666666666666666,
+      "mean_rank": 1.6666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.625,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 0.875
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 4,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 2
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "guo_index [all-on-rows/hot]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "guo_index"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": false,
+      "score": 0.9166666666666666,
+      "sd": 0.15138251770487457,
+      "top1": 0.6666666666666666,
+      "mean_rank": 1.6666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.625,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 0.875
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 4,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 2
+      },
+      "fit_seconds": 0.011
+    },
+    {
+      "row": "guo_index [cooling/all]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "guo_index"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.0,
+      "cooling_only": true,
+      "score": 0.9166666666666666,
+      "sd": 0.15138251770487457,
+      "top1": 0.6666666666666666,
+      "mean_rank": 1.6666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.625,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 0.875
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 4,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 2
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "guo_index [cooling/hottest-quarter]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "guo_index"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.75,
+      "cooling_only": true,
+      "score": 0.9166666666666666,
+      "sd": 0.15138251770487457,
+      "top1": 0.6666666666666666,
+      "mean_rank": 1.6666666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.625,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 0.875
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 4,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 2
+      },
+      "fit_seconds": 0.009
+    },
+    {
+      "row": "mode_switch_rate",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "mode_switch_rate"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": true,
+      "score": 0.875,
+      "sd": 0.30618621784789724,
+      "top1": 0.8333333333333334,
+      "mean_rank": 2.0,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 1.0,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 0.25
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 1,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 7
+      },
+      "fit_seconds": 0.011
+    },
+    {
+      "row": "mode_switch_rate [all-on-rows/hot]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "mode_switch_rate"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": false,
+      "score": 0.875,
+      "sd": 0.30618621784789724,
+      "top1": 0.8333333333333334,
+      "mean_rank": 2.0,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 1.0,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 0.25
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 1,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 7
+      },
+      "fit_seconds": 0.011
+    },
+    {
+      "row": "mode_switch_rate [cooling/all]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "mode_switch_rate"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.0,
+      "cooling_only": true,
+      "score": 0.875,
+      "sd": 0.30618621784789724,
+      "top1": 0.8333333333333334,
+      "mean_rank": 2.0,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 1.0,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 0.25
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 1,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 7
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "mode_switch_rate [cooling/hottest-quarter]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "mode_switch_rate"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.75,
+      "cooling_only": true,
+      "score": 0.875,
+      "sd": 0.30618621784789724,
+      "top1": 0.8333333333333334,
+      "mean_rank": 2.0,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 1.0,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 0.25
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 1,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 7
+      },
+      "fit_seconds": 0.009
+    },
+    {
+      "row": "peer_delta_trend [cooling/hottest-quarter]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_trend"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.75,
+      "cooling_only": true,
+      "score": 0.7916666666666666,
+      "sd": 0.3415650255319866,
+      "top1": 0.5,
+      "mean_rank": 2.6666666666666665,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 0.875,
+        "acv_case_03.xlsx": 0.125,
+        "acv_case_04.xlsx": 0.75,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 1.0
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 2,
+        "acv_case_03.xlsx": 8,
+        "acv_case_04.xlsx": 3,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 1
+      },
+      "fit_seconds": 0.009
+    },
+    {
+      "row": "peer_delta_trend",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_trend"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": true,
+      "score": 0.7083333333333334,
+      "sd": 0.37638632635454056,
+      "top1": 0.5,
+      "mean_rank": 3.3333333333333335,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 0.125,
+        "acv_case_04.xlsx": 0.75,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 0.375
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 8,
+        "acv_case_04.xlsx": 3,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 6
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "peer_delta_trend [all-on-rows/hot]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_trend"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": false,
+      "score": 0.7083333333333334,
+      "sd": 0.37638632635454056,
+      "top1": 0.5,
+      "mean_rank": 3.3333333333333335,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 0.125,
+        "acv_case_04.xlsx": 0.75,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 0.375
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 8,
+        "acv_case_04.xlsx": 3,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 6
+      },
+      "fit_seconds": 0.011
+    },
+    {
+      "row": "full_cooling_duty",
+      "degenerate": true,
+      "degenerate_reason": "<= 3 distinct values per case",
+      "features": [
+        "full_cooling_duty"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": true,
+      "score": 0.6875,
+      "sd": 0.3235544776386196,
+      "top1": 0.3333333333333333,
+      "mean_rank": 3.5,
+      "per_file": {
+        "acv_case_01.xlsx": 0.875,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.625,
+        "acv_case_05.xlsx": 0.375,
+        "acv_case_06.xlsx": 0.25
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 2,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 4,
+        "acv_case_05.xlsx": 6,
+        "acv_case_06.xlsx": 7
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "full_cooling_duty [all-on-rows/hot]",
+      "degenerate": true,
+      "degenerate_reason": "<= 3 distinct values per case",
+      "features": [
+        "full_cooling_duty"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": false,
+      "score": 0.6875,
+      "sd": 0.3235544776386196,
+      "top1": 0.3333333333333333,
+      "mean_rank": 3.5,
+      "per_file": {
+        "acv_case_01.xlsx": 0.875,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.625,
+        "acv_case_05.xlsx": 0.375,
+        "acv_case_06.xlsx": 0.25
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 2,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 4,
+        "acv_case_05.xlsx": 6,
+        "acv_case_06.xlsx": 7
+      },
+      "fit_seconds": 0.012
+    },
+    {
+      "row": "full_cooling_duty [cooling/all]",
+      "degenerate": true,
+      "degenerate_reason": "<= 3 distinct values per case",
+      "features": [
+        "full_cooling_duty"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.0,
+      "cooling_only": true,
+      "score": 0.6875,
+      "sd": 0.3235544776386196,
+      "top1": 0.3333333333333333,
+      "mean_rank": 3.5,
+      "per_file": {
+        "acv_case_01.xlsx": 0.875,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.625,
+        "acv_case_05.xlsx": 0.375,
+        "acv_case_06.xlsx": 0.25
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 2,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 4,
+        "acv_case_05.xlsx": 6,
+        "acv_case_06.xlsx": 7
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "full_cooling_duty [cooling/hottest-quarter]",
+      "degenerate": true,
+      "degenerate_reason": "<= 3 distinct values per case",
+      "features": [
+        "full_cooling_duty"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.75,
+      "cooling_only": true,
+      "score": 0.6875,
+      "sd": 0.3235544776386196,
+      "top1": 0.3333333333333333,
+      "mean_rank": 3.5,
+      "per_file": {
+        "acv_case_01.xlsx": 0.875,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 1.0,
+        "acv_case_04.xlsx": 0.625,
+        "acv_case_05.xlsx": 0.375,
+        "acv_case_06.xlsx": 0.25
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 2,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 1,
+        "acv_case_04.xlsx": 4,
+        "acv_case_05.xlsx": 6,
+        "acv_case_06.xlsx": 7
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "peer_delta_trend [cooling/all]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "peer_delta_trend"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.0,
+      "cooling_only": true,
+      "score": 0.6666666666666666,
+      "sd": 0.4306003560921271,
+      "top1": 0.5,
+      "mean_rank": 3.6666666666666665,
+      "per_file": {
+        "acv_case_01.xlsx": 1.0,
+        "acv_case_02.xlsx": 1.0,
+        "acv_case_03.xlsx": 0.125,
+        "acv_case_04.xlsx": 0.75,
+        "acv_case_05.xlsx": 1.0,
+        "acv_case_06.xlsx": 0.125
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 1,
+        "acv_case_02.xlsx": 1,
+        "acv_case_03.xlsx": 8,
+        "acv_case_04.xlsx": 3,
+        "acv_case_05.xlsx": 1,
+        "acv_case_06.xlsx": 8
+      },
+      "fit_seconds": 0.011
+    },
+    {
+      "row": "pulldown_penalty",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "pulldown_penalty"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": true,
+      "score": 0.3541666666666667,
+      "sd": 0.3572172541558802,
+      "top1": 0.0,
+      "mean_rank": 6.166666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 0.125,
+        "acv_case_02.xlsx": 0.875,
+        "acv_case_03.xlsx": 0.125,
+        "acv_case_04.xlsx": 0.75,
+        "acv_case_05.xlsx": 0.125,
+        "acv_case_06.xlsx": 0.125
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 8,
+        "acv_case_02.xlsx": 2,
+        "acv_case_03.xlsx": 8,
+        "acv_case_04.xlsx": 3,
+        "acv_case_05.xlsx": 8,
+        "acv_case_06.xlsx": 8
+      },
+      "fit_seconds": 0.012
+    },
+    {
+      "row": "pulldown_penalty [all-on-rows/hot]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "pulldown_penalty"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.5,
+      "cooling_only": false,
+      "score": 0.3541666666666667,
+      "sd": 0.3572172541558802,
+      "top1": 0.0,
+      "mean_rank": 6.166666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 0.125,
+        "acv_case_02.xlsx": 0.875,
+        "acv_case_03.xlsx": 0.125,
+        "acv_case_04.xlsx": 0.75,
+        "acv_case_05.xlsx": 0.125,
+        "acv_case_06.xlsx": 0.125
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 8,
+        "acv_case_02.xlsx": 2,
+        "acv_case_03.xlsx": 8,
+        "acv_case_04.xlsx": 3,
+        "acv_case_05.xlsx": 8,
+        "acv_case_06.xlsx": 8
+      },
+      "fit_seconds": 0.012
+    },
+    {
+      "row": "pulldown_penalty [cooling/all]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "pulldown_penalty"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.0,
+      "cooling_only": true,
+      "score": 0.3541666666666667,
+      "sd": 0.3572172541558802,
+      "top1": 0.0,
+      "mean_rank": 6.166666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 0.125,
+        "acv_case_02.xlsx": 0.875,
+        "acv_case_03.xlsx": 0.125,
+        "acv_case_04.xlsx": 0.75,
+        "acv_case_05.xlsx": 0.125,
+        "acv_case_06.xlsx": 0.125
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 8,
+        "acv_case_02.xlsx": 2,
+        "acv_case_03.xlsx": 8,
+        "acv_case_04.xlsx": 3,
+        "acv_case_05.xlsx": 8,
+        "acv_case_06.xlsx": 8
+      },
+      "fit_seconds": 0.01
+    },
+    {
+      "row": "pulldown_penalty [cooling/hottest-quarter]",
+      "degenerate": false,
+      "degenerate_reason": null,
+      "features": [
+        "pulldown_penalty"
+      ],
+      "n_features": 1,
+      "aggregation": "single",
+      "hot_quantile": 0.75,
+      "cooling_only": true,
+      "score": 0.3541666666666667,
+      "sd": 0.3572172541558802,
+      "top1": 0.0,
+      "mean_rank": 6.166666666666667,
+      "per_file": {
+        "acv_case_01.xlsx": 0.125,
+        "acv_case_02.xlsx": 0.875,
+        "acv_case_03.xlsx": 0.125,
+        "acv_case_04.xlsx": 0.75,
+        "acv_case_05.xlsx": 0.125,
+        "acv_case_06.xlsx": 0.125
+      },
+      "ranks": {
+        "acv_case_01.xlsx": 8,
+        "acv_case_02.xlsx": 2,
+        "acv_case_03.xlsx": 8,
+        "acv_case_04.xlsx": 3,
+        "acv_case_05.xlsx": 8,
+        "acv_case_06.xlsx": 8
+      },
+      "fit_seconds": 0.009
+    }
+  ]
+}

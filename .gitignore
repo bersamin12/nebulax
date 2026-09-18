@@ -1,0 +1,28 @@
+data/
+*.blend1
+__pycache__/
+*.pyc
+.env
+node_modules/
+web/dist/
+results/runs/
+.venv/
+.conda-app/
+results/verify/
+
+# verifier scratch scripts and their caches (Codex / Opus audit runs write here)
+results/splits/
+results/runs_smoke*/
+results/*.log
+web/dist/
+
+# reading materials and problem statement
+readingmaterials/*
+!readingmaterials/problem_statement/
+readingmaterials/problem_statement/*
+!readingmaterials/problem_statement/PS3/
+readingmaterials/problem_statement/PS3/*
+!readingmaterials/problem_statement/PS3/01_Problem_Statement_3_Specifications.md
+!readingmaterials/problem_statement/PS3/03_References/
+!readingmaterials/problem_statement/PS3/04_Example_Submission/
+submission/nebulax/app/data/

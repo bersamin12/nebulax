@@ -1,0 +1,39 @@
+{
+  "task": "acv",
+  "git_rev": "33d00a2",
+  "saved_at": "2026-09-17T14:23:54+00:00",
+  "bytes": 257,
+  "cv": {
+    "scheme": "leave-one-case-out (6 cases, exploratory)",
+    "score": 0.9791666666666666,
+    "sd": 0.05103103630798288,
+    "top1": 0.8333333333333334,
+    "folds": 6
+  },
+  "feature_version": "acv-f5",
+  "ranker": {
+    "features": [
+      "peer_delta_hot"
+    ],
+    "weights": [
+      1.0
+    ],
+    "aggregation": "single",
+    "tie_break": [
+      "ctrl_residual"
+    ],
+    "hot_quantile": 0.5,
+    "cooling_only": true,
+    "feature_version": "acv-f5",
+    "name": "baseline_peer_delta_hot",
+    "trained_on": [
+      "acv_case_01.xlsx",
+      "acv_case_02.xlsx",
+      "acv_case_03.xlsx",
+      "acv_case_04.xlsx",
+      "acv_case_05.xlsx",
+      "acv_case_06.xlsx"
+    ],
+    "cv": {}
+  }
+}

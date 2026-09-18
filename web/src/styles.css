@@ -1,0 +1,263 @@
+/* NEBULA X light console. PMS 2746C blue / PMS 321C teal are approximated for screens. */
+
+:root {
+  --ground: #f4f7f8;
+  --panel: #ffffff;
+  --panel2: #f8fafb;
+  --panel3: #eef3f5;
+  --line: #dce5e9;
+  --line2: #bdcbd2;
+  --grid: #eaf0f2;
+  --text: #1d2633;
+  --text2: #344454;
+  --dim: #526273;
+  --dim2: #64748b;
+  --accent: #008f95;
+  --accent-bright: #006d73;
+  --accent-bg: #e4f4f3;
+  --violet: #1f2374;
+  --violet-bright: #1f2374;
+  --ok: #1f8059;
+  --warn: #a66500;
+  --crit: #c43d36;
+  --mono: 'IBM Plex Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+  --sans: 'IBM Plex Sans', 'Segoe UI', Tahoma, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--ground);
+}
+
+body {
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 12px;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+/* ---- fixed console, scaled (never reflowed) ---- */
+.nx-stage {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e6eef1;
+}
+.nx-console {
+  width: 1440px;
+  height: 900px;
+  overflow: hidden;
+  background: var(--ground);
+  color: var(--text);
+  font-family: var(--sans);
+  display: flex;
+  flex-direction: column;
+  transform-origin: top left;
+}
+
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+/* ---- chips ---- */
+.nx-chip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 26px;
+  padding: 0 11px;
+  border: 1px solid var(--line2);
+  background: var(--panel3);
+  color: var(--text);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.nx-chip--accent {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  color: var(--accent-bright);
+  font-weight: 600;
+}
+.nx-tag {
+  padding: 1px 7px;
+  border: 1px solid var(--line2);
+  color: var(--violet);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  white-space: nowrap;
+}
+
+/* ---- native select styled as a console chip ---- */
+.nx-select {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 26px;
+  padding: 0 26px 0 11px;
+  border: 1px solid var(--accent);
+  background: var(--accent-bg)
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23006d73' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>")
+    no-repeat right 8px center;
+  color: var(--accent-bright);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+.nx-select:focus-visible { outline: 1px solid var(--accent-bright); outline-offset: 1px; }
+.nx-select option { background: var(--panel2); color: var(--text); }
+
+/* ---- alert ticker ---- */
+.nx-ticker-window { flex: 1 1 auto; overflow: hidden; min-width: 0; }
+.nx-ticker-rail {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  animation: nx-ticker-scroll linear infinite;
+}
+.nx-ticker-run { display: flex; align-items: center; gap: 26px; padding-right: 26px; }
+@keyframes nx-ticker-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nx-ticker-rail { animation: none; }
+}
+
+/* ---- subsystem lanes ---- */
+.nx-lane {
+  height: 144px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  padding: 8px 10px;
+}
+.nx-lane-grid {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  min-height: 0;
+}
+.nx-cell {
+  display: flex;
+  flex-direction: column;
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--line2);
+  padding: 7px 8px;
+  min-width: 0;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.nx-cell:hover { background: #edf7f7; }
+.nx-cell--nodata { cursor: default; }
+.nx-cell--nodata:hover { background: var(--panel2); }
+.nx-cell--sel { outline: 1px solid var(--accent-bright); outline-offset: -1px; }
+.nx-cell:focus-visible { outline: 1px solid var(--accent-bright); outline-offset: -1px; }
+
+/* ---- generic buttons ---- */
+.nx-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 22px;
+  padding: 0 10px;
+  border: 1px solid var(--violet);
+  background: #eef0fc;
+  color: var(--violet-bright);
+  font-family: var(--sans);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+}
+.nx-btn:hover { background: #e3e6fb; }
+.nx-btn[disabled] { opacity: 0.5; cursor: default; }
+
+/* Keep the file controls native and visible so Firefox owns the entire picker interaction. */
+.nx-file-pick-input {
+  width: 150px;
+  min-width: 0;
+  height: 27px;
+  font-size: 10px;
+  color: var(--text2);
+  cursor: pointer;
+}
+.nx-file-pick-input::file-selector-button {
+  height: 26px;
+  margin-right: 5px;
+  padding: 0 9px;
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  background: var(--accent-bg);
+  color: var(--accent-bright);
+  font: 600 10px var(--sans);
+  cursor: pointer;
+}
+.nx-file-pick-input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+/* ---- scrollbars inside panels ---- */
+.nx-scroll { overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--line2) transparent; }
+.nx-scroll::-webkit-scrollbar { width: 6px; }
+.nx-scroll::-webkit-scrollbar-thumb { background: var(--line2); }
+
+.nx-kv { display: grid; grid-template-columns: 1.6fr 0.75fr 0.65fr; gap: 4px; }
+
+/* SVG chart labels use tabular figures like the rest of the console. */
+svg text { font-variant-numeric: tabular-nums; }
+
+/* ---- PS3 predict page (web/src/predict/) ---- */
+.nx-predict-table tbody tr:hover { background: #edf7f7; }
+.nx-predict-table th { user-select: none; }
+/* a disabled <a> download link keeps the button shape but stops being a link */
+a.nx-btn[aria-disabled="true"] { cursor: default; }
+
+.nx-filter, .nx-inline-link {
+  border: 1px solid var(--line2);
+  background: var(--panel);
+  color: var(--accent-bright);
+  padding: 4px 8px;
+  font: 700 9px/1 var(--sans);
+  letter-spacing: .08em;
+  cursor: pointer;
+}
+.nx-filter:hover, .nx-inline-link:hover { background: var(--accent-bg); }
+.nx-filter:focus-visible, .nx-inline-link:focus-visible,
+.nx-car-rank:focus-visible, .nx-source-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.nx-system-grid { max-height: 198px; overflow-y: auto; scrollbar-width: thin; }
+.nx-ranked-cars { display: flex; gap: 3px; flex-wrap: wrap; }
+.nx-car-rank {
+  border: 1px solid var(--line2);
+  border-radius: 4px;
+  background: var(--panel);
+  padding: 2px 5px;
+  font: 600 10px/1.3 var(--mono);
+  cursor: pointer;
+}
+.nx-car-rank small { font-size: 8px; color: var(--dim); }
+.nx-car-rank:hover, .nx-car-rank.is-selected { background: var(--accent-bg); border-color: var(--accent); }
+.nx-car-detail { display: flex; flex-direction: column; gap: 3px; padding: 9px; margin-bottom: 9px; border: 1px solid var(--line); background: var(--accent-bg); color: var(--text2); }
+.nx-car-detail strong { color: var(--accent-bright); }
+.nx-info-card { background: var(--panel); border: 1px solid var(--line); color: var(--text2); }
+.nx-info-card h2 { color: var(--text); font-size: 17px; margin: 9px 0; line-height: 1.2; }
+.nx-info-card p { font-size: 11px; line-height: 1.55; margin: 8px 0 15px; }
+.nx-eyebrow { color: var(--accent-bright); font-size: 9px; font-weight: 700; letter-spacing: .16em; }
+.nx-info-badge { display: inline-block; color: var(--violet); background: #eef0fc; border: 1px solid #c7cdef; padding: 6px 8px; font-size: 9px; font-weight: 700; letter-spacing: .05em; }
+.nx-dataset-fact { display: flex; flex-direction: column; gap: 4px; padding: 10px 0; border-bottom: 1px solid var(--grid); font-size: 11px; }
+.nx-dataset-fact span { color: var(--dim); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
+.nx-dataset-fact strong { color: var(--text); font-weight: 600; line-height: 1.4; }
+.nx-source-link { display: inline-flex; margin-top: 18px; color: var(--accent-bright); font-size: 10px; font-weight: 700; letter-spacing: .08em; text-decoration: none; }
+.nx-source-link:hover { text-decoration: underline; }

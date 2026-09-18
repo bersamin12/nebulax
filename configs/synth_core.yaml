@@ -1,0 +1,203 @@
+version: 1
+runs:
+- name: sim_pneumatic_cycle_features
+  dataset: sim
+  task: ad
+  model:
+  - shallow_rule_learner
+  - cusum_cycle_scalar
+  - robust_z_ewma_cycle
+  - duty_cycle_ratio_cusum
+  subsystem: pneumatic
+  peer_norm: false
+  contamination:
+  - 0.0
+  - 0.05
+  split: sim_loo_unit
+  data:
+    max_runs: 8
+- name: sim_pneumatic_window_stats_raw_window
+  dataset: sim
+  task: ad
+  model:
+  - conformal_threshold
+  - cblof
+  - per_channel_or_aggregate
+  - random_score
+  - single_feature_threshold
+  - copod
+  - knn_outlier
+  - ecod
+  - isolation_forest
+  - ocsvm
+  - halfspace_trees_ocknn
+  - mahalanobis_mincovdet
+  - pca_spe_t2
+  - robust_z_ewma_window
+  - sensor_range_baseline
+  - trivial_baseline_set
+  - name: k_of_n_corroboration
+    params:
+      k: 3
+      features:
+      - TP2
+      - TP3
+      - Motor_current
+      - Oil_temperature
+      - COMP
+    comment: R95 vote with this subsystem's own channels (the default members are
+      MetroPT-3 compressor signals)
+  - kmeans_ad
+  - ocsvm_mfcc_ams
+  - moving_window_variance
+  - squared_difference
+  - lgbm_residual
+  - l2_norm_channels
+  - nn1_distance
+  - dwt_w8w9_startpeak
+  subsystem: pneumatic
+  window:
+  - 60
+  - 360
+  peer_norm: false
+  contamination: 0.0
+  split: sim_loo_unit
+  data:
+    max_runs: 5
+- name: sim_pneumatic_deep
+  dataset: sim
+  task: ad
+  model:
+  - sparse_autoencoder
+  - usad
+  - lstm_ae
+  - tcn_ae
+  - name: tspulse_zeroshot
+    params:
+      context_points: 512
+  subsystem: pneumatic
+  window: 360
+  peer_norm: false
+  contamination: 0.0
+  split: sim_loo_unit
+  max_minutes: 10
+  data:
+    max_runs: 5
+- name: sim_bearing_cycle_features
+  dataset: sim
+  task: ad
+  model:
+  - shallow_rule_learner
+  - cusum_cycle_scalar
+  - robust_z_ewma_cycle
+  - peer_normalisation
+  subsystem: bearing
+  peer_norm:
+  - true
+  - false
+  contamination:
+  - 0.0
+  - 0.05
+  split: sim_loo_unit
+  data:
+    max_runs: 8
+- name: sim_bearing_window_stats_raw_window
+  dataset: sim
+  task: ad
+  model:
+  - conformal_threshold
+  - cblof
+  - per_channel_or_aggregate
+  - random_score
+  - single_feature_threshold
+  - copod
+  - knn_outlier
+  - ecod
+  - isolation_forest
+  - ocsvm
+  - halfspace_trees_ocknn
+  - mahalanobis_mincovdet
+  - pca_spe_t2
+  - robust_z_ewma_window
+  - sensor_range_baseline
+  - trivial_baseline_set
+  - name: k_of_n_corroboration
+    params:
+      k: 3
+      features:
+      - T_box
+      - vib_rms
+      - vib_kurt
+      - vib_crest
+      - vib_bpfo
+    comment: R95 vote with this subsystem's own channels (the default members are
+      MetroPT-3 compressor signals)
+  - peer_delta_temperature
+  - thermal_residual_model
+  - peer_normalisation_shared
+  - kmeans_ad
+  - ocsvm_mfcc_ams
+  - moving_window_variance
+  - squared_difference
+  - lgbm_residual
+  - l2_norm_channels
+  - nn1_distance
+  - kurtogram_envelope_bpfo
+  subsystem: bearing
+  window:
+  - 60
+  - 360
+  peer_norm: false
+  contamination: 0.0
+  split: sim_loo_unit
+  data:
+    max_runs: 5
+  note: dwt_w8w9_startpeak is a door-motor start-peak current rule (R-ladder door
+    row); the bearing table has no current channel, so it is not run here.
+- name: sim_bearing_deep
+  dataset: sim
+  task: ad
+  model:
+  - sparse_autoencoder
+  - usad
+  - lstm_ae
+  - tcn_ae
+  - name: tspulse_zeroshot
+    params:
+      context_points: 512
+  subsystem: bearing
+  window: 360
+  peer_norm: false
+  contamination: 0.0
+  split: sim_loo_unit
+  max_minutes: 10
+  data:
+    max_runs: 5
+- name: sim_pneumatic_matrix_profile
+  dataset: sim
+  task: ad
+  model:
+  - matrix_profile_discord
+  subsystem: pneumatic
+  window: 360
+  peer_norm: false
+  contamination: 0.0
+  split: sim_loo_unit
+  data:
+    max_runs: 2
+  max_minutes: 10
+  comment: 'window 360 only, 10-min cap: matrix profile is O(n^2) in windows'
+- name: sim_bearing_matrix_profile
+  dataset: sim
+  task: ad
+  model:
+  - matrix_profile_discord
+  subsystem: bearing
+  window: 360
+  peer_norm: false
+  contamination: 0.0
+  split: sim_loo_unit
+  data:
+    max_runs: 2
+  max_minutes: 10
+  comment: 'window 360 only, 10-min cap: matrix profile is O(n^2) in windows'

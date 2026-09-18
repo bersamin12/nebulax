@@ -1,0 +1,24 @@
+{
+  "task": "shm",
+  "git_rev": "83a5696",
+  "saved_at": "2026-09-18T13:56:55+00:00",
+  "bytes": 6212,
+  "stage": "ladder",
+  "spec": {
+    "model": "lasso_log",
+    "families": [
+      "stats",
+      "rainflow",
+      "spectral",
+      "fds"
+    ],
+    "log_target": true,
+    "bias": true,
+    "mixup": 0,
+    "physics_blend_pos_skew": 0.5
+  },
+  "loo_mape": 0.018734357139969078,
+  "rkf_mape_mean": 0.018694616534858287,
+  "nested_loo_mape": 0.018700038166041273,
+  "feature_version": "shm-f2"
+}

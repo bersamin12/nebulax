@@ -1,0 +1,71 @@
+{
+  "source": "Train only; matched duplicate-grouped 5-fold x 3 held-out probabilities; no Test labels",
+  "method": "blend each fold's independently fitted, mirror-averaged, class-boosted probabilities; apply the shared low-speed rule after blending",
+  "weights_examined": [
+    0.0,
+    0.25,
+    0.5,
+    0.75,
+    1.0
+  ],
+  "reference_selection_macro_f1_mean": 0.8440869856747256,
+  "n_held_decisions": 816,
+  "rows": [
+    {
+      "coherence_weight": 0.0,
+      "macro_f1_mean": 0.8340519978820863,
+      "macro_f1_sd": 0.10078157027316384,
+      "class_f1_mean": {
+        "Normal": 0.9815258830161476,
+        "Side I": 0.5930158730158729,
+        "Side II": 0.9276142376142377
+      },
+      "changed_decisions_vs_coherence": 10
+    },
+    {
+      "coherence_weight": 0.25,
+      "macro_f1_mean": 0.8340519978820863,
+      "macro_f1_sd": 0.10078157027316384,
+      "class_f1_mean": {
+        "Normal": 0.9815258830161476,
+        "Side I": 0.5930158730158729,
+        "Side II": 0.9276142376142377
+      },
+      "changed_decisions_vs_coherence": 10
+    },
+    {
+      "coherence_weight": 0.5,
+      "macro_f1_mean": 0.8420303577081504,
+      "macro_f1_sd": 0.10364983820817672,
+      "class_f1_mean": {
+        "Normal": 0.9822574992908771,
+        "Side I": 0.6101587301587301,
+        "Side II": 0.9336748436748438
+      },
+      "changed_decisions_vs_coherence": 8
+    },
+    {
+      "coherence_weight": 0.75,
+      "macro_f1_mean": 0.8421152293241086,
+      "macro_f1_sd": 0.11010761463013514,
+      "class_f1_mean": {
+        "Normal": 0.9801071117337496,
+        "Side I": 0.6334920634920636,
+        "Side II": 0.9127465127465128
+      },
+      "changed_decisions_vs_coherence": 2
+    },
+    {
+      "coherence_weight": 1.0,
+      "macro_f1_mean": 0.8440869856747256,
+      "macro_f1_sd": 0.10586334203881143,
+      "class_f1_mean": {
+        "Normal": 0.9800435448067647,
+        "Side I": 0.6453968253968253,
+        "Side II": 0.9068205868205869
+      },
+      "changed_decisions_vs_coherence": 0
+    }
+  ],
+  "wall_seconds": 83.29472231864929
+}

@@ -1,0 +1,410 @@
+<title>R151 Subsystem Views</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --ground: #f3f4f6; --panel: #ffffff; --panel-2: #e9ecf0; --line: #d3d8df;
+    --text: #16191f; --muted: #5d6675; --accent: #1f8fa3; --accent-ink: #ffffff;
+    --ok: #2e9e6b; --warn: #d99a1e; --crit: #d04a3a; --series-2: #6b5bd2;
+    --sans: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+    --mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #16191f; --panel: #1e2229; --panel-2: #262b34; --line: #333a45;
+      --text: #e6e9ee; --muted: #8a93a3; --accent: #4bb8c9; --accent-ink: #0d1114; --series-2: #a99cf0;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #16191f; --panel: #1e2229; --panel-2: #262b34; --line: #333a45;
+    --text: #e6e9ee; --muted: #8a93a3; --accent: #4bb8c9; --accent-ink: #0d1114; --series-2: #a99cf0;
+  }
+  body { background: var(--ground); color: var(--text); font-family: var(--sans); font-size: 14px; line-height: 1.45; padding: 0 20px; padding-block: 20px 40px; }
+  .wrap { max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+  header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 24px; }
+  h1 { font-size: 20px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
+  .sub { color: var(--muted); margin: 0; }
+  .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+  button { font: 500 12px/1 var(--sans); color: var(--text); background: var(--panel-2); border: 1px solid var(--line); border-radius: 4px; padding: 8px 12px; cursor: pointer; min-height: 32px; }
+  button:hover { border-color: var(--accent); }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .viewer { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  @media (max-width: 960px) { .viewer { grid-template-columns: 1fr; } }
+  .stage { position: relative; min-height: 420px; aspect-ratio: 16 / 9; max-width: 100%; background: radial-gradient(ellipse at 50% 70%, var(--panel-2), var(--panel) 70%); }
+  .stage canvas { display: block; width: 100%; height: 100%; }
+  .fallback[hidden] { display: none; }
+  .fallback { position: absolute; inset: 0; overflow: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; background: var(--panel); }
+  .fallback-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+  .fallback figure { margin: 0; display: flex; flex-direction: column; gap: 4px; }
+  .fallback img { max-width: 100%; border-radius: 4px; background: var(--panel-2); }
+  .fallback figcaption { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .loading { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); font-family: var(--mono); font-size: 12px; pointer-events: none; }
+  .side { border-left: 1px solid var(--line); display: flex; flex-direction: column; gap: 12px; padding: 14px; min-width: 0; }
+  @media (max-width: 960px) { .side { border-left: 0; border-top: 1px solid var(--line); } }
+  .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .spacer { flex: 1 1 auto; }
+  .readout { font-family: var(--mono); font-size: 12px; color: var(--muted); display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; }
+  .readout b { color: var(--text); font-weight: 500; text-align: right; font-variant-numeric: tabular-nums; }
+  .chart { width: 100%; height: 120px; display: block; }
+  .chart-title { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  input[type=range] { width: 100%; accent-color: var(--accent); }
+  .events { font-family: var(--mono); font-size: 11.5px; color: var(--muted); display: flex; flex-direction: column; gap: 3px; max-height: 90px; overflow: auto; }
+  .events .now { color: var(--crit); }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 10px 14px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 12px; color: var(--muted); grid-column: 1 / -1; }
+  .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+  .note { color: var(--muted); font-size: 12.5px; max-width: 78ch; }
+  .pill { font-family: var(--mono); font-size: 11px; padding: 2px 8px; border-radius: 10px; background: var(--panel-2); color: var(--muted); }
+  .pill.crit { background: var(--crit); color: #fff; } .pill.warn { background: var(--warn); color: #16191f; } .pill.ok { background: var(--ok); color: #fff; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <p class="eyebrow">NEBULA X · Track 3 · health twin</p>
+      <h1>Subsystem views driven by the physics simulators</h1>
+    </div>
+    <p class="sub">Each view plays a simulated run on the model. Switch to the fault run to watch the behaviour change.</p>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="Views">
+    <button id="tab-overview" role="tab" aria-pressed="true">Overview</button>
+    <button id="tab-door" role="tab" aria-pressed="false">Door · car 4 L3</button>
+    <button id="tab-bogie" role="tab" aria-pressed="false">Bogie · car 4 bogie 1</button>
+    <button id="tab-apu" role="tab" aria-pressed="false">Air supply · car 4</button>
+  </div>
+
+  <section class="viewer">
+    <div class="stage" id="stage"><div class="loading" id="loading">loading model …</div>
+      <div class="fallback" id="fallback" hidden>
+        <p class="note" id="fallback-msg"></p>
+        <div class="fallback-grid">
+          <figure><img src="view_door.png" alt="Door mechanism render"><figcaption>Door drive, car 4 L3</figcaption></figure>
+          <figure><img src="view_bogie.png" alt="Bogie render"><figcaption>Bogie 1, car 4</figcaption></figure>
+          <figure><img src="view_apu.png" alt="Air supply render"><figcaption>Air supply, car 4</figcaption></figure>
+        </div>
+      </div></div>
+    <aside class="side">
+      <div class="row">
+        <span class="eyebrow" id="view-title">Overview</span>
+        <span class="spacer"></span>
+        <span class="pill" id="state-pill">idle</span>
+      </div>
+      <div class="row" id="run-row">
+        <span class="eyebrow">Run</span>
+        <div class="row" id="run-buttons"></div>
+      </div>
+      <div class="row" id="play-row">
+        <button id="play" aria-pressed="false">Play</button>
+        <button id="speed" title="playback speed">1×</button>
+        <span class="spacer"></span>
+        <span class="eyebrow" id="clock">t = 0.00 s</span>
+      </div>
+      <input type="range" id="scrub" min="0" max="1000" value="0" aria-label="scrub time">
+      <div id="charts"></div>
+      <div class="readout" id="features"></div>
+      <div class="events" id="events"></div>
+      <p class="note" id="view-note"></p>
+    </aside>
+    <div class="legend">
+      <span><span class="dot" style="background: var(--ok)"></span>Healthy</span>
+      <span><span class="dot" style="background: var(--warn)"></span>Watch</span>
+      <span><span class="dot" style="background: var(--crit)"></span>Alert</span>
+      <span><span class="dot" style="background: var(--accent)"></span>Focus</span>
+      <span>Drag to orbit · scroll to zoom. Runs are simulator output, not measurements.</span>
+    </div>
+  </section>
+</div>
+
+<script id="glb" type="text/plain">__GLB_BASE64__</script>
+<script id="runs" type="application/json">__RUNS_JSON__</script>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+const stage = document.getElementById("stage");
+const loading = document.getElementById("loading");
+const $ = (id) => document.getElementById(id);
+function fail(msg) {
+  loading.hidden = true;
+  const fb = $("fallback"); fb.hidden = false;
+  $("fallback-msg").textContent = msg + " Showing the Blender renders instead. Opening this link directly in Chrome, Edge or Safari usually restores the live model.";
+}
+window.addEventListener("error", (e) => fail(`Viewer error: ${e.message}.`));
+window.addEventListener("unhandledrejection", (e) => fail(`Viewer error: ${e.reason && e.reason.message ? e.reason.message : e.reason}.`));
+let RUNS;
+try { RUNS = JSON.parse(document.getElementById("runs").textContent); }
+catch (e) { fail("The simulation runs embedded in this page could not be read."); throw e; }
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const col = (v) => new THREE.Color(css(v));
+
+// ---------------------------------------------------------------- renderer
+let renderer;
+try {
+  const probe = document.createElement("canvas");
+  if (!(probe.getContext("webgl2") || probe.getContext("webgl"))) throw new Error("no WebGL context");
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+} catch (e) { fail("This viewer does not provide WebGL, which the live 3D model needs."); throw e; }
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+stage.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(32, 16 / 9, 0.2, 2000);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.dampingFactor = 0.08; controls.maxPolarAngle = Math.PI * 0.6;
+scene.add(new THREE.HemisphereLight(0xdfe7f2, 0x3a3f47, 1.6));
+const key = new THREE.DirectionalLight(0xffffff, 2.2); key.position.set(40, 60, 50); scene.add(key);
+const fill = new THREE.DirectionalLight(0xcfd8e6, 0.8); fill.position.set(-60, 30, -40); scene.add(fill);
+
+// ---------------------------------------------------------------- model
+// Blender (x, y, z) -> glTF (x, z, -y): train runs along X, up is Y, the -Y side of the train is +Z.
+const CAR4 = 23.83 + 0.65 + 22.8 + 0.65 + 22.8 + 0.65 + 22.8 / 2;   // car 4 centre x
+const DOOR = { x: CAR4 + 3.15, y: 2.075, z: 1.615 };
+const BOGIE = { x: CAR4 - 7.85, y: 0.7, z: 0 };
+const APU = { x: CAR4 + 1.5, y: 0.42, z: 0.72 };
+const WHEEL_R = 0.425, HALF_LEAF = 0.725 / 2;
+const nodes = new Map();
+const baseMat = new Map();
+const homePos = new Map();
+let root = null;
+
+function b64ToBytes(b64) {
+  const lookup = new Uint8Array(256);
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+  for (let i = 0; i < chars.length; i++) lookup[chars.charCodeAt(i)] = i;
+  const len = b64.length; let pad = 0;
+  if (b64.charCodeAt(len - 1) === 61) pad++; if (b64.charCodeAt(len - 2) === 61) pad++;
+  const out = new Uint8Array(((len * 3) >> 2) - pad); let p = 0;
+  for (let i = 0; i < len; i += 4) {
+    const a = lookup[b64.charCodeAt(i)], b = lookup[b64.charCodeAt(i + 1)], c = lookup[b64.charCodeAt(i + 2)], d = lookup[b64.charCodeAt(i + 3)];
+    out[p++] = (a << 2) | (b >> 4);
+    if (p < out.length) out[p++] = ((b & 15) << 4) | (c >> 2);
+    if (p < out.length) out[p++] = ((c & 3) << 6) | d;
+  }
+  return out;
+}
+const tick = () => new Promise((r) => setTimeout(r, 30));
+async function boot() {
+  loading.textContent = "reading embedded model …"; await tick();
+  const glbText = document.getElementById("glb").textContent.trim();
+  if (glbText.length < 1000 || !glbText.startsWith("Z2xURg")) { fail(`The embedded model data is missing or truncated (${glbText.length} characters).`); return; }
+  loading.textContent = `decoding ${(glbText.length / 1e6).toFixed(1)} MB …`; await tick();
+  let glbBin;
+  try { glbBin = b64ToBytes(glbText); } catch (e) { fail("The embedded model data could not be decoded."); throw e; }
+  loading.textContent = "building scene …"; await tick();
+  new GLTFLoader().parse(glbBin.buffer, "", (gltf) => {
+  root = gltf.scene;
+  root.traverse((o) => {
+    nodes.set(o.name, o);
+    homePos.set(o.name, o.position.clone());
+    if (o.isMesh) { o.material = o.material.clone(); baseMat.set(o.name, o.material); }
+  });
+  scene.add(root);
+  loading.remove();
+  setView("overview");
+}, (err) => { fail(`The model could not be parsed: ${err && err.message ? err.message : err}.`); console.error(err); });
+}
+boot();
+
+function get(name) { return nodes.get(name); }
+function setMat(name, kind, glow = 0.15) {
+  const m = get(name); if (!m || !m.isMesh) return;
+  const base = baseMat.get(name);
+  if (!kind) { m.material = base; return; }
+  const c = col(kind === "crit" ? "--crit" : kind === "warn" ? "--warn" : kind === "focus" ? "--accent" : "--ok");
+  const mat = base.clone(); mat.color = c; mat.emissive = c.clone().multiplyScalar(glow); m.material = mat;
+}
+function dimAll(except) {
+  for (const [name, o] of nodes) {
+    if (!o.isMesh) continue;
+    const keep = except.some((p) => name.startsWith(p));
+    const base = baseMat.get(name);
+    if (keep) { o.material = base; continue; }
+    const m = base.clone(); m.transparent = true; m.opacity = name === "car4_body" ? 0.18 : 0.06; m.depthWrite = false; o.material = m;
+  }
+}
+function undimAll() { for (const [name, o] of nodes) if (o.isMesh) o.material = baseMat.get(name); }
+function resetPositions() {
+  for (const [name, o] of nodes) { const h = homePos.get(name); if (h) o.position.copy(h); if (o.isMesh) o.rotation.set(0, 0, 0); }
+}
+
+// ---------------------------------------------------------------- views
+const VIEWS = {
+  overview: {
+    title: "Overview", pos: [CAR4 - 40, 12, 60], target: [CAR4, 1.8, 0],
+    runs: null, focus: null,
+    note: "Whole set. Doors, bogies, axle boxes, brake blocks and air units are separate parts so the app can colour and move them from live scores.",
+  },
+  door: {
+    title: "Door · car 4 · L3", pos: [DOOR.x - 1.2, DOOR.y + 0.9, DOOR.z + 6.2], target: [DOOR.x, DOOR.y - 0.1, DOOR.z],
+    runs: RUNS.door, focus: ["car4_door_L3"], speed: [1, 0.25, 4], dt: 0.02,
+    charts: [{ key: "pos", label: "leaf position (m)", max: 0.8 }, { key: "current", label: "motor current (A)", abs: true, max: 8 }],
+    note: "Car body faded so the drive is visible: motor, belt, pulley, rail and the two limit switches. Leaves slide into the wall pockets. Friction run: the motor saturates and the door slows; obstruction run: current spikes, the door reverses 100 mm and retries.",
+  },
+  bogie: {
+    title: "Bogie · car 4 · bogie 1", pos: [BOGIE.x - 4.5, 2.2, 7.5], target: [BOGIE.x, 0.7, 0],
+    runs: RUNS.bearing, focus: ["car4_bogie1", "car4_wheel_1", "car4_wheel_2", "car4_brake_1", "car4_brake_2", "car4_axlebox_1", "car4_axlebox_2", "car4_axlebox_3", "car4_axlebox_4", "car4_wheel_3", "car4_wheel_4", "car4_brake_3", "car4_brake_4", "car4_bogie2"], speed: [120, 30, 600], dt: 5,
+    charts: [{ key: "T_3R", label: "axle box 3R temperature (°C)", peer: "T_1R", max: 100 }, { key: "speed", label: "train speed (m/s)", max: 25 }],
+    note: "Wheels turn with the simulated speed profile; tread brake blocks close on the wheels in each braking phase; axle boxes are coloured by temperature against their peers. Bearing run: box 3R runs hotter as the friction coefficient degrades.",
+  },
+  apu: {
+    title: "Air supply · car 4", pos: [APU.x - 2.0, 1.4, 6.0], target: [APU.x + 0.8, 0.45, 0.6],
+    runs: RUNS.pneumatic, focus: ["car4_apu"], speed: [30, 10, 120], dt: 1,
+    charts: [{ key: "TP3", label: "main reservoir (bar)", min: 6, max: 10.5 }, { key: "Motor_current", label: "compressor current (A)", max: 10 }],
+    note: "Compressor fan spins while loaded, dryer towers alternate, the reservoir tank tints with pressure between the 8.2 and 10.0 bar band, and the unit pulses when the brakes draw air. Air-leak run: the compressor runs far more often and the overnight decay steepens.",
+  },
+};
+let view = "overview", run = null, runName = null, t = 0, playing = false, speedIdx = 0, lastFrame = 0;
+
+function setView(id) {
+  view = id;
+  const v = VIEWS[id];
+  for (const k of Object.keys(VIEWS)) $(`tab-${k}`).setAttribute("aria-pressed", String(k === id));
+  $("view-title").textContent = v.title;
+  $("view-note").textContent = v.note;
+  camera.position.set(...v.pos); controls.target.set(...v.target); controls.update();
+  resetPositions();
+  if (v.focus) dimAll(v.focus); else undimAll();
+  playing = false; $("play").setAttribute("aria-pressed", "false"); $("play").textContent = "Play";
+  speedIdx = 0; $("speed").textContent = v.speed ? `${v.speed[0]}×` : "1×";
+  $("run-row").hidden = !v.runs; $("play-row").hidden = !v.runs; $("scrub").hidden = !v.runs;
+  $("run-buttons").innerHTML = ""; $("charts").innerHTML = ""; $("features").innerHTML = ""; $("events").innerHTML = "";
+  $("state-pill").textContent = v.runs ? "paused" : "static"; $("state-pill").className = "pill";
+  if (v.runs) {
+    for (const name of Object.keys(v.runs)) {
+      const b = document.createElement("button"); b.textContent = name.replace("_", " "); b.id = `run-${name}`;
+      b.addEventListener("click", () => setRun(name)); $("run-buttons").appendChild(b);
+    }
+    setRun(Object.keys(v.runs)[0]);
+  } else {
+    overviewColours();
+  }
+}
+function overviewColours() {
+  setMat("car4_door_L3_leafA", "crit"); setMat("car4_door_L3_leafB", "crit");
+  setMat("car2_apu_block", "warn"); setMat("car3_axlebox_2R", "warn");
+}
+function setRun(name) {
+  runName = name; run = VIEWS[view].runs[name]; t = 0;
+  for (const n of Object.keys(VIEWS[view].runs)) $(`run-${n}`).setAttribute("aria-pressed", String(n === name));
+  buildCharts(); renderFeatures(); renderEvents(); applyFrame(true);
+}
+function tEnd() { const T = run.signals.t; return T[T.length - 1]; }
+function idxAt(time) {
+  const T = run.signals.t; let lo = 0, hi = T.length - 1;
+  while (lo < hi) { const mid = (lo + hi) >> 1; if (T[mid] < time) lo = mid + 1; else hi = mid; }
+  return lo;
+}
+$("play").addEventListener("click", () => {
+  playing = !playing; $("play").setAttribute("aria-pressed", String(playing)); $("play").textContent = playing ? "Pause" : "Play";
+  if (playing && t >= tEnd()) t = 0;
+  lastFrame = performance.now();
+});
+$("speed").addEventListener("click", () => {
+  const s = VIEWS[view].speed; speedIdx = (speedIdx + 1) % s.length; $("speed").textContent = `${s[speedIdx]}×`;
+});
+$("scrub").addEventListener("input", (e) => { t = (e.target.value / 1000) * tEnd(); applyFrame(true); });
+for (const k of Object.keys(VIEWS)) $(`tab-${k}`).addEventListener("click", () => setView(k));
+
+// ---------------------------------------------------------------- charts
+function buildCharts() {
+  const v = VIEWS[view]; const S = run.signals; const W = 352, H = 120, L = 34, B = 16;
+  $("charts").innerHTML = v.charts.map((c) => {
+    const ys = S[c.key].map((y) => (c.abs ? Math.abs(y) : y));
+    const min = c.min ?? 0, max = c.max ?? Math.max(...ys) * 1.1;
+    const sx = (i) => L + (i / (ys.length - 1)) * (W - L - 6);
+    const sy = (y) => H - B - ((y - min) / (max - min)) * (H - B - 8);
+    const path = ys.map((y, i) => `${i ? "L" : "M"}${sx(i).toFixed(1)},${sy(y).toFixed(1)}`).join(" ");
+    let peer = "";
+    if (c.peer) {
+      const boxes = Object.keys(S).filter((k) => k.startsWith("T_") && k !== "T_amb");
+      const med = ys.map((_, i) => { const a = boxes.map((b) => S[b][i]).sort((p, q) => p - q); return a[a.length >> 1]; });
+      peer = `<path d="${med.map((y, i) => `${i ? "L" : "M"}${sx(i).toFixed(1)},${sy(y).toFixed(1)}`).join(" ")}" fill="none" stroke="var(--series-2)" stroke-width="1.5" stroke-dasharray="3 3"/>`;
+    }
+    const grid = [0, 0.5, 1].map((f) => { const y = sy(min + f * (max - min)); return `<line x1="${L}" x2="${W - 6}" y1="${y}" y2="${y}" stroke="var(--line)" stroke-width="1"/><text x="${L - 4}" y="${y + 4}" text-anchor="end" font-size="10" fill="var(--muted)" font-family="var(--mono)">${(min + f * (max - min)).toFixed(0)}</text>`; }).join("");
+    return `<div class="chart-title"><span>${c.label}</span>${c.peer ? "<span>dashed = peer median</span>" : ""}</div>
+      <svg class="chart" viewBox="0 0 ${W} ${H}" data-key="${c.key}">${grid}<path d="${path}" fill="none" stroke="var(--accent)" stroke-width="1.6"/>${peer}
+      <line class="cursor" x1="${L}" x2="${L}" y1="6" y2="${H - B}" stroke="var(--crit)" stroke-width="1.2"/></svg>`;
+  }).join("");
+}
+function moveCursors(i) {
+  const n = run.signals.t.length; const W = 352, L = 34;
+  for (const svg of $("charts").querySelectorAll("svg")) { const x = L + (i / (n - 1)) * (W - L - 6); const c = svg.querySelector(".cursor"); c.setAttribute("x1", x); c.setAttribute("x2", x); }
+}
+function renderFeatures() {
+  const f = run.features;
+  $("features").innerHTML = Object.entries(f).map(([k, v]) => `<span>${k.replace(/_/g, " ")}</span><b>${v === null ? "–" : typeof v === "number" ? (Math.abs(v) >= 100 ? v.toFixed(0) : v.toFixed(2)) : v}</b>`).join("");
+}
+function renderEvents() {
+  $("events").innerHTML = run.events.length ? run.events.map((e) => `<span data-t="${e.t}">t=${e.t}s · ${e.event}</span>`).join("") : `<span>no events in this run</span>`;
+}
+
+// ---------------------------------------------------------------- animation bindings
+function tint(name, temp) {
+  // 40 °C green -> 70 amber -> 90 red
+  const kind = temp > 80 ? "crit" : temp > 62 ? "warn" : "ok";
+  setMat(name, kind, temp > 80 ? 0.5 : 0.15);
+}
+function applyFrame(force = false) {
+  if (!run || !root) return;
+  const S = run.signals; const i = idxAt(t); const v = VIEWS[view];
+  $("clock").textContent = `t = ${t.toFixed(view === "door" ? 2 : 0)} s`;
+  $("scrub").value = Math.round((t / tEnd()) * 1000);
+  moveCursors(i);
+  for (const e of $("events").children) e.classList.toggle("now", Math.abs((+e.dataset.t || -1) - t) < (view === "door" ? 0.4 : 8));
+  if (view === "door") {
+    const pos = S.pos[i], cur = Math.abs(S.current[i]);
+    const A = get("car4_door_L3_leafA"), B = get("car4_door_L3_leafB");
+    if (A) A.position.x = homePos.get(A.name).x - pos; if (B) B.position.x = homePos.get(B.name).x + pos;
+    const p = get("car4_door_L3_pulley"); if (p) p.rotation.z = -pos / 0.10;
+    setMat("car4_door_L3_lsOpen", S.ls_open[i] ? "ok" : null, 0.6);
+    setMat("car4_door_L3_lsClosed", S.ls_closed[i] ? "ok" : null, 0.6);
+    const obstructed = S.obstruction[i] === 1;
+    setMat("car4_door_L3_leafA", obstructed ? "crit" : cur > 4 ? "warn" : null, obstructed ? 0.5 : 0.15);
+    setMat("car4_door_L3_leafB", obstructed ? "crit" : cur > 4 ? "warn" : null, obstructed ? 0.5 : 0.15);
+    setMat("car4_door_L3_drive", cur > 4 ? "warn" : null);
+    pill(obstructed ? ["obstruction", "crit"] : cur > 4 ? ["high current", "warn"] : pos > 0.71 ? ["open", "ok"] : pos < 0.01 ? ["closed and locked", "ok"] : ["moving", "ok"]);
+  } else if (view === "bogie") {
+    const speed = S.speed[i], braking = i > 0 && S.speed[i] < S.speed[i - 1] - 0.01;
+    for (const a of [1, 2]) for (const s of "LR") {
+      const w = get(`car4_wheel_${a}${s}`); if (w) w.rotation.z = -(S.t[i] * (S.speed[i] / WHEEL_R)) % (Math.PI * 2);
+      const b = get(`car4_brake_${a}${s}`); if (b) { const h = homePos.get(b.name); const d = braking ? 0.06 : 0; b.position.set(h.x - d, h.y - d, h.z); }
+      setMat(`car4_brake_${a}${s}`, braking ? "warn" : null, 0.3);
+    }
+    for (const a of [1, 2, 3, 4]) for (const s of "LR") tint(`car4_axlebox_${a}${s}`, S[`T_${a}${s}`][i]);
+    const hot = Math.max(...[1, 2, 3, 4].flatMap((a) => ["L", "R"].map((s) => S[`T_${a}${s}`][i])));
+    pill(hot > 80 ? ["hot axle box", "crit"] : hot > 62 ? ["axle box warm", "warn"] : braking ? ["braking", "ok"] : speed > 0 ? ["running", "ok"] : ["at station", "ok"]);
+  } else if (view === "apu") {
+    const loaded = S.COMP[i] === 0, P = S.TP3[i], tower = S.Towers[i], braking = S.brake[i] === 1;
+    const fan = get("car4_apu_fan"); if (fan && (loaded || force)) fan.rotation.z = (S.t[i] * 12) % (Math.PI * 2);
+    setMat("car4_apu_tower1", tower === 0 ? "focus" : null, 0.4); setMat("car4_apu_tower2", tower === 1 ? "focus" : null, 0.4);
+    setMat("car4_apu_block", loaded ? "focus" : null, 0.25);
+    const tank = get("car4_apu_tank"); if (tank) { const f = Math.max(0, Math.min(1, (P - 7) / 3)); const m = baseMat.get(tank.name).clone(); m.color = col("--crit").lerp(col("--ok"), f); m.emissive = m.color.clone().multiplyScalar(0.2); tank.material = m; }
+    setMat("car4_apu_pipes", braking ? "warn" : null, 0.5);
+    pill(S.LPS[i] ? ["low pressure", "crit"] : S.leak_rate[i] > 1.5 ? ["leak growing", "warn"] : loaded ? ["compressor loaded", "ok"] : ["compressor off", "ok"]);
+  }
+}
+function pill([text, kind]) { $("state-pill").textContent = text; $("state-pill").className = `pill ${kind}`; }
+
+// ---------------------------------------------------------------- loop
+function resize() { const w = stage.clientWidth, h = stage.clientHeight; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); }
+new ResizeObserver(resize).observe(stage); resize();
+renderer.setAnimationLoop((now) => {
+  if (playing && run) {
+    const dt = (now - lastFrame) / 1000; lastFrame = now;
+    t += dt * VIEWS[view].speed[speedIdx];
+    if (t >= tEnd()) { t = tEnd(); playing = false; $("play").setAttribute("aria-pressed", "false"); $("play").textContent = "Replay"; }
+    applyFrame();
+  }
+  controls.update(); renderer.render(scene, camera);
+});
+</script>

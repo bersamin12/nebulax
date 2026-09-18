@@ -1,0 +1,258 @@
+{
+  "task": "acv",
+  "scheme": "leave-one-case-out (6 cases, exploratory)",
+  "folds": 6,
+  "seeds": [
+    0
+  ],
+  "git_rev": "33d00a2",
+  "feature_version": "acv-f5",
+  "wall_seconds": 5.18,
+  "wall_seconds_warm": 5.18,
+  "wall_seconds_cold": 317.28,
+  "wall_seconds_detail": {
+    "warm": 5.18,
+    "cold": 317.28,
+    "measured": "warm",
+    "feature_frames": 24,
+    "cache_hits": 24,
+    "feature_seconds_warm": 0.08,
+    "feature_seconds_cold": 312.18
+  },
+  "metric": "rank_decay (ACV Info Kit section 4)",
+  "score": 0.9791666666666666,
+  "sd": 0.05103103630798288,
+  "top1": 0.8333333333333334,
+  "headline": "0.9792 +/- 0.051 (exploratory, 6 cases)",
+  "chance_floor": 0.6042,
+  "chance_floor_blind": 0.6042,
+  "chance_floor_uniform": 0.5625,
+  "exploratory": true,
+  "ranker": {
+    "features": [
+      "peer_delta_hot"
+    ],
+    "weights": [
+      1.0
+    ],
+    "aggregation": "single",
+    "tie_break": [
+      "ctrl_residual"
+    ],
+    "hot_quantile": 0.5,
+    "cooling_only": true,
+    "feature_version": "acv-f5",
+    "name": "baseline_peer_delta_hot",
+    "trained_on": [
+      "acv_case_01.xlsx",
+      "acv_case_02.xlsx",
+      "acv_case_03.xlsx",
+      "acv_case_04.xlsx",
+      "acv_case_05.xlsx",
+      "acv_case_06.xlsx"
+    ],
+    "cv": {}
+  },
+  "per_fold": [
+    {
+      "held_out": "acv_case_01.xlsx",
+      "chosen_ranker": "baseline_peer_delta_hot",
+      "chosen_features": [
+        "peer_delta_hot"
+      ],
+      "chosen_weights": [
+        1.0
+      ],
+      "chosen_aggregation": "single",
+      "train_score": null,
+      "train_separation": null,
+      "n_tied_at_top": null,
+      "n_tied_after_separation": null,
+      "n_candidates": null,
+      "true_car": "01",
+      "rank": 1,
+      "ranked_cars": [
+        "01",
+        "03",
+        "04",
+        "02",
+        "07",
+        "06",
+        "08",
+        "05"
+      ],
+      "score": 1.0,
+      "margin": 0.5756443875478587
+    },
+    {
+      "held_out": "acv_case_02.xlsx",
+      "chosen_ranker": "baseline_peer_delta_hot",
+      "chosen_features": [
+        "peer_delta_hot"
+      ],
+      "chosen_weights": [
+        1.0
+      ],
+      "chosen_aggregation": "single",
+      "train_score": null,
+      "train_separation": null,
+      "n_tied_at_top": null,
+      "n_tied_after_separation": null,
+      "n_candidates": null,
+      "true_car": "02",
+      "rank": 1,
+      "ranked_cars": [
+        "02",
+        "03",
+        "08",
+        "01",
+        "07",
+        "04",
+        "06",
+        "05"
+      ],
+      "score": 1.0,
+      "margin": 0.11081596246927983
+    },
+    {
+      "held_out": "acv_case_03.xlsx",
+      "chosen_ranker": "baseline_peer_delta_hot",
+      "chosen_features": [
+        "peer_delta_hot"
+      ],
+      "chosen_weights": [
+        1.0
+      ],
+      "chosen_aggregation": "single",
+      "train_score": null,
+      "train_separation": null,
+      "n_tied_at_top": null,
+      "n_tied_after_separation": null,
+      "n_candidates": null,
+      "true_car": "03",
+      "rank": 1,
+      "ranked_cars": [
+        "03",
+        "02",
+        "04",
+        "01",
+        "08",
+        "07",
+        "05",
+        "06"
+      ],
+      "score": 1.0,
+      "margin": 0.6968273262843765
+    },
+    {
+      "held_out": "acv_case_04.xlsx",
+      "chosen_ranker": "baseline_peer_delta_hot",
+      "chosen_features": [
+        "peer_delta_hot"
+      ],
+      "chosen_weights": [
+        1.0
+      ],
+      "chosen_aggregation": "single",
+      "train_score": null,
+      "train_separation": null,
+      "n_tied_at_top": null,
+      "n_tied_after_separation": null,
+      "n_candidates": null,
+      "true_car": "01",
+      "rank": 2,
+      "ranked_cars": [
+        "04",
+        "01",
+        "02",
+        "03",
+        "05",
+        "06",
+        "07",
+        "08"
+      ],
+      "score": 0.875,
+      "margin": 0.004163507723405319
+    },
+    {
+      "held_out": "acv_case_05.xlsx",
+      "chosen_ranker": "baseline_peer_delta_hot",
+      "chosen_features": [
+        "peer_delta_hot"
+      ],
+      "chosen_weights": [
+        1.0
+      ],
+      "chosen_aggregation": "single",
+      "train_score": null,
+      "train_separation": null,
+      "n_tied_at_top": null,
+      "n_tied_after_separation": null,
+      "n_candidates": null,
+      "true_car": "04",
+      "rank": 1,
+      "ranked_cars": [
+        "04",
+        "02",
+        "07",
+        "06",
+        "03",
+        "01",
+        "08",
+        "05"
+      ],
+      "score": 1.0,
+      "margin": 0.12809088693957116
+    },
+    {
+      "held_out": "acv_case_06.xlsx",
+      "chosen_ranker": "baseline_peer_delta_hot",
+      "chosen_features": [
+        "peer_delta_hot"
+      ],
+      "chosen_weights": [
+        1.0
+      ],
+      "chosen_aggregation": "single",
+      "train_score": null,
+      "train_separation": null,
+      "n_tied_at_top": null,
+      "n_tied_after_separation": null,
+      "n_candidates": null,
+      "true_car": "06",
+      "rank": 1,
+      "ranked_cars": [
+        "06",
+        "08",
+        "04",
+        "02",
+        "03",
+        "05",
+        "01",
+        "07"
+      ],
+      "score": 1.0,
+      "margin": 1.1513075965130761
+    }
+  ],
+  "baseline_score": 0.9791666666666666,
+  "ladder_selected_score": 0.9791666666666666,
+  "ladder_selected_per_fold": {
+    "acv_case_01.xlsx": "peer_delta_hot_loo",
+    "acv_case_02.xlsx": "peer_delta_hot_loo",
+    "acv_case_03.xlsx": "peer_delta_hot_loo",
+    "acv_case_04.xlsx": "peer_delta_steady",
+    "acv_case_05.xlsx": "peer_delta_hot_loo",
+    "acv_case_06.xlsx": "peer_delta_hot_loo"
+  },
+  "ladder_best": {
+    "row": "peer_delta_hot_loo",
+    "score": 1.0,
+    "sd": 0.0,
+    "top1": 1.0,
+    "label": "selected on all six cases",
+    "note": "not a held-out number: this row tops a table read on the same six cases it is scored on, so it is reported here and never promoted to the artefact."
+  },
+  "artefact": "baseline (pre-registered; the ladder never promotes on this CV)",
+  "selection_note": "train() does not promote a ladder winner: the ladder is read on the same six cases the headline is computed on, so a promoted row's score would be a selection result. The ladder's best row is reported as `ladder_best`."
+}

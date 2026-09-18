@@ -1,0 +1,2 @@
+# Only the batch image needs Google Cloud Storage; the interactive app stays small.
+google-cloud-storage==3.14.1

@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "nebulax_version": "0.1.0",
+  "source": "sim",
+  "run_id": "bearing_0008",
+  "written_at": "2026-09-15T04:50:43.106425+00:00",
+  "rows": {
+    "long": 765136,
+    "features": 4608,
+    "events": 2,
+    "fault_log": 1
+  },
+  "generator": "scripts/generate.py",
+  "subsystem": "bearing",
+  "train_id": "T09",
+  "car": 3,
+  "component_id": "axlebox_1L",
+  "healthy": false,
+  "days": 30,
+  "scenario_seed": 1025124697,
+  "train_seed": 1785399957,
+  "store_every": 10,
+  "fault_types": [
+    "outer_race"
+  ],
+  "elapsed_sim_s": 63.58494172000792,
+  "sample_window": {
+    "start": "2026-09-12T00:00:00+00:00",
+    "end_exclusive": "2026-09-14T00:00:00+00:00"
+  }
+}

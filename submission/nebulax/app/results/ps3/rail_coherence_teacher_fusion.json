@@ -1,0 +1,65 @@
+{
+  "source": "Train only; same duplicate-grouped 5-fold x 3 held-out files; no Test labels",
+  "method": "coherence probability plus equal Mantis-short and MOMENT-long frozen-probe probabilities; each probe is fitted only on the respective outer training fold",
+  "historical_probe_reproduction": "W7+Mantis+MOMENT exact on all 816 held-out decisions; MOMENT standalone has one near-tie mismatch",
+  "moment_standalone_mismatches": [
+    {
+      "fold": 2,
+      "file_id": "Train256.csv",
+      "historical": "Side II",
+      "rerun": "Normal",
+      "probability": [
+        0.4909775270572193,
+        0.02007145736696108,
+        0.4889510155758196
+      ]
+    }
+  ],
+  "rows": [
+    {
+      "coherence_weight": 0.5,
+      "macro_f1_mean": 0.8262664140494699,
+      "macro_f1_sd": 0.10761543365258636,
+      "class_f1_mean": {
+        "Normal": 0.9837535471027145,
+        "Side I": 0.6079365079365079,
+        "Side II": 0.8871091871091872
+      },
+      "changed_decisions_vs_coherence": 17
+    },
+    {
+      "coherence_weight": 0.75,
+      "macro_f1_mean": 0.8409223364630438,
+      "macro_f1_sd": 0.10210886749529956,
+      "class_f1_mean": {
+        "Normal": 0.9830363696584921,
+        "Side I": 0.633968253968254,
+        "Side II": 0.9057623857623859
+      },
+      "changed_decisions_vs_coherence": 10
+    },
+    {
+      "coherence_weight": 0.875,
+      "macro_f1_mean": 0.8447456906502222,
+      "macro_f1_sd": 0.1111760108840357,
+      "class_f1_mean": {
+        "Normal": 0.980855638569233,
+        "Side I": 0.6406349206349208,
+        "Side II": 0.9127465127465128
+      },
+      "changed_decisions_vs_coherence": 3
+    },
+    {
+      "coherence_weight": 1.0,
+      "macro_f1_mean": 0.8440869856747256,
+      "macro_f1_sd": 0.10586334203881143,
+      "class_f1_mean": {
+        "Normal": 0.9800435448067647,
+        "Side I": 0.6453968253968253,
+        "Side II": 0.9068205868205869
+      },
+      "changed_decisions_vs_coherence": 0
+    }
+  ],
+  "wall_seconds": 0.041321516036987305
+}

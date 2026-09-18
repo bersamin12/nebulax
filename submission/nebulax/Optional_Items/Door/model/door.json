@@ -1,0 +1,46 @@
+{
+  "task": "door",
+  "git_rev": "24f6755",
+  "saved_at": "2026-09-17T16:14:37+00:00",
+  "bytes": 6685,
+  "scheme": "5 contiguous time blocks of the raw stream, end to end",
+  "metric": "iou_f1",
+  "iou_f1_mean": 0.9818181818181818,
+  "iou_f1_sd": 0.036363636363636376,
+  "feature_version": "door-f1",
+  "winner": {
+    "kind": "logreg",
+    "features": [
+      "i_mean_cruise_rel",
+      "i_mean_cruise_z",
+      "i_mean_opening_rel",
+      "i_mean_closing_rel",
+      "i_max_cruise_rel",
+      "i_mean_rel",
+      "i_peak_rel",
+      "i_peak_frac",
+      "i_std_cruise_rel",
+      "charge_rel",
+      "energy_rel",
+      "v_mean_rel",
+      "v_mean_cruise_rel",
+      "emf_mean_cruise_rel",
+      "r_proxy_rel",
+      "i_per_speed_rel",
+      "emf_per_speed_rel",
+      "emf_residual_z",
+      "speed_cruise_rel",
+      "duration_rel",
+      "duration_vs_cmd_rel",
+      "dwt_coarse1_rel",
+      "dwt_coarse2_rel",
+      "prof_dist"
+    ],
+    "separate": true,
+    "baseline_mode": "fold",
+    "augment": "none"
+  },
+  "seeds": [
+    0
+  ]
+}
