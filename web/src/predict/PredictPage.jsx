@@ -1,9 +1,10 @@
-// PS3 predict page (the app's landing page; `?page=twin` is the fleet console).
+// PS3 prediction workflow. The former `?page=twin` fleet console is archived under
+// web/archive/fleet-dashboard.
 //
 // One board under the 56 px header: optional API banner, 268 px model stage,
 // prediction workspace and footer. The workspace is the default visible page.
 //
-// Flow: pick a subsystem (GET /api/ps3/tasks says what it accepts and what it scored), queue
+// Flow: choose a subsystem (GET /api/ps3/tasks says what it accepts and what it scored), queue
 // files, RUN. The queue is uploaded in batches of `max_files_per_request` (32) against one
 // session token, so the 68 rail files never travel in one request; the server answers with every
 // row accumulated so far, which is what the table, the 3D twin and the CSV download all read.
@@ -70,7 +71,7 @@ export default function PredictPage({ height = 844, tourKey = 0 }) {
     setPicked(null);
   };
 
-  // keep the deep link honest: the tab is part of the URL, but never a history entry per click
+  // Keep the deep link current: the tab is part of the URL, but not a history entry per click.
   useEffect(() => {
     if (typeof window === "undefined") return;
     const q = new URLSearchParams(window.location.search);
@@ -174,6 +175,7 @@ export default function PredictPage({ height = 844, tourKey = 0 }) {
   const bodyH = height - VIEWPORT_H - FOOTER_H - (fatal ? BANNER_H : 0);
   const innerH = bodyH - 12;
   const csvHref = p.csvUrl ? (p.csvUrl.startsWith("/") ? p.csvUrl : ps3CsvUrl(p.session)) : null;
+  const completedCount = p.nDone || files.filter((file) => file.status === "done").length;
 
   return (
     <div style={{ height, display: "flex", flexDirection: "column", minHeight: 0 }}>
@@ -193,9 +195,9 @@ export default function PredictPage({ height = 844, tourKey = 0 }) {
           }}
         >
           <span style={{ width: 7, height: 7, background: C.crit, display: "block", flex: "none" }} />
-          <strong style={{ letterSpacing: "0.08em" }}>SERVER UNREACHABLE</strong>
+          <strong style={{ letterSpacing: "0.08em" }}>PREDICTION SERVICE UNAVAILABLE</strong>
           <span style={{ color: C.crit, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-            {String(fatal.message || fatal)}. The page still works, but nothing can be predicted until /api/ps3 answers.
+            {String(fatal.message || fatal)}. You can review the page, but predictions are unavailable until the service reconnects.
           </span>
           <button type="button" className="nx-btn" style={{ marginLeft: "auto", flex: "none" }} onClick={p.reload}>
             RETRY
@@ -241,8 +243,6 @@ export default function PredictPage({ height = 844, tourKey = 0 }) {
           total={p.total}
           notice={p.notice}
           error={p.error}
-          animateOnTwin={p.animateOnTwin}
-          setAnimateOnTwin={p.setAnimateOnTwin}
           width={LEFT_W}
           height={innerH}
         />
@@ -300,7 +300,7 @@ export default function PredictPage({ height = 844, tourKey = 0 }) {
       >
         {info ? (
           <div style={{ fontSize: 11, color: C.text2 }}>
-            <strong>{info.tab}</strong> · built-in research excerpt · no PS3 prediction or CSV output
+            <strong>{info.tab}</strong> · recorded research excerpt · no PS3 prediction or CSV output
           </div>
         ) : <><a
           data-tour="download"
@@ -335,19 +335,19 @@ export default function PredictPage({ height = 844, tourKey = 0 }) {
           }}
           disabled={running || (!files.length && !rows.length)}
         >
-          CLEAR
+          CLEAR SESSION
         </button>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0, flex: "1 1 auto" }}>
           <div style={{ fontSize: 10.5, color: C.text2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-            <span style={{ color: C.dim, letterSpacing: "0.1em", fontSize: 9 }}>HOW IT&rsquo;S SCORED&nbsp;&nbsp;</span>
+            <span style={{ color: C.dim, letterSpacing: "0.1em", fontSize: 9 }}>SCORING&nbsp;&nbsp;</span>
             <span className="mono" style={{ color: C.violet }}>{meta.metric}</span>
             <span style={{ color: C.dim }}>: {meta.scored}</span>
           </div>
           <div className="mono" style={{ fontSize: 9.5, color: C.dim2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
             {p.session
-              ? `session ${String(p.session).slice(0, 8)}… · ${p.nDone || files.filter((f) => f.status === "done").length} file(s) · ${rows.length} row(s) · the download is the validated submission CSV`
-              : "no session yet: the CSV link appears after the first successful batch"}
+              ? `Session ${String(p.session).slice(0, 8)}… · ${completedCount} file${completedCount === 1 ? "" : "s"} · ${rows.length} result${rows.length === 1 ? "" : "s"} · CSV ready`
+              : "The CSV will be available after the first successful result."}
           </div>
         </div></>}
       </div>

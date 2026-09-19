@@ -17,7 +17,6 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { deletePs3Session, getPs3Tasks, postPs3LocalStream, postPs3Predict, postPs3Stream, ps3CsvUrl } from "../api.js";
-import { addStreamResult } from "../state/ps3StreamStore.js";
 import { TASK_ORDER, TASK_SUFFIXES } from "./taskMeta.js";
 
 let SEQ = 0;
@@ -65,8 +64,6 @@ export function usePs3Predict(initialTask) {
   const [task, setTaskState] = useState(
     TASK_ORDER.includes(initialTask) ? initialTask : TASK_ORDER[0]
   );
-  const [animateOnTwin, setAnimateOnTwin] = useState(true);
-
   // per-task queue + results, so switching tabs never mixes two subsystems in one session
   const [state, setState] = useState(() => Object.fromEntries(TASK_ORDER.map((t) => [t, blank()])));
   const [running, setRunning] = useState(false);
@@ -167,7 +164,7 @@ export function usePs3Predict(initialTask) {
     [patch, task]
   );
 
-  /** Upload + predict every queued file, in batches or streamed per-file for animation. */
+  /** Upload + predict every queued file, using per-file requests only for local paths. */
   const run = useCallback(async () => {
     const name = task;
     const snapshot = state[name];
@@ -187,7 +184,7 @@ export function usePs3Predict(initialTask) {
     let session = snapshot.session;
     let stopped = null;
 
-    if (animateOnTwin || queued.some((item) => item.localPath)) {
+    if (queued.some((item) => item.localPath)) {
       for (const item of queued) {
         patch(name, (s) => ({
           files: s.files.map((f) => (f.id === item.id ? { ...f, status: "running" } : f)),
@@ -225,7 +222,6 @@ export function usePs3Predict(initialTask) {
           break;
         }
 
-        if (animateOnTwin) addStreamResult(name, res);
         const failed = new Map((res.errors || []).map((e) => [String(e.file), String(e.message)]));
         patch(name, (s) => ({
           session: res.session,
@@ -316,7 +312,7 @@ export function usePs3Predict(initialTask) {
     abort.current = null;
     setRunning(false);
     if (!stopped) patch(name, (s) => ({ files: s.files.map((f) => (f.status === "waiting" ? { ...f, status: "queued" } : f)) }));
-  }, [animateOnTwin, meta, patch, running, state, task]);
+  }, [meta, patch, running, state, task]);
 
   const cancel = useCallback(() => {
     if (abort.current) abort.current.abort();
@@ -345,8 +341,6 @@ export function usePs3Predict(initialTask) {
     run,
     cancel,
     clear,
-    animateOnTwin,
-    setAnimateOnTwin,
     ...cur,
   };
 }
@@ -358,7 +352,7 @@ function stoppedState(s, cutIds) {
   return {
     files: s.files.map((f) => (cut.has(f.id) || f.status === "waiting" ? { ...f, status: "queued", message: "" } : f)),
     error: "",
-    notice: `stopped: ${s.done} of ${s.total} processed, ${back} still queued (press RUN to continue)`,
+    notice: `Stopped after ${s.done} of ${s.total} files. ${back} ${back === 1 ? "is" : "are"} still queued; select Run to continue.`,
   };
 }
 

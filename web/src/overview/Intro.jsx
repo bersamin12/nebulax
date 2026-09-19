@@ -11,21 +11,21 @@ export default function Intro({ openTwin, openTour }) {
     <div style={{ position: "absolute", right: "0", top: "0", width: "160px", height: "580px", background: "linear-gradient(90deg, rgba(255,255,255,0), #ffffff)" }}></div>
     <div style={{ position: "absolute", left: "120px", top: "104px", width: "470px", display: "flex", flexDirection: "column", gap: "18px" }}>
       <div className="eyebrow">Team Bus MRT Walk · Problem Statement 3</div>
-      <h1 style={{ margin: "0", fontSize: "40px", lineHeight: "1.15", fontWeight: "600", letterSpacing: "-.01em" }}>A digital twin for a metro train's condition monitoring</h1>
-      <p style={{ margin: "0", fontSize: "17px", lineHeight: "1.55", color: "#5b6673" }}>The Train Digital Twin is a virtual copy of the train that runs the same four fault-detection models we submit: doors, air-conditioning, rail corrugation and structural fatigue. Upload a released Test file, press RUN, and watch the component light up on the train model with an explanation for every row.</p>
+      <h1 style={{ margin: "0", fontSize: "40px", lineHeight: "1.15", fontWeight: "600", letterSpacing: "-.01em" }}>Train condition monitoring, in one workspace</h1>
+      <p style={{ margin: "0", fontSize: "17px", lineHeight: "1.55", color: "#5b6673" }}>Run the four Problem Statement 3 models for doors, air-conditioning, rail corrugation, and structural fatigue. Upload a Test file to review the predictions, inspect the affected component on the train, and download the submission CSV.</p>
       <div style={{ display: "flex", gap: "12px", marginTop: "4px" }}>
-        <a href="?page=predict" onClick={openTwin} className="btn primary" style={{ textDecoration: "none" }}>Open Digital Twin</a>
-        <a href="?page=predict&tour=1" onClick={openTour} className="btn" style={{ textDecoration: "none" }}>Take the 2-minute tour</a>
+        <a href="?page=predict" onClick={openTwin} className="btn primary" style={{ textDecoration: "none" }}>Open prediction workspace</a>
+        <a href="?page=predict&tour=1" onClick={openTour} className="btn" style={{ textDecoration: "none" }}>Take a quick tour</a>
       </div>
-      <div className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>Runs offline · app and predict.py call the same functions</div>
+      <div className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>Runs locally using the same prediction code as predict.py</div>
     </div>
   </section>
 
   {/* headline metrics */}
   <section style={{ flex: "none", padding: "32px 120px 8px", display: "flex", flexDirection: "column", gap: "12px" }}>
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-      <div className="eyebrow">Honest headlines · nested / outer CV on training data only</div>
-      <div style={{ fontSize: "12px", color: "#5b6673" }}>Every number names its JSON key in <span className="mono">results/ps3/leaderboard.md</span></div>
+      <div className="eyebrow">Cross-validation results · training data only</div>
+      <div style={{ fontSize: "12px", color: "#5b6673" }}>Full results and source fields: <span className="mono">results/ps3/leaderboard.md</span></div>
     </div>
     <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: "12px" }}>
       <div className="card" style={{ padding: "18px 20px", display: "flex", flexDirection: "column", gap: "6px" }}>
@@ -58,9 +58,9 @@ export default function Intro({ openTwin, openTour }) {
   {/* how the twin works: 4 steps */}
   <section style={{ flex: "none", padding: "40px 120px 32px", display: "flex", flexDirection: "column", gap: "24px" }}>
     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-      <div className="eyebrow">How the digital twin works</div>
-      <h2 style={{ margin: "0", fontSize: "28px", fontWeight: "600" }}>Four steps from a raw Test file to a prediction on the train</h2>
-      <p style={{ margin: "0", fontSize: "15px", color: "#5b6673", maxWidth: "820px", lineHeight: "1.55" }}>The same four functions run whether you press RUN in the browser or call <span className="mono" style={{ fontSize: "13px" }}>python predict.py --input …</span>. The table on screen is the CSV you download, and the train model lights up the component behind the selected row.</p>
+      <div className="eyebrow">Prediction workflow</div>
+      <h2 style={{ margin: "0", fontSize: "28px", fontWeight: "600" }}>From Test file to prediction in four steps</h2>
+      <p style={{ margin: "0", fontSize: "15px", color: "#5b6673", maxWidth: "820px", lineHeight: "1.55" }}>The browser and <span className="mono" style={{ fontSize: "13px" }}>predict.py</span> use the same prediction functions. Results appear in submission format, and selecting a row highlights its component on the train.</p>
     </div>
 
     <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: "20px" }}>
@@ -81,8 +81,8 @@ export default function Intro({ openTwin, openTour }) {
         </svg>
         <div style={{ padding: "16px 18px 18px", display: "flex", flexDirection: "column", gap: "8px" }}>
           <div className="mono" style={{ fontSize: "11px", color: "#1a4fa3" }}>01 · UPLOAD</div>
-          <div style={{ fontSize: "16px", fontWeight: "600" }}>Pick a subsystem, queue files</div>
-          <div style={{ fontSize: "13px", color: "#5b6673", lineHeight: "1.5" }}>One Door stream, one ACV workbook, 68 Rail files or 16 SHM files. The browser sends at most 32 files per request against one session, so the table fills as batches return.</div>
+          <div style={{ fontSize: "16px", fontWeight: "600" }}>Choose a system and add files</div>
+          <div style={{ fontSize: "13px", color: "#5b6673", lineHeight: "1.5" }}>Add a Door CSV, ACV workbook, or a folder of Rail or SHM files. Large selections are processed in batches, and results appear as each batch finishes.</div>
           <div className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>web/src/predict/</div>
         </div>
       </div>
@@ -107,8 +107,8 @@ export default function Intro({ openTwin, openTour }) {
         </svg>
         <div style={{ padding: "16px 18px 18px", display: "flex", flexDirection: "column", gap: "8px" }}>
           <div className="mono" style={{ fontSize: "11px", color: "#1a4fa3" }}>02 · LOAD</div>
-          <div style={{ fontSize: "16px", fontWeight: "600" }}>Schema-aware loader</div>
-          <div style={{ fontSize: "13px", color: "#5b6673", lineHeight: "1.5" }}>Parses timestamps to the millisecond, discovers <span className="mono" style={{ fontSize: "12px" }}>Car N - parameter</span> columns by pattern, maps header aliases to canonical fields and reports unknown columns instead of guessing.</div>
+          <div style={{ fontSize: "16px", fontWeight: "600" }}>Check the file format</div>
+          <div style={{ fontSize: "13px", color: "#5b6673", lineHeight: "1.5" }}>The app checks timestamps and column names, recognises known aliases, and flags fields it cannot use.</div>
           <div className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>nebulax/ps3/&lt;task&gt;.py</div>
         </div>
       </div>
@@ -126,7 +126,7 @@ export default function Intro({ openTwin, openTour }) {
         </svg>
         <div style={{ padding: "16px 18px 18px", display: "flex", flexDirection: "column", gap: "8px" }}>
           <div className="mono" style={{ fontSize: "11px", color: "#1a4fa3" }}>03 · FEATURISE</div>
-          <div style={{ fontSize: "16px", fontWeight: "600" }}>Physics features</div>
+          <div style={{ fontSize: "16px", fontWeight: "600" }}>Build model inputs</div>
           <div style={{ fontSize: "13px", color: "#5b6673", lineHeight: "1.5" }}>Door-cycle currents, peer temperature deltas, axle-box spectra and coherence, rainflow damage sums. Baselines, templates and scalers always come from training data only.</div>
           <div className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>nebulax/ps3/&lt;task&gt;_features.py</div>
         </div>
@@ -150,8 +150,8 @@ export default function Intro({ openTwin, openTour }) {
         </svg>
         <div style={{ padding: "16px 18px 18px", display: "flex", flexDirection: "column", gap: "8px" }}>
           <div className="mono" style={{ fontSize: "11px", color: "#1a4fa3" }}>04 · PREDICT</div>
-          <div style={{ fontSize: "16px", fontWeight: "600" }}>Saved artifact, frozen</div>
-          <div style={{ fontSize: "13px", color: "#5b6673", lineHeight: "1.5" }}>Each <span className="mono" style={{ fontSize: "12px" }}>.pkl</span> holds the fitted model and its preprocessing state; the adjacent <span className="mono" style={{ fontSize: "12px" }}>.json</span> records the configuration and honest headline. The output is validated against the organiser schema before download.</div>
+          <div style={{ fontSize: "16px", fontWeight: "600" }}>Run the selected model</div>
+          <div style={{ fontSize: "13px", color: "#5b6673", lineHeight: "1.5" }}>Each <span className="mono" style={{ fontSize: "12px" }}>.pkl</span> holds the fitted model and its preprocessing state; the adjacent <span className="mono" style={{ fontSize: "12px" }}>.json</span> records the configuration and validation result. The output is validated against the organiser schema before download.</div>
           <div className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>models/ps3/*.pkl · nebulax/ps3/submission.py</div>
         </div>
       </div>
@@ -160,8 +160,8 @@ export default function Intro({ openTwin, openTour }) {
     {/* animated: where each subsystem lives on one cab */}
     <div className="card" style={{ overflow: "hidden" }}>
       <div style={{ padding: "20px 24px 0", display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-        <div className="eyebrow">Where each subsystem lives · one cab, cycling every 4 seconds</div>
-        <div style={{ fontSize: "12px", color: "#5b6673" }}>The component behind the selected row lights up green (normal) or red (fault)</div>
+        <div className="eyebrow">Subsystem locations on the train</div>
+        <div style={{ fontSize: "12px", color: "#5b6673" }}>Selecting a result highlights the corresponding component: green for normal and red for a detected fault.</div>
       </div>
       <div style={{ position: "relative", width: "1200px", height: "300px", overflow: "hidden" }}>
         <img src="/overview/cab_elev.png" alt="Side elevation of the first cab of the train model" style={{ position: "absolute", left: "0", top: "0", width: "1200px", height: "260px" }} />

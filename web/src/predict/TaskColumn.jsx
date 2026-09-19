@@ -13,7 +13,7 @@ const STATUS_COLOR = { queued: C.dim2, waiting: C.dim, running: C.accent, done: 
 const STATUS_WORD = { queued: "queued", waiting: "waiting", running: "running", done: "done", error: "error" };
 
 /**
- * One system tile: the name and its headline (the CV score of a shipped model, or EXPLORATORY
+ * One system tile: the name and its headline (the CV score of the selected model, or RESEARCH
  * for the two dataset profiles). The blurb lives in the panel under the grid, for the active
  * tile only, so all six fit without clutter.
  */
@@ -39,13 +39,13 @@ function TaskTab({ name, entry, active, onClick }) {
         justifyContent: "center",
         gap: 2,
       }}
-      title={off ? entry.detail || "task unavailable" : `${meta.blurb}\nclick to ${active ? "hide or show" : "read"} the description`}
+      title={off ? entry.detail || "System unavailable" : `${meta.blurb}\nSelect to ${active ? "hide or show" : "read"} the description.`}
     >
       <span style={{ fontSize: 11, fontWeight: 600, color: active ? C.accentBright : C.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
         {meta.tab || name}
       </span>
       <span className="mono" style={{ fontSize: 8.5, color: infoOnly ? C.dim2 : off ? C.crit : cv ? C.violet : C.dim2, letterSpacing: "0.04em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-        {infoOnly ? "(EXPLORATORY)" : off ? "UNAVAILABLE" : cv ? `${cv.label} ${Number(cv.value).toFixed(3)}` : entry && entry.cv ? "cv: no headline" : "no cv yet"}
+        {infoOnly ? "RESEARCH" : off ? "UNAVAILABLE" : cv ? `${cv.label} ${Number(cv.value).toFixed(3)}` : entry && entry.cv ? "cv: no headline" : "no cv yet"}
       </span>
     </button>
   );
@@ -60,7 +60,7 @@ function SystemInfo({ name, entry }) {
     <div className="nx-system-info">
       <div style={{ fontSize: 11, fontWeight: 600, color: C.text }}>
         {meta.title || name}
-        {infoOnly && <span className="mono" style={{ fontSize: 8.5, color: C.dim2, marginLeft: 6 }}>EXPLORATORY · NO UPLOAD OR PREDICTION</span>}
+        {infoOnly && <span className="mono" style={{ fontSize: 8.5, color: C.dim2, marginLeft: 6 }}>READ-ONLY DATASET · NO PREDICTION</span>}
       </div>
       <div style={{ fontSize: 10.5, color: C.text2, lineHeight: 1.4 }}>{meta.blurb}</div>
       <div style={{ fontSize: 9.5, color: C.dim, lineHeight: 1.4 }}>
@@ -89,8 +89,6 @@ export default function TaskColumn({
   total,
   notice,
   error,
-  animateOnTwin = true,
-  setAnimateOnTwin,
   width = 340,
   height = 546,
 }) {
@@ -163,8 +161,8 @@ export default function TaskColumn({
     if (valid.length) addFiles(valid);
     setCheckMessage(
       valid.length === total
-        ? `${valid.length} file${valid.length === 1 ? "" : "s"} checked and queued`
-        : `${valid.length} of ${total} files matched and were queued; the rest were left out`
+        ? `${valid.length} file${valid.length === 1 ? "" : "s"} added`
+        : `${valid.length} of ${total} files were added. The other ${total - valid.length} did not match the required format.`
     );
     setCheckFailed(valid.length < total);
   }, [addFiles, pending]);
@@ -174,7 +172,7 @@ export default function TaskColumn({
     checkAbort.current = null;
     setChecking(false);
     setPending(null);
-    setCheckMessage("pick cancelled, nothing was queued");
+    setCheckMessage("File selection cancelled");
     setCheckFailed(false);
     if (fileRef.current) fileRef.current.value = "";
     if (dirRef.current) dirRef.current.value = "";
@@ -195,14 +193,14 @@ export default function TaskColumn({
       const input = e.currentTarget;
       const list = Array.from(input.files || []);
       if (!list.length) {
-        setPickMessage("The picker returned no files. Try dropping a file into the box above.");
+        setPickMessage("No files were selected. Choose a file or drop it here.");
         return;
       }
       setPickMessage("");
       // Leave the selected filename visible. Firefox may still be completing the native
       // picker handoff when this change handler returns.
       void queuePicked(list)
-        .catch((err) => setPickMessage(`Could not queue the selection: ${err.message || err}`));
+        .catch((err) => setPickMessage(`Could not add the selection: ${err.message || err}`));
     },
     [queuePicked]
   );
@@ -241,7 +239,7 @@ export default function TaskColumn({
     <div data-tour="systems" style={{ display: "flex", flexDirection: "column", gap: 6, flex: "none" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 6 }}>
         <span style={{ fontSize: 9.5, letterSpacing: "0.14em", color: C.dim }}>SYSTEMS</span>
-        <span className="mono" style={{ fontSize: 9, color: C.dim2 }}>4 models · 2 exploratory</span>
+        <span className="mono" style={{ fontSize: 9, color: C.dim2 }}>4 prediction models · 2 research datasets</span>
       </div>
       <div className="nx-system-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 5 }}>
         {SYSTEM_ORDER.map((name) => (
@@ -277,7 +275,7 @@ export default function TaskColumn({
           <h2>{tmeta.dataset}</h2>
           <p>{tmeta.blurb}</p>
           <p><strong>{tmeta.size}</strong><br />{tmeta.signals}</p>
-          <span className="nx-info-badge">EXPLORATORY · NO UPLOAD OR PREDICTION</span>
+          <span className="nx-info-badge">READ-ONLY DATASET · NO PREDICTION</span>
         </div>
       </div>
     );
@@ -306,7 +304,7 @@ export default function TaskColumn({
         }}
       >
         <div style={{ fontSize: 10.5, color: hover ? C.accentBright : C.dim }}>
-          drop {tmeta.multiple ? "files or a folder" : "the file"} here ({accept}
+          Drop {tmeta.multiple ? "files or a folder" : "the file"} here ({accept}
           {meta && meta.max_files_per_request ? `, ${meta.max_files_per_request} per request` : ""})
         </div>
         <div style={{ display: "flex", gap: 6 }}>
@@ -322,7 +320,7 @@ export default function TaskColumn({
               onChange={onPick}
               className="nx-file-pick-input"
               aria-label={`${tmeta.tab || task} input files`}
-              title="Choose files to add to the queue"
+              title="Choose files"
             />
           </div>
           {tmeta.directory && (
@@ -339,7 +337,7 @@ export default function TaskColumn({
                 onChange={onPick}
                 className="nx-file-pick-input"
                 aria-label={`${tmeta.tab || task} input folder`}
-                title="Choose a folder to add its files to the queue"
+                title="Choose a folder"
               />
             </div>
           )}
@@ -347,7 +345,7 @@ export default function TaskColumn({
         {pickMessage && <div role="alert" style={{ fontSize: 10, color: C.crit }}>{pickMessage}</div>}
         {meta?.local_paths && (
           <div style={{ display: "flex", flexDirection: "column", gap: 3, borderTop: `1px solid ${C.line}`, paddingTop: 6 }}>
-            <span className="nx-eyebrow">LOCAL FILE OR TEST FOLDER PATH · FIREFOX FALLBACK</span>
+            <span className="nx-eyebrow">LOCAL PATH · USE IF THE FILE PICKER DOES NOT WORK</span>
             <div style={{ display: "flex", gap: 5 }}>
               <input
                 type="text"
@@ -394,7 +392,7 @@ export default function TaskColumn({
         </div>
         <div className="nx-scroll" style={{ flex: 1, minHeight: 0 }}>
           {!files.length ? (
-            <div style={{ padding: "10px 9px", fontSize: 10.5, color: C.dim2 }}>nothing queued</div>
+            <div style={{ padding: "10px 9px", fontSize: 10.5, color: C.dim2 }}>No files added</div>
           ) : (
             files.map((f) => (
               <div
@@ -452,21 +450,6 @@ export default function TaskColumn({
       )}
 
       <div style={{ flex: "none", display: "flex", flexDirection: "column", gap: 6 }}>
-        {setAnimateOnTwin && (
-          <label style={{ display: "inline-flex", alignItems: "center", gap: 6, cursor: "pointer", fontSize: 10, color: C.text2, userSelect: "none" }}>
-            <input
-              type="checkbox"
-              checked={animateOnTwin}
-              onChange={(e) => setAnimateOnTwin(e.target.checked)}
-              style={{ accentColor: C.accent, cursor: "pointer" }}
-            />
-            <span style={{ fontWeight: 600, letterSpacing: "0.04em" }}>INCLUDE REPLAY FRAMES</span>
-            <span className="mono" style={{ fontSize: 9, color: C.dim2 }}>
-              (stream frames)
-            </span>
-          </label>
-        )}
-
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <button
             type="button"
@@ -476,14 +459,14 @@ export default function TaskColumn({
             disabled={running || checking || !queued || unavailable}
             style={{ borderColor: C.accent, background: C.accentBg, color: C.accentBright, height: 26, fontSize: 10.5 }}
           >
-            {running ? `RUNNING ${done}/${total}` : `RUN ${queued || ""}`}
+            {running ? `PROCESSING ${done} OF ${total}` : queued ? `RUN ${queued} FILE${queued === 1 ? "" : "S"}` : "RUN"}
           </button>
           {running && (
             <button
               type="button"
               className="nx-btn"
               onClick={cancel}
-              title="Stop after the file in flight; the rows already predicted stay, the rest of the queue waits"
+              title="Stop after the current file. Completed results will remain, and unprocessed files will stay in the queue."
               style={{ borderColor: C.crit, color: C.crit, height: 26, fontSize: 10.5 }}
             >
               STOP
@@ -491,12 +474,10 @@ export default function TaskColumn({
           )}
           <span className="mono" style={{ fontSize: 9.5, color: C.dim2 }}>
             {running
-              ? animateOnTwin
-                ? "streaming preview frames, one file at a time"
-                : "uploading in batches, one file predicted at a time"
+              ? "Processing files"
               : queued
                 ? `${queued} queued · ${fmtBytes(files.filter((f) => f.status === "queued").reduce((a, f) => a + f.size, 0))}`
-                : "queue files to run"}
+                : "Add files to begin"}
           </span>
         </div>
       </div>

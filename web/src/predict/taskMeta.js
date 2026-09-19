@@ -7,7 +7,7 @@
 
 export const TASK_ORDER = ["door", "acv", "rail", "shm"];
 // Match the server contract while GET /api/ps3/tasks is still loading. A user can pick a file
-// before that request finishes, especially in Firefox after a page reload.
+// before that request finishes, especially after a page reload.
 export const TASK_SUFFIXES = { door: [".csv"], acv: [".xlsx", ".xls"], rail: [".csv"], shm: [".csv"] };
 export const INFO_ORDER = ["pneumatic", "bearing"];
 export const SYSTEM_ORDER = [...TASK_ORDER, ...INFO_ORDER];
@@ -46,8 +46,8 @@ export const INFO_META = {
 export const TASK_META = {
   door: {
     tab: "Door",
-    title: "Door segment detection",
-    blurb: "Cut the motor-current stream into door cycles and label each Normal or Abnormal resistance.",
+    title: "Door cycle classification",
+    blurb: "Identify each door cycle in the motor-current stream and classify it as Normal or Abnormal resistance.",
     input: "one Test.csv stream (datetime, motor current, …)",
     scored: "IoU-weighted F1 over the predicted segments, same-label matches only.",
     metric: "IoU-weighted F1",
@@ -57,7 +57,7 @@ export const TASK_META = {
   acv: {
     tab: "ACV",
     title: "Refrigerant-leak car ranking",
-    blurb: "Rank every car of a train-day workbook from most to least likely to be leaking.",
+    blurb: "Rank the cars in each workbook from most to least likely to have a refrigerant leak.",
     input: "one .xlsx workbook per case",
     scored: "Rank decay (n − (r − 1)) / n on the true car, averaged over cases.",
     metric: "rank decay",
@@ -66,8 +66,8 @@ export const TASK_META = {
   },
   rail: {
     tab: "Rail corrugation",
-    title: "Rail corrugation side",
-    blurb: "Call each run Normal, Side I or Side II from the 64 axle-box accelerometers.",
+    title: "Rail corrugation classification",
+    blurb: "Classify each run as Normal, Side I, or Side II using the 64 axle-box accelerometers.",
     input: "one .csv per run (speed + 64 boxes × 2 axes); drop the whole folder",
     scored: "Macro F1 over the fixed three labels; an absent class scores F1 = 0.",
     metric: "macro F1",
@@ -76,8 +76,8 @@ export const TASK_META = {
   },
   shm: {
     tab: "SHM",
-    title: "Fatigue-damage regression",
-    blurb: "Predict the cumulative fatigue damage of a dynamic-stress record.",
+    title: "Fatigue damage prediction",
+    blurb: "Estimate cumulative fatigue damage from a dynamic stress record.",
     input: "one headerless single-column .csv per record; drop the whole folder",
     scored: "score = max(0, 1 − MAPE) on the cumulative-damage number.",
     metric: "MAPE score",

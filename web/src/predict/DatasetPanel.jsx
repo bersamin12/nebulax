@@ -16,7 +16,7 @@ export default function DatasetPanel({ info, detail = false, height }) {
       <h2>{detail ? info.title : info.dataset}</h2>
       {detail ? (
         <>
-          <p>Research and calibration data for the train component shown above. This view does not produce a PS3 prediction.</p>
+          <p>Background data for the component shown above. This read-only view does not run a PS3 model.</p>
           <Fact label="Model explored">{info.model}</Fact>
           <Fact label="Evaluation">{info.evaluation}</Fact>
           <Fact label="Train location">{info.location}</Fact>
@@ -31,7 +31,7 @@ export default function DatasetPanel({ info, detail = false, height }) {
           <Fact label="Records">{info.size}</Fact>
           <Fact label="Measurements">{info.signals}</Fact>
           <div style={{ marginTop: 20, color: C.dim, lineHeight: 1.55 }}>
-            No uploaded-file prediction or submission CSV is available for this research system.
+            Uploads and submission CSVs are not available for this dataset.
           </div>
         </>
       )}

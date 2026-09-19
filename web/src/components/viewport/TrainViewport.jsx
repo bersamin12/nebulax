@@ -694,7 +694,7 @@ export default function TrainViewport({
           </div>
         ) : null}
         <div className="nx-vp-hint">
-          DRAG TO ORBIT &middot; SCROLL TO ZOOM &middot; DOUBLE-CLICK TO RESET
+          DRAG TO ROTATE &middot; SCROLL TO ZOOM &middot; DOUBLE-CLICK TO RESET
         </div>
       </div>
     </div>

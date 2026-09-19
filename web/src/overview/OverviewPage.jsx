@@ -2,7 +2,7 @@
 // the ablation ladders, the two exploratory systems, and the team. Static prose and numbers, no
 // API calls; the only interaction is the carousels and the two calls to action.
 //
-// It is the default page (`?page=overview`); "Open Digital Twin" goes to the predict page and
+// It is the default page (`?page=overview`); "Open prediction workspace" goes to Predict and
 // "Take the 2-minute tour" opens it with the tutorial running (`?tour=1`, predict/Tutorial.jsx).
 // The console shell is a fixed 1440x900 board, so the page scrolls inside it.
 import { useCallback } from "react";
