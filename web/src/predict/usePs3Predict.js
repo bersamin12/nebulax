@@ -1,10 +1,10 @@
 // The predict page's state machine: the task list, the upload queue, and the batched session.
 //
-// Why batches: `POST /api/ps3/{task}/predict` takes at most `max_files_per_request` (32) files
-// per call and predicts them one at a time, appending the rows to an upload *session*. The 68
-// released rail files are ~1.1 GB, so the page slices the queue into batches, sends the first
-// one with no session, and passes the token it gets back with every following batch. The server
-// answers with **all** rows accumulated so far (so `rows` is a replace, not an append) and with
+// Why batches: `POST /api/ps3/{task}/predict` takes bounded multipart requests and predicts the
+// files one at a time, appending the rows to an upload *session*. Cloud Run HTTP/1 rejects a
+// whole request above 32 MiB, so batches are capped by both file count and 30 MiB of file data.
+// The page sends the first batch with no session and passes its token with every following batch.
+// The server answers with **all** rows accumulated so far (so `rows` is a replace, not an append) and with
 // the explanations of *that batch only* (so `explanations` is a merge by file_id).
 //
 // Nothing is retried automatically: a file the server refuses comes back in `errors` and is
@@ -21,6 +21,30 @@ import { TASK_ORDER, TASK_SUFFIXES } from "./taskMeta.js";
 
 let SEQ = 0;
 const nextId = () => `f${++SEQ}`;
+
+// Leaves roughly 2 MiB below Cloud Run's 32 MiB HTTP/1 request limit for multipart headers.
+export const MAX_UPLOAD_BATCH_BYTES = 30 * 1024 * 1024;
+
+/** Preserve queue order while bounding both the file count and total bytes in each request. */
+export function uploadBatches(items, maxFiles = 32, maxBytes = MAX_UPLOAD_BATCH_BYTES) {
+  const countLimit = Math.max(1, Number(maxFiles) || 1);
+  const byteLimit = Math.max(1, Number(maxBytes) || 1);
+  const batches = [];
+  let batch = [];
+  let bytes = 0;
+  for (const item of items || []) {
+    const size = Math.max(0, Number(item && (item.size ?? (item.file && item.file.size))) || 0);
+    if (batch.length && (batch.length >= countLimit || bytes + size > byteLimit)) {
+      batches.push(batch);
+      batch = [];
+      bytes = 0;
+    }
+    batch.push(item);
+    bytes += size;
+  }
+  if (batch.length) batches.push(batch);
+  return batches;
+}
 
 /** Accepted-suffix test, the same rule the API applies (case-insensitive, leading dot). */
 export function accepts(suffixes, name) {
@@ -262,8 +286,7 @@ export function usePs3Predict(initialTask) {
       }
     } else {
       const batchSize = Math.max(1, Math.min(32, Number(meta && meta.max_files_per_request) || 32));
-      for (let i = 0; i < queued.length; i += batchSize) {
-        const batch = queued.slice(i, i + batchSize);
+      for (const batch of uploadBatches(queued, batchSize)) {
         const ids = new Set(batch.map((f) => f.id));
         patch(name, (s) => ({
           files: s.files.map((f) => (ids.has(f.id) ? { ...f, status: "running" } : f)),
