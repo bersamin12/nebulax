@@ -1,4 +1,4 @@
-# Rail PHM — what the literature and operators actually use
+# Rail PHM —  what the literature and operators actually use
 
 Per subsystem: the signals real systems carry, the features that work on them, the fault taxonomy,
 the thresholds and standards, and what is actually deployed. Every claim carries a `[Rnn]` resolving
@@ -26,17 +26,17 @@ regulatory text carries a newton or a second** for obstacle detection.
 
 Everything downstream of a temperature depends on this, and nothing in the W0 pass stated it.
 
-| Quantity | Value | Source |
-|---|---|---|
-| 24-hour mean air temperature | **26.8 °C** (Dec/Jan) to **28.6 °C** (May) | [R152] |
-| Mean daily **maximum** | **30.5 °C** (Dec) to **32.4 °C** (Apr) | [R152] |
-| Mean daily **minimum** | **24.3 °C** (Jan/Dec) to **25.7 °C** (May/Jun) | [R152] |
-| Record daily maximum / minimum | **37.0 °C** (13 May 2023) / **19.0 °C** (14 Feb 1989) | [R153] |
-| Mean annual relative humidity | **≈82 %**; monthly daily-mean 80.7-85.5 % | [R152] |
-| Daily **maximum** RH | **93.0 %** (Aug) to **96.5 %** (Nov) | [R152] |
-| Daily **minimum** RH | **61.4 %** (Mar/Oct) to **68.0 %** (Dec) | [R152] |
-| Rainfall | 2113.3 mm over 171 rain days | [R152] |
-| Regulatory design envelope, zone **T1** | **−25 °C to +40 °C** nominal | [R163] cl. 4.2.6.1 |
+| Quantity                                     | Value                                                               | Source             |
+| -------------------------------------------- | ------------------------------------------------------------------- | ------------------ |
+| 24-hour mean air temperature                 | **26.8 °C** (Dec/Jan) to **28.6 °C** (May)            | [R152]             |
+| Mean daily**maximum**                  | **30.5 °C** (Dec) to **32.4 °C** (Apr)                | [R152]             |
+| Mean daily**minimum**                  | **24.3 °C** (Jan/Dec) to **25.7 °C** (May/Jun)        | [R152]             |
+| Record daily maximum / minimum               | **37.0 °C** (13 May 2023) / **19.0 °C** (14 Feb 1989) | [R153]             |
+| Mean annual relative humidity                | **≈82 %**; monthly daily-mean 80.7-85.5 %                    | [R152]             |
+| Daily**maximum** RH                    | **93.0 %** (Aug) to **96.5 %** (Nov)                    | [R152]             |
+| Daily**minimum** RH                    | **61.4 %** (Mar/Oct) to **68.0 %** (Dec)                | [R152]             |
+| Rainfall                                     | 2113.3 mm over 171 rain days                                        | [R152]             |
+| Regulatory design envelope, zone**T1** | **−25 °C to +40 °C** nominal                               | [R163] cl. 4.2.6.1 |
 
 **Two consequences that change simulator parameters.**
 
@@ -68,14 +68,14 @@ source for them — say "surface climate normals" on the slide, not "tunnel cond
 
 ### 1.1 Signals that are actually available
 
-| Source | Signal set | Note |
-|---|---|---|
-| Korean test-rig comparative study [R64] | **Motor current only** | The entire diagnosis is built on one channel. No added sensors. |
-| Cranfield railway-asset PHM [R72] | **Motor current only** | Stated explicitly: current is already available from the controller / motor drive with **no added sensors**, and the method generalises to any electro-mechanical actuator. |
-| Chinese rail-vehicle door telemetry [R78] | **Door position, motor speed, motor current**, collected from **multiple doors of the same vehicle simultaneously** | The multi-door aspect is the transferable trick: siblings are the reference population. |
-| ScotRail Class 158 RCM analysis [R74] | door key switch, **door interlock switch**, door operating pressure, door opening pressure, door closing pressure, emergency passenger relay | The operator's own condition-monitoring shortlist. Cheap discrete/analogue channels, **not vibration**. Note: Class 158 doors are electrically controlled but **pneumatically operated** (torque cylinder driving linkages, mechanically locked over centre). |
-| PHME 2026 door test bench [R69] | `Time, POS_REF, POS_FBK, VEL_REF, VEL_FBK, FBK_DIGHALL, FBK_DIGENC1, DRV_PROT_VBUS, MOT_PROT_TEMP, FBK_CUR_A/B/C, DRV_PROT_TEMP, FBK_VOL_A/B/C` | 16 channels, 600 samples per file, one file per opening or closing activity, two files = one cycle. Three-phase brushless servomotor, INGENIA EVEREST XCR controller. |
-| Plug-door audio work [R75] | Airborne audio, 44.1 kHz portable recorder, CRH5A plug door | Retrofit modality where the DCU cannot be tapped. |
+| Source                                    | Signal set                                                                                                                                        | Note                                                                                                                                                                                                                                                                     |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Korean test-rig comparative study [R64]   | **Motor current only**                                                                                                                      | The entire diagnosis is built on one channel. No added sensors.                                                                                                                                                                                                          |
+| Cranfield railway-asset PHM [R72]         | **Motor current only**                                                                                                                      | Stated explicitly: current is already available from the controller / motor drive with**no added sensors**, and the method generalises to any electro-mechanical actuator.                                                                                         |
+| Chinese rail-vehicle door telemetry [R78] | **Door position, motor speed, motor current**, collected from **multiple doors of the same vehicle simultaneously**                   | The multi-door aspect is the transferable trick: siblings are the reference population.                                                                                                                                                                                  |
+| ScotRail Class 158 RCM analysis [R74]     | door key switch,**door interlock switch**, door operating pressure, door opening pressure, door closing pressure, emergency passenger relay | The operator's own condition-monitoring shortlist. Cheap discrete/analogue channels,**not vibration**. Note: Class 158 doors are electrically controlled but **pneumatically operated** (torque cylinder driving linkages, mechanically locked over centre). |
+| PHME 2026 door test bench [R69]           | `Time, POS_REF, POS_FBK, VEL_REF, VEL_FBK, FBK_DIGHALL, FBK_DIGENC1, DRV_PROT_VBUS, MOT_PROT_TEMP, FBK_CUR_A/B/C, DRV_PROT_TEMP, FBK_VOL_A/B/C` | 16 channels, 600 samples per file, one file per opening or closing activity, two files = one cycle. Three-phase brushless servomotor, INGENIA EVEREST XCR controller.                                                                                                    |
+| Plug-door audio work [R75]                | Airborne audio, 44.1 kHz portable recorder, CRH5A plug door                                                                                       | Retrofit modality where the DCU cannot be tapped.                                                                                                                                                                                                                        |
 
 **Verdict for us:** motor current plus position is sufficient and is what the field uses. Limit-switch
 and interlock discrete state deserve first-class status because that is what the operator monitors.
@@ -112,20 +112,20 @@ and interlock discrete state deserve first-class status because that is what the
 
 **ScotRail Class 380, 38-unit fleet, 205 door defects — root causes ranked [R73]:**
 
-| Root cause | Defects | Share |
-|---|---|---|
-| **No fault found (NFF)** | 87 | **42.4 %** |
-| Faulty push buttons | 39 | 19 % |
-| Faulty DCU | 20 | |
-| Limit / micro-switch disengagement | 18 | |
-| Light barrier | 7 | |
-| Door drive (motor failure, **encoder** failure, faulty connections) | 6 | |
-| Guard operating panel | 6 | |
-| Limit switches | 6 | |
-| Loose plugs | 6 | |
-| Obstruction by dirt / debris in door tracks | 6 | |
-| Door roller detachment | 2 | |
-| Poor lubrication | 2 | |
+| Root cause                                                               | Defects | Share            |
+| ------------------------------------------------------------------------ | ------- | ---------------- |
+| **No fault found (NFF)**                                           | 87      | **42.4 %** |
+| Faulty push buttons                                                      | 39      | 19 %             |
+| Faulty DCU                                                               | 20      |                  |
+| Limit / micro-switch disengagement                                       | 18      |                  |
+| Light barrier                                                            | 7       |                  |
+| Door drive (motor failure,**encoder** failure, faulty connections) | 6       |                  |
+| Guard operating panel                                                    | 6       |                  |
+| Limit switches                                                           | 6       |                  |
+| Loose plugs                                                              | 6       |                  |
+| Obstruction by dirt / debris in door tracks                              | 6       |                  |
+| Door roller detachment                                                   | 2       |                  |
+| Poor lubrication                                                         | 2       |                  |
 
 Criticality (risk factor) per failure mode ranges 3-28 out of 100: ~3 % very low, ~15 % low, ~70 %
 medium, 12 % high; nine high-critical failure modes (four at RF 27, five at RF 28). Their 5-whys
@@ -170,20 +170,21 @@ and report detection latency against 0.3 s as *our* acceptance metric — never 
 **The only door force and timing numbers in free regulatory text are these, and they are not
 obstruction limits** — they are PRM human-interface and passenger-warning requirements [R165]:
 
-| Quantity | Value | Clause |
-|---|---|---|
-| Palm force to operate a public door control device | **≤ 20 N** | PRM 4.2.2.3.1(2) |
-| Force to open or close a **manual** door | **≤ 60 N** | PRM 4.2.2.3.3(3) |
-| Door **opening** signal duration | **≥ 5 s** (may cease after 3 s if the door is operated) | PRM 4.2.2.3.2 |
-| Remote / automatic opening signal | **≥ 3 s** from the start of opening | PRM 4.2.2.3.2 |
-| Door **closing** signal | starts **≥ 2 s before the door starts to close**, continues until closed | PRM 4.2.2.3.2 |
-| Clear usable door width | **≥ 800 mm** (≥ 1000 mm for wheelchair-access level-access doors, < 250 km/h) | PRM 4.2.2.3.2 |
-| Internal emergency-opening device active below | **10 km/h** | LOC&PAS 4.2.5.5.9(1) [R163] |
+| Quantity                                           | Value                                                                                 | Clause                      |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------- | --------------------------- |
+| Palm force to operate a public door control device | **≤ 20 N**                                                                     | PRM 4.2.2.3.1(2)            |
+| Force to open or close a**manual** door      | **≤ 60 N**                                                                     | PRM 4.2.2.3.3(3)            |
+| Door**opening** signal duration              | **≥ 5 s** (may cease after 3 s if the door is operated)                        | PRM 4.2.2.3.2               |
+| Remote / automatic opening signal                  | **≥ 3 s** from the start of opening                                            | PRM 4.2.2.3.2               |
+| Door**closing** signal                       | starts**≥ 2 s before the door starts to close**, continues until closed        | PRM 4.2.2.3.2               |
+| Clear usable door width                            | **≥ 800 mm** (≥ 1000 mm for wheelchair-access level-access doors, < 250 km/h) | PRM 4.2.2.3.2               |
+| Internal emergency-opening device active below     | **10 km/h**                                                                     | LOC&PAS 4.2.5.5.9(1) [R163] |
 
 There is **no cycle-time (open-to-close duration) requirement anywhere in the PRM TSI** — so any
 closing-time threshold in our simulator is ours, not a regulator's. The ≥ 2 s closing warning is
 useful though: it pins the simulated door event timeline to a regulator-consistent shape, so an
 injected obstruction always sits after a legitimate warning phase.
+
 - **Class 158 RCM** [R74]: 48-unit DMU fleet, 8 doors per unit, **over 100 inter-dependent components
   and over 345 failure modes**; doors have the **most technical incidents and the most delay minutes**
   of any safety-critical system on the fleet; a door failure typically causes a **5+ minute delay**,
@@ -210,11 +211,11 @@ injected obstruction always sits after a legitimate warning phase.
 
 ### 2.1 Signals
 
-| Release | Signals | Rate | Window |
-|---|---|---|---|
-| **MetroPT-3** [R88] (ours) | 7 analogue: `TP2, TP3, H1, DV_pressure, Reservoirs, Motor_current, Oil_temperature`; 8 digital: `COMP, DV_electric, TOWERS, MPG, LPS, Pressure_Switch, Oil_Level, Caudal_Impulses`. **No GPS, no Flowmeter.** | 1 Hz | Feb-Aug 2020, 1,516,948 rows |
-| **MetroPT-1** [R87][R132] | 8 analogue: adds **`Flowmeter`**; 8 digital; **plus `gpsLong/gpsLat/gpsSpeed/gpsQuality`** | 1 Hz | Jan-Jun 2022, 10,979,547 rows, 20 variables |
-| **MetroPT-2** [R89] | 16 sensor signals + control signals + GPS, 21 attributes | 1 Hz | 28 Apr - 28 Jul 2022, 7,116,940 records |
+| Release                          | Signals                                                                                                                                                                                                                | Rate | Window                                      |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | ------------------------------------------- |
+| **MetroPT-3** [R88] (ours) | 7 analogue:`TP2, TP3, H1, DV_pressure, Reservoirs, Motor_current, Oil_temperature`; 8 digital: `COMP, DV_electric, TOWERS, MPG, LPS, Pressure_Switch, Oil_Level, Caudal_Impulses`. **No GPS, no Flowmeter.** | 1 Hz | Feb-Aug 2020, 1,516,948 rows                |
+| **MetroPT-1** [R87][R132]  | 8 analogue: adds**`Flowmeter`**; 8 digital; **plus `gpsLong/gpsLat/gpsSpeed/gpsQuality`**                                                                                                              | 1 Hz | Jan-Jun 2022, 10,979,547 rows, 20 variables |
+| **MetroPT-2** [R89]        | 16 sensor signals + control signals + GPS, 21 attributes                                                                                                                                                               | 1 Hz | 28 Apr - 28 Jul 2022, 7,116,940 records     |
 
 **Naming trap for our repo:** the three releases are different datasets with different signal sets and
 different failure modes. MetroPT-3 has **air leaks only** [R88]; a classifier trained on it cannot
@@ -285,14 +286,14 @@ transfer at the same pressure class (5-9 barg) as a rail main reservoir.*
 [R87].** These are the four numbers the simulator must not invent, because the APU we are modelling
 is the one this paper describes:
 
-| Constant | Value | Source |
-|---|---|---|
-| Compressor **start** pressure | below **8.2 bar** | [R87] |
-| Compressor **stop** pressure | above **10.2 bar** (operating pressure) | [R87] |
-| `LPS` low-pressure switch trip | below **7 bar** | [R87] |
-| `Motor_current` three-state expectation | ≈ **0 A** off, ≈ **4 A** offloaded, ≈ **7 A** under load | [R87] |
-| `TOWERS` semantics | inactive = tower one drying, active = tower two drying | [R87] |
-| Acquisition rate | 1 Hz | [R87] |
+| Constant                                  | Value                                                                        | Source |
+| ----------------------------------------- | ---------------------------------------------------------------------------- | ------ |
+| Compressor**start** pressure        | below**8.2 bar**                                                       | [R87]  |
+| Compressor**stop** pressure         | above**10.2 bar** (operating pressure)                                 | [R87]  |
+| `LPS` low-pressure switch trip          | below**7 bar**                                                         | [R87]  |
+| `Motor_current` three-state expectation | ≈**0 A** off, ≈ **4 A** offloaded, ≈ **7 A** under load | [R87]  |
+| `TOWERS` semantics                      | inactive = tower one drying, active = tower two drying                       | [R87]  |
+| Acquisition rate                          | 1 Hz                                                                         | [R87]  |
 
 The twin-tower **switching period does not need to be invented either** — measure it directly from
 the `TOWERS` channel in MetroPT-2/3 [R88][R89]. That is empirical ground truth from a real metro
@@ -305,12 +306,12 @@ with the **square of orifice diameter** and rises with supply pressure [R154]. C
 psig row to NL/s for sharp-edged orifices (1 cfm = 0.4719 NL/s; *our arithmetic on their published
 table*):
 
-| Orifice | Sharp-edged leak at 90 psig ≈ 6.2 barg |
-|---|---|
-| 1/64 in (0.40 mm) | **0.10 NL/s** |
-| 1/32 in (0.79 mm) | **0.42 NL/s** |
-| 1/16 in (1.59 mm) | **1.65 NL/s** |
-| 1/8 in (3.18 mm) | **6.65 NL/s** |
+| Orifice           | Sharp-edged leak at 90 psig ≈ 6.2 barg |
+| ----------------- | --------------------------------------- |
+| 1/64 in (0.40 mm) | **0.10 NL/s**                     |
+| 1/32 in (0.79 mm) | **0.42 NL/s**                     |
+| 1/16 in (1.59 mm) | **1.65 NL/s**                     |
+| 1/8 in (3.18 mm)  | **6.65 NL/s**                     |
 
 So our planned `Q_leak = 0.2 + 3.0·s` NL/s spans roughly a **0.55 mm** sharp orifice at `s = 0` to a
 **2.2 mm** sharp orifice at `s = 1` — both physically sensible, the large end a plausible fitting or
@@ -327,15 +328,14 @@ spec and as a labelled "failed the acceptance test" threshold.
 
 **Duty ratio has a published absolute band, not only a percentile.** With all end uses off, DOE gives
 `Leakage(%) = T·100/(T + t)` where `T` = on-load minutes and `t` = off-load minutes, with **< 10 %**
-in a well-maintained system and **20-30 %** when poorly maintained [R155]. Our `idle_run_ratio =
-t_off / t_loaded` is exactly `t/T`, so `Leakage(%) = 100/(1 + idle_run_ratio)` and (*our algebra on
+in a well-maintained system and **20-30 %** when poorly maintained [R155]. Our `idle_run_ratio = t_off / t_loaded` is exactly `t/T`, so `Leakage(%) = 100/(1 + idle_run_ratio)` and (*our algebra on
 their formula*):
 
-| System state | DOE leakage % | Equivalent `idle_run_ratio` |
-|---|---|---|
-| Well maintained | ≤ 10 % | **≥ 9.0** |
-| Degraded | 20 % | **4.0** |
-| Poorly maintained | 30 % | **2.33** |
+| System state      | DOE leakage % | Equivalent`idle_run_ratio` |
+| ----------------- | ------------- | ---------------------------- |
+| Well maintained   | ≤ 10 %       | **≥ 9.0**             |
+| Degraded          | 20 %          | **4.0**                |
+| Poorly maintained | 30 %          | **2.33**               |
 
 **Honest caveat that must be stated with it:** DOE measures with all end uses *off*. A train in
 revenue service has genuine consumption (door operations, brake applications, air suspension
@@ -345,16 +345,16 @@ improvement on the W0 text, which had only a percentile and no citation.
 
 **Twin-tower dryer constants** [R155][R160]:
 
-| Quantity | Value | Source |
-|---|---|---|
-| Rated pressure dew point, twin-tower desiccant | **−40 °F = −40 °C** | [R155] |
-| Purge air, pressure-swing regenerative | **10-18 %** of the dryer's rating | [R155] |
-| Purge air, heater-purge twin tower (measured, 13 sites) | **12 % of flow** | [R160] |
-| Pressure drop through the dryer | **3-5 psi** | [R155] |
-| Heater run-time fraction (heated types) | 14-57 %, depending on dew-point setpoint and load | [R160] |
-| Regeneration mechanism | depressurise the tower, pass previously dried purge air through the bed | [R155] |
-| Regeneration control | built-in cycle based on **time, dew point, or both**; in practice a **timed cycle adjusted by season** | [R155][R160] |
-| Coupled failure mode | **low supply pressure → higher volumetric flow → reduced purge → incomplete regeneration → degraded performance and possible failure** | [R160] |
+| Quantity                                                | Value                                                                                                                                            | Source       |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ------------ |
+| Rated pressure dew point, twin-tower desiccant          | **−40 °F = −40 °C**                                                                                                                    | [R155]       |
+| Purge air, pressure-swing regenerative                  | **10-18 %** of the dryer's rating                                                                                                          | [R155]       |
+| Purge air, heater-purge twin tower (measured, 13 sites) | **12 % of flow**                                                                                                                           | [R160]       |
+| Pressure drop through the dryer                         | **3-5 psi**                                                                                                                                | [R155]       |
+| Heater run-time fraction (heated types)                 | 14-57 %, depending on dew-point setpoint and load                                                                                                | [R160]       |
+| Regeneration mechanism                                  | depressurise the tower, pass previously dried purge air through the bed                                                                          | [R155]       |
+| Regeneration control                                    | built-in cycle based on**time, dew point, or both**; in practice a **timed cycle adjusted by season**                                | [R155][R160] |
+| Coupled failure mode                                    | **low supply pressure → higher volumetric flow → reduced purge → incomplete regeneration → degraded performance and possible failure** | [R160]       |
 
 That last row is a genuinely useful *cascading* fault to inject: a main-reservoir leak degrades the
 dryer, which is a plausible real failure chain and a much better demo than two independent faults.
@@ -385,13 +385,13 @@ transition durations in the state machine rather than instantaneous switching.
 
 ### 3.1 Sensing modalities and what each can see
 
-| Modality | Where | What it catches | Source |
-|---|---|---|---|
-| Wayside HABD (hot axle box detector, IR) | Trackside | End-of-life thermal runaway. **Late-stage indicator.** | [R109][R113] |
-| Wayside acoustic (RailBAM / TADS) | Trackside microphone array | End-of-life bearings; **misses incipient defects**. Requires Doppler-effect removal by resampling before envelope/order analysis, because the signal is Doppler-distorted and buried in wheel-rail noise. | [R109][R127] |
-| Onboard vibration | Axle box | **Damage far earlier than temperature.** | [R109] |
-| Onboard temperature | Axle box | Continuous, cheap, mandated above 250 km/h. | [R113][R114] |
-| Acoustic emission | Axle box | Earliest of all; specialist. | [R109] |
+| Modality                                 | Where                      | What it catches                                                                                                                                                                                                | Source       |
+| ---------------------------------------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
+| Wayside HABD (hot axle box detector, IR) | Trackside                  | End-of-life thermal runaway.**Late-stage indicator.**                                                                                                                                                    | [R109][R113] |
+| Wayside acoustic (RailBAM / TADS)        | Trackside microphone array | End-of-life bearings;**misses incipient defects**. Requires Doppler-effect removal by resampling before envelope/order analysis, because the signal is Doppler-distorted and buried in wheel-rail noise. | [R109][R127] |
+| Onboard vibration                        | Axle box                   | **Damage far earlier than temperature.**                                                                                                                                                                 | [R109]       |
+| Onboard temperature                      | Axle box                   | Continuous, cheap, mandated above 250 km/h.                                                                                                                                                                    | [R113][R114] |
+| Acoustic emission                        | Axle box                   | Earliest of all; specialist.                                                                                                                                                                                   | [R109]       |
 
 The central argument for our pitch: **temperature-only detection is a late-stage indicator while
 vibration and acoustic emission detect damage far earlier** [R109].
@@ -477,16 +477,16 @@ series, **60 million wayside HotBox measurements over 2 years** across 27 measur
 [R151]. This is a far better citation than a paywalled standard because it is an operator saying what
 it really does:
 
-| Rule | Value | Note |
-|---|---|---|
-| Wayside **immediate-stop** limit | measured axle-box temperature **> 115 °C** → driver ordered to stop immediately | [R151] |
-| Peer feature, defined exactly | `dT` = absolute bearing temperature **− median of the other bearing temperatures on the same SIDE of the train** | not all peers — the same-side restriction matters, see below |
-| Differential alarm | `dT > 30 °C` → level 1/2/3 depending on frequency; `dT > 50 °C` → level 3 immediately | [R151] |
-| Absolute alarm | **> 80 °C** → level 4 immediately | [R151] |
-| Slow-degradation rule | per bearing, take the deviation of its side-difference from the **median of all side-differences on that train**; if it exceeds **3.5 standard deviations for ≥ 10 measurements within 30 days** → level 1; double that frequency → level 2 | [R151] |
-| Data-quality guard | if **≥ 4 bearings on one train in one measurement read > 50 °C**, attribute the cause to the **measurement station** and suppress the alarms | [R151] |
-| Achieved lead time | alarms **one to three months** before existing detection methods in every true-positive case; > 90 days in the illustrated case | [R151] |
-| Normal variation is driven by | ambient temperature, sunshine, and **duty cycle** — "the bearing cools significantly by the wind while driving and warms up while standing still" | [R151] |
+| Rule                                  | Value                                                                                                                                                                                                                                                     | Note                                                          |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| Wayside**immediate-stop** limit | measured axle-box temperature**> 115 °C** → driver ordered to stop immediately                                                                                                                                                                    | [R151]                                                        |
+| Peer feature, defined exactly         | `dT` = absolute bearing temperature **− median of the other bearing temperatures on the same SIDE of the train**                                                                                                                                 | not all peers — the same-side restriction matters, see below |
+| Differential alarm                    | `dT > 30 °C` → level 1/2/3 depending on frequency; `dT > 50 °C` → level 3 immediately                                                                                                                                                             | [R151]                                                        |
+| Absolute alarm                        | **> 80 °C** → level 4 immediately                                                                                                                                                                                                                 | [R151]                                                        |
+| Slow-degradation rule                 | per bearing, take the deviation of its side-difference from the**median of all side-differences on that train**; if it exceeds **3.5 standard deviations for ≥ 10 measurements within 30 days** → level 1; double that frequency → level 2 | [R151]                                                        |
+| Data-quality guard                    | if**≥ 4 bearings on one train in one measurement read > 50 °C**, attribute the cause to the **measurement station** and suppress the alarms                                                                                                 | [R151]                                                        |
+| Achieved lead time                    | alarms**one to three months** before existing detection methods in every true-positive case; > 90 days in the illustrated case                                                                                                                      | [R151]                                                        |
+| Normal variation is driven by         | ambient temperature, sunshine, and**duty cycle** — "the bearing cools significantly by the wind while driving and warms up while standing still"                                                                                                   | [R151]                                                        |
 
 **Why "same side" rather than all peers.** Axle boxes on one wheelset are not thermally identical when
 the car is powered: on a motor car, bearing 1 carries **13.5 % (200 km/h) and 10.5 % (300 km/h)**
@@ -593,20 +593,18 @@ band and require detection within **0.3 s**; emit a soft/hard object class rathe
 `obstruction` flag. Report **detection latency against 0.3 s** as a first-class metric, not only F1.
 (EN 14752 clause values `UNVERIFIED` — we quote them as "the operating point used by [R67]".)
 
-**`cycle_features` additions.** Current list keeps `closing_time, opening_time, i_peak, i_mean_cruise,
-i_rms_cruise, i_end, energy_J, pwm_mean, pos_err_max, pos_err_rms, reversal_count, obstruction,
-ls_timeout, dropout_frac, T_motor, current_profile_50`. Add:
+**`cycle_features` additions.** Current list keeps `closing_time, opening_time, i_peak, i_mean_cruise, i_rms_cruise, i_end, energy_J, pwm_mean, pos_err_max, pos_err_rms, reversal_count, obstruction, ls_timeout, dropout_frac, T_motor, current_profile_50`. Add:
 
-| Feature | Definition | Source |
-|---|---|---|
-| `dwt_l1_w8`, `dwt_l1_w9` | L1 norm of db10 DWT detail coefficients at levels 8 and 9 of the closing current | [R66] |
-| `i_start_peak` | motor starting-current peak | [R66] |
-| `i_mean_accel`, `i_mean_cruise`, `i_mean_decel` | mean current per velocity regime | [R64] |
-| `i_rms_accel`, `i_rms_decel`, `t_accel`, `t_cruise`, `t_decel` | regime-wise RMS and durations | [R64] |
-| `dtw_to_ref` | DTW distance of the (current vs position) profile to the fleet-median healthy cycle | [R72] |
-| `peer_z_<feat>` | z-score of each feature against the 7 sibling doors of the unit at the same timestamp | [R78] |
-| `shock_count`, `shock_peak`, `pos_close_max` | shock events and closing-position ceiling | [R69][R71] |
-| `severity_stage` | k-means cluster index over `dtw_to_ref` (ordinal 0..4) | [R72][R81] |
+| Feature                                                                  | Definition                                                                            | Source     |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------- | ---------- |
+| `dwt_l1_w8`, `dwt_l1_w9`                                             | L1 norm of db10 DWT detail coefficients at levels 8 and 9 of the closing current      | [R66]      |
+| `i_start_peak`                                                         | motor starting-current peak                                                           | [R66]      |
+| `i_mean_accel`, `i_mean_cruise`, `i_mean_decel`                    | mean current per velocity regime                                                      | [R64]      |
+| `i_rms_accel`, `i_rms_decel`, `t_accel`, `t_cruise`, `t_decel` | regime-wise RMS and durations                                                         | [R64]      |
+| `dtw_to_ref`                                                           | DTW distance of the (current vs position) profile to the fleet-median healthy cycle   | [R72]      |
+| `peer_z_<feat>`                                                        | z-score of each feature against the 7 sibling doors of the unit at the same timestamp | [R78]      |
+| `shock_count`, `shock_peak`, `pos_close_max`                       | shock events and closing-position ceiling                                             | [R69][R71] |
+| `severity_stage`                                                       | k-means cluster index over`dtw_to_ref` (ordinal 0..4)                               | [R72][R81] |
 
 **Feature screening and reporting** [R68]: Spearman rank correlation + **variance inflation factor**
 screening → LightGBM gain ranking → stacking → threshold tuned by **F1 max on validation only** →
@@ -633,8 +631,7 @@ idle_run_ratio  = t_off / t_loaded           # leak signature: this SHRINKS
 ```
 
 Detector rule: alarm when the **6-hour rolling median of `idle_run_ratio` drops below its healthy
-validation 5th percentile**, **and** report the DOE absolute band as a second axis — `idle_run_ratio
-≥ 9.0` is DOE's "well maintained" (< 10 % leakage), `4.0` is 20 % and `2.33` is 30 % [R155] (our
+validation 5th percentile**, **and** report the DOE absolute band as a second axis — `idle_run_ratio ≥ 9.0` is DOE's "well maintained" (< 10 % leakage), `4.0` is 20 % and `2.33` is 30 % [R155] (our
 algebra on their `Leakage(%) = T·100/(T+t)` formula, §2.3b). Caveat to state: DOE's band assumes all
 end uses off, so it is exact only for a stabled train; in revenue service the validation percentile
 governs and the absolute band is context. The 6-hour window and the 5th-percentile choice remain
@@ -700,12 +697,12 @@ roughly 10× our `s = 1`, and is the right label for a "catastrophic" class if w
 
 **Lead-time targets to state as acceptance criteria:**
 
-| Fault | Target lead | Source |
-|---|---|---|
-| Any APU failure | **≥ 2 h before removal**, minimal false alarms (operator requirement) | [R90][R94] |
-| Air leak | **≥ 150 min before `LPS` fires** | [R93] |
-| Oil leak | **≥ 2 days** | [R93] |
-| Brake-pipe air leak (fleet, from on/off logs only) | **1-4 weeks** | [R101] |
+| Fault                                              | Target lead                                                                  | Source     |
+| -------------------------------------------------- | ---------------------------------------------------------------------------- | ---------- |
+| Any APU failure                                    | **≥ 2 h before removal**, minimal false alarms (operator requirement) | [R90][R94] |
+| Air leak                                           | **≥ 150 min before `LPS` fires**                                    | [R93]      |
+| Oil leak                                           | **≥ 2 days**                                                          | [R93]      |
+| Brake-pipe air leak (fleet, from on/off logs only) | **1-4 weeks**                                                          | [R101]     |
 
 **False-alarm suppression rule** [R95]: raise a fault only when **≥ 3 of
 `{TP2, TP3, Motor_current, Oil_temperature, idle_run_ratio}`** are simultaneously anomalous. ~25 lines.
@@ -748,12 +745,12 @@ with inner-ring/lubricant `h_i = 0.19*(k_l/(2*R_iex))*(Re_Di^2 + Gr_Di)^(1/3)` (
 **Validation anchors from a real fleet** [R149] Table 1 (8 cars of a high-speed train, measured vs
 simulated axle-box bearing temperature; max simulated-vs-mean-measured error ≈ 2.4 K):
 
-| Case | Speed | Ambient | Measured range | Simulated |
-|---|---|---|---|---|
-| 1 | 200 km/h | ≈15 °C | 44.64-53.08 °C | 47.62 °C |
-| 2 | 300 km/h | ≈25 °C | 50.08-60.43 °C | 52.84 °C |
-| 3 | 200 km/h | ≈15 °C | 53.83-64.73 °C | 58.93 °C |
-| 4 | 300 km/h | ≈25 °C | 59.57-71.39 °C | 63.76 °C |
+| Case | Speed    | Ambient  | Measured range  | Simulated |
+| ---- | -------- | -------- | --------------- | --------- |
+| 1    | 200 km/h | ≈15 °C | 44.64-53.08 °C | 47.62 °C |
+| 2    | 300 km/h | ≈25 °C | 50.08-60.43 °C | 52.84 °C |
+| 3    | 200 km/h | ≈15 °C | 53.83-64.73 °C | 58.93 °C |
+| 4    | 300 km/h | ≈25 °C | 59.57-71.39 °C | 63.76 °C |
 
 **The healthy 21-25 K anchor is now derived, not asserted.** Take the case-1/case-2 rise above
 ambient: ≈**30-38 K at 200 km/h**. Under `Q ∝ v` (friction power is torque × speed, and the
@@ -773,14 +770,14 @@ ambient 15-25 °C** — 2.5-4× our speed and ~13 K cooler than Singapore. The a
 **This is the single most important correction in the W1 pass.** [R149] swept wheel-flat length 0-60
 mm (flat depth `D_f = L_f²/(16R)`). Going from a 30 mm to a 60 mm flat raises:
 
-| Node | Temperature rise |
-|---|---|
-| Roller, large end | **+15.60 K** |
-| Roller, small end | +16.84 K |
-| Cage | +15.74 K |
-| Inner ring | +15.38 K |
-| Outer ring | +13.23 K |
-| **AXLE BOX** (where our sensor is) | **+1.02 K** |
+| Node                                     | Temperature rise   |
+| ---------------------------------------- | ------------------ |
+| Roller, large end                        | **+15.60 K** |
+| Roller, small end                        | +16.84 K           |
+| Cage                                     | +15.74 K           |
+| Inner ring                               | +15.38 K           |
+| Outer ring                               | +13.23 K           |
+| **AXLE BOX** (where our sensor is) | **+1.02 K**  |
 
 The axle box is roughly **15× less sensitive to defect severity than the internal rings**. Speed
 sensitivity under a fixed 30 mm flat, 300 → 350 km/h, shows the same pattern: axle box **+3.75 K**
@@ -798,14 +795,14 @@ slide rather than an assertion.**
 The W0 laws were `vib_rms ∝ (v/22)^1.2·(1+3s)`, `vib_kurt = 3 + 6s²`, `crest = 3 + 4s`,
 `bpfo_band ∝ s·(v/22)²`. Measured evidence:
 
-| Constant | W0 value | Measured | Verdict |
-|---|---|---|---|
-| Healthy **kurtosis** | 3 | **2.76-2.96** (four speeds) [R157] | **CONFIRMED** |
-| Healthy **crest factor** | 3 (`crest = 3+4s` at `s=0`) | **4.22-5.59** [R157] | **FALSIFIED — raise the intercept to ≈4.5** |
-| **Kurtosis monotonic in severity** (`3 + 6s²`) | monotonic rise | inner race by defect size: **5.56 → 21.69 → 8.06 → 3.29**; outer race **7.85 → 3.02 → 23.16** [R157] | **FALSIFIED — must rise then COLLAPSE** |
-| Speed exponent for **defective** bearings | 1.2 | fitted 1.0-1.3 for inner/outer-race defects (*our power-law fit to [R158] Table 3*, speed ratio 41/17 Hz) | **CONFIRMED for the defect term** |
-| Speed exponent for the **healthy** floor | 1.2 | fitted **≈2.3** healthy (no load 2.30, loaded 2.28) [R158] | **TOO LOW — use ≈2 for the broadband healthy floor** |
-| Healthy axle-box acceleration magnitude | unstated | **8.8 m/s² RMS vertical at 300 km/h** (sim 7.6, 15.6 % low); bogie frame 1.6 m/s²; peak near 100 m/s² [R150] | **NEW anchor — our healthy `vib_rms` must be the right order of magnitude** |
+| Constant                                                | W0 value                        | Measured                                                                                                              | Verdict                                                                              |
+| ------------------------------------------------------- | ------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Healthy**kurtosis**                               | 3                               | **2.76-2.96** (four speeds) [R157]                                                                              | **CONFIRMED**                                                                  |
+| Healthy**crest factor**                           | 3 (`crest = 3+4s` at `s=0`) | **4.22-5.59** [R157]                                                                                            | **FALSIFIED — raise the intercept to ≈4.5**                                  |
+| **Kurtosis monotonic in severity** (`3 + 6s²`) | monotonic rise                  | inner race by defect size:**5.56 → 21.69 → 8.06 → 3.29**; outer race **7.85 → 3.02 → 23.16** [R157]  | **FALSIFIED — must rise then COLLAPSE**                                       |
+| Speed exponent for**defective** bearings          | 1.2                             | fitted 1.0-1.3 for inner/outer-race defects (*our power-law fit to [R158] Table 3*, speed ratio 41/17 Hz)           | **CONFIRMED for the defect term**                                              |
+| Speed exponent for the**healthy** floor           | 1.2                             | fitted**≈2.3** healthy (no load 2.30, loaded 2.28) [R158]                                                      | **TOO LOW — use ≈2 for the broadband healthy floor**                         |
+| Healthy axle-box acceleration magnitude                 | unstated                        | **8.8 m/s² RMS vertical at 300 km/h** (sim 7.6, 15.6 % low); bogie frame 1.6 m/s²; peak near 100 m/s² [R150] | **NEW anchor — our healthy `vib_rms` must be the right order of magnitude** |
 
 **The kurtosis correction matters most.** A monotonic kurtosis law makes the severe class trivially
 separable; the real physics is spall widening — a large distributed defect stops being impulsive, and
@@ -845,23 +842,23 @@ the thermal + RUL arm.
 
 #### 4.3.4 Thresholds to encode — updated
 
-| Quantity | Value | Status |
-|---|---|---|
-| Functional failure (our sim), absolute | `T_box > 90 °C` | **our definition**, and it now sits defensibly *between* the two published operator lines below |
-| Functional failure (our sim), differential | `T_box − median(same-side peers) > 30 K` | **aligned with [R151]**, which uses `dT > 30 °C` for level 1-3 — note it is the median of peers on the **same side**, and the published persistence criterion is **10 measurements within 30 days**, not 5 minutes. Our 5-minute persistence is an *on-board continuous-monitoring* choice; state it as ours. |
-| Operator absolute, level 4 (immediate) | **> 80 °C** | [R151] — a real operator rule, published |
-| Operator differential, level 3 (immediate) | **> 50 °C** | [R151] |
-| Wayside immediate-stop | **> 115 °C** | [R151] |
-| Slow-degradation rule | side-difference deviating **> 3.5 σ from the train median for ≥ 10 measurements in 30 days** | [R151] |
-| Data-quality guard | **≥ 4 boxes on one train > 50 °C in one pass ⇒ blame the station, suppress** | [R151] |
-| Healthy rise above ambient at 80 km/h, 12 t axle | **21-25 K**, implemented as `ΔT ∝ v^0.43` | **derived** from [R149] Eq. 25 + Table 1 and [R150] Eqs. 7-11 (our scaling arithmetic) |
-| Healthy absolute at Singapore ambient | **53 °C** at 28 °C mean, **57 °C** at 32 °C daily max, **62 °C** on the 37 °C record day | §0, [R152][R153] |
-| Max observed in service (high-speed fleet) | **82 °C** motor car, **69.8 °C** trailer car | [R150] |
-| Inter-box spread, healthy, matched condition | **8.4 K** across 8 cars | [R149] Table 1 |
-| Wayside scan-location bias | **±5 K** | **our modelling assumption**, motivated by [R112] (IR scan location dominates the reading) and bounded by the 8.4 K healthy spread in [R149]. Not a published figure — label it. |
-| Onboard monitoring mandated above | **250 km/h** design speed | [R163] cl. 4.2.3.3.2 — **irrelevant to an LTA metro**, which falls in the either/or band, so on-board bearing monitoring is a voluntary engineering choice. Pitch it that way. |
-| EN-standard alarm pair | ~~`> 95 °C` / `> 56 K`~~ | **WITHDRAWN** — not in any EN standard, not on the vendor page, not in the TSI. See 3.3. |
-| Regulatory ambient design envelope | zone T1 **−25 to +40 °C** | [R163] cl. 4.2.6.1 — a citable ambient ceiling for the sweep |
+| Quantity                                         | Value                                                                                                            | Status                                                                                                                                                                                                                                                                                                                                |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Functional failure (our sim), absolute           | `T_box > 90 °C`                                                                                               | **our definition**, and it now sits defensibly *between* the two published operator lines below                                                                                                                                                                                                                               |
+| Functional failure (our sim), differential       | `T_box − median(same-side peers) > 30 K`                                                                      | **aligned with [R151]**, which uses `dT > 30 °C` for level 1-3 — note it is the median of peers on the **same side**, and the published persistence criterion is **10 measurements within 30 days**, not 5 minutes. Our 5-minute persistence is an *on-board continuous-monitoring* choice; state it as ours. |
+| Operator absolute, level 4 (immediate)           | **> 80 °C**                                                                                               | [R151] — a real operator rule, published                                                                                                                                                                                                                                                                                             |
+| Operator differential, level 3 (immediate)       | **> 50 °C**                                                                                               | [R151]                                                                                                                                                                                                                                                                                                                                |
+| Wayside immediate-stop                           | **> 115 °C**                                                                                              | [R151]                                                                                                                                                                                                                                                                                                                                |
+| Slow-degradation rule                            | side-difference deviating**> 3.5 σ from the train median for ≥ 10 measurements in 30 days**              | [R151]                                                                                                                                                                                                                                                                                                                                |
+| Data-quality guard                               | **≥ 4 boxes on one train > 50 °C in one pass ⇒ blame the station, suppress**                            | [R151]                                                                                                                                                                                                                                                                                                                                |
+| Healthy rise above ambient at 80 km/h, 12 t axle | **21-25 K**, implemented as `ΔT ∝ v^0.43`                                                              | **derived** from [R149] Eq. 25 + Table 1 and [R150] Eqs. 7-11 (our scaling arithmetic)                                                                                                                                                                                                                                          |
+| Healthy absolute at Singapore ambient            | **53 °C** at 28 °C mean, **57 °C** at 32 °C daily max, **62 °C** on the 37 °C record day | §0, [R152][R153]                                                                                                                                                                                                                                                                                                                     |
+| Max observed in service (high-speed fleet)       | **82 °C** motor car, **69.8 °C** trailer car                                                       | [R150]                                                                                                                                                                                                                                                                                                                                |
+| Inter-box spread, healthy, matched condition     | **8.4 K** across 8 cars                                                                                    | [R149] Table 1                                                                                                                                                                                                                                                                                                                        |
+| Wayside scan-location bias                       | **±5 K**                                                                                                  | **our modelling assumption**, motivated by [R112] (IR scan location dominates the reading) and bounded by the 8.4 K healthy spread in [R149]. Not a published figure — label it.                                                                                                                                               |
+| Onboard monitoring mandated above                | **250 km/h** design speed                                                                                  | [R163] cl. 4.2.3.3.2 —**irrelevant to an LTA metro**, which falls in the either/or band, so on-board bearing monitoring is a voluntary engineering choice. Pitch it that way.                                                                                                                                                  |
+| EN-standard alarm pair                           | ~~`> 95 °C` / `> 56 K`~~                                                                                   | **WITHDRAWN** — not in any EN standard, not on the vendor page, not in the TSI. See 3.3.                                                                                                                                                                                                                                       |
+| Regulatory ambient design envelope               | zone T1**−25 to +40 °C**                                                                                 | [R163] cl. 4.2.6.1 — a citable ambient ceiling for the sweep                                                                                                                                                                                                                                                                         |
 
 Report the 30 K / 90 °C pair as **our** functional-failure definition, benchmark it against the
 **published NS operator rules** [R151], and say plainly that no harmonised European threshold exists
@@ -950,14 +947,14 @@ networks [R221]. XJTU-SY has **15** bearings [R124][R227] and FEMTO ~17 [R143][R
 squarely the small-`n` regime where a deep RUL net is not sample-efficient and a parametric
 degradation model is. Concretely:
 
-| Model | When it applies | Cost | Source |
-|---|---|---|---|
-| **Wiener process** (drift-diffusion), RUL by first hitting time | HI may fluctuate up and down | ~40 lines: MLE of `μ`, `σ` from HI increments; inverse-Gaussian first-passage gives a free predictive interval, mean `(w − x_t)/μ` | [R196][R195] |
-| **Gamma process** | HI strictly monotone increasing — bearing spall growth, leak growth, fouling | ~40 lines: MLE of shape/scale on increments, RUL by gamma quantiles | [R197] |
-| **Inverse-Gaussian process** | monotone but gamma fits poorly | ~30 lines with `scipy.stats.invgauss` | [R198] |
-| **General Path Model** | any ordinal severity index + level threshold | ~100 lines, `curve_fit` | [R199] |
-| **Similarity-based RUL** | a library of complete run-to-failure trajectories exists | ~100 lines, DTW or Euclidean matching over a smoothed HI. **Requires run-to-failure data** — this is what XJTU-SY and FEMTO are for | [R200] |
-| **Particle / Kalman filter state tracking** with uncertainty propagation | a state-space degradation model exists (which our simulator gives us for free) | `progpy` state estimators + `MonteCarlo` predictor [R201]; or `filterpy` (MIT) for Kalman only [R202] | [R201][R202] |
+| Model                                                                          | When it applies                                                                | Cost                                                                                                                                        | Source       |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
+| **Wiener process** (drift-diffusion), RUL by first hitting time          | HI may fluctuate up and down                                                   | ~40 lines: MLE of`μ`, `σ` from HI increments; inverse-Gaussian first-passage gives a free predictive interval, mean `(w − x_t)/μ` | [R196][R195] |
+| **Gamma process**                                                        | HI strictly monotone increasing — bearing spall growth, leak growth, fouling  | ~40 lines: MLE of shape/scale on increments, RUL by gamma quantiles                                                                         | [R197]       |
+| **Inverse-Gaussian process**                                             | monotone but gamma fits poorly                                                 | ~30 lines with`scipy.stats.invgauss`                                                                                                      | [R198]       |
+| **General Path Model**                                                   | any ordinal severity index + level threshold                                   | ~100 lines,`curve_fit`                                                                                                                    | [R199]       |
+| **Similarity-based RUL**                                                 | a library of complete run-to-failure trajectories exists                       | ~100 lines, DTW or Euclidean matching over a smoothed HI.**Requires run-to-failure data** — this is what XJTU-SY and FEMTO are for   | [R200]       |
+| **Particle / Kalman filter state tracking** with uncertainty propagation | a state-space degradation model exists (which our simulator gives us for free) | `progpy` state estimators + `MonteCarlo` predictor [R201]; or `filterpy` (MIT) for Kalman only [R202]                                 | [R201][R202] |
 
 **Licence note that decides a dependency:** ProgPy is **NASA-1.3**, not an OSI-standard permissive
 licence [R201] — check the NEBULA X IP rules before it ships. FilterPy is MIT but has no particle
@@ -1014,11 +1011,11 @@ index we already have. Say that on the slide — it is a defensible contribution
 
 **What this buys each subsystem:**
 
-| Subsystem | RUL arm | Needs run-to-failure? | Dataset it justifies |
-|---|---|---|---|
-| **Door** | DTW-to-reference → k-means severity → dwell time (already MUST) [R72][R81]; similarity ensemble [R70][R200]; gated EOL [R71] | similarity arm: yes | PHME 2026 [R69] |
-| **Pneumatic** | General Path Model on `idle_run_ratio` severity [R199][R101]; gamma process [R197]; Cox / RSF on fleet censored data [R205][R206] | **no** | SCANIA Component X [R134] for the survival demo |
-| **Bearing** | Gamma or Wiener process on the envelope-band HI [R197][R196]; similarity-based RUL [R200]; particle-filter state tracking [R201] | similarity arm: yes | **XJTU-SY [R124], FEMTO [R143], Paderborn R2F [R138] — now earning their ingest** |
+| Subsystem           | RUL arm                                                                                                                            | Needs run-to-failure? | Dataset it justifies                                                                     |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | --------------------- | ---------------------------------------------------------------------------------------- |
+| **Door**      | DTW-to-reference → k-means severity → dwell time (already MUST) [R72][R81]; similarity ensemble [R70][R200]; gated EOL [R71]     | similarity arm: yes   | PHME 2026 [R69]                                                                          |
+| **Pneumatic** | General Path Model on`idle_run_ratio` severity [R199][R101]; gamma process [R197]; Cox / RSF on fleet censored data [R205][R206] | **no**          | SCANIA Component X [R134] for the survival demo                                          |
+| **Bearing**   | Gamma or Wiener process on the envelope-band HI [R197][R196]; similarity-based RUL [R200]; particle-filter state tracking [R201]   | similarity arm: yes   | **XJTU-SY [R124], FEMTO [R143], Paderborn R2F [R138] — now earning their ingest** |
 
 ---
 
