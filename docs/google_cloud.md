@@ -6,13 +6,15 @@ This is the main guide for using, observing, rebuilding, and extending the Nebul
 
 - [Choose how to run the app](#choose-how-to-run-the-app)
 - [Use the cloud app now](#use-the-cloud-app-now)
+- [Publish and retrieve the submission URL](#publish-and-retrieve-the-submission-url)
 - [Check health, logs, and costs](#check-health-logs-and-costs)
 - [Overnight usage and pausing](#overnight-usage-and-pausing)
 - [Connect the CLI](#connect-the-cli)
 - [Current deployed resources and verification](#current-deployed-resources-and-verification)
 - [Build and redeploy the web app](#build-and-redeploy-the-web-app)
 - [Run a Cloud Storage prediction batch](#run-a-cloud-storage-prediction-batch)
-- [Next cloud work](#next-cloud-work)
+- [Implementation progress](#implementation-progress)
+- [Remaining plan details](#remaining-plan-details)
 
 ## Choose how to run the app
 
@@ -29,7 +31,7 @@ The proxy does not start, build, or redeploy the app. It forwards your browser r
 Connect `gcloud` as described in [Connect the CLI](#connect-the-cli), then run this in PowerShell:
 
 ```powershell
-$gcloud = Join-Path $env:LOCALAPPDATA 'Google\Cloud SDK\google-cloud-sdk\bin\gcloud.cmd'
+$gcloud = (Get-ChildItem "$env:LOCALAPPDATA\Google\Cloud SDK" -Filter gcloud.cmd -Recurse | Select-Object -First 1).FullName
 & $gcloud run services proxy nebulax-app --region us-central1 --project qwiklabs-gcp-02-ebc381898f1f --port 9090
 ```
 
@@ -39,7 +41,24 @@ On macOS, after [installing and authenticating `gcloud`](#macos-setup), run `gcl
 
 The separate `nebulax-ps3-batch` Cloud Run Job reads larger input folders from Cloud Storage and writes a CSV back to Cloud Storage. Use the [batch instructions](#run-a-cloud-storage-prediction-batch) below. The browser does not yet start that job or show its status.
 
-The deployed app **does not train models or accept model uploads**. To update a model, change the artifact in `models/ps3/`, rebuild the image, and redeploy it. The repository now contains newer Rail and SHM artifacts than the currently running Cloud Run image; the cloud app will use those updates only after redeployment. Cloud training and model version management are planned work. The existing deployment has no Fleet replay data, so its `/api/health` reports `scores_loaded: false`. A newly built image from this checkout includes `demo_data/` and will report a two-train bearing and brake replay after deployment.
+The deployed app **does not train models or accept model uploads**. To update a model, change the artifact in `models/ps3/`, rebuild the image, and redeploy it. The current Cloud Run revision contains the latest checked-in Rail and SHM artifacts plus `demo_data/`; `/api/health` reports a two-train bearing and brake replay. Cloud training and model version management are planned work.
+
+## Publish and retrieve the submission URL
+
+Deploy the current checkout first:
+
+```powershell
+python scripts/gcp_deploy.py web
+```
+
+The deployment script keeps the service private. When the final deployment is ready for judging, allow unauthenticated access and retrieve its Cloud Run URL:
+
+```powershell
+& $gcloud run services update nebulax-app --project qwiklabs-gcp-02-ebc381898f1f --region us-central1 --no-invoker-iam-check
+& $gcloud run services describe nebulax-app --project qwiklabs-gcp-02-ebc381898f1f --region us-central1 --format="value(status.url)"
+```
+
+Submit the returned HTTPS `run.app` URL. Do not submit `127.0.0.1:8765` or `127.0.0.1:9090`; those addresses work only on the developer's computer. Test the returned URL in an incognito window without signing in. Also confirm that this Qwiklabs project remains active throughout judging; otherwise repeat the deployment in the durable competition project and submit that service's URL. To return the service to private access later, run `& $gcloud run services update nebulax-app --project qwiklabs-gcp-02-ebc381898f1f --region us-central1 --invoker-iam-check`.
 
 ## Check health, logs, and costs
 
@@ -72,13 +91,13 @@ The web service is configured for **zero minimum instances** and **one maximum i
 There is normally no need to pause the service overnight. To make it unavailable deliberately:
 
 ```powershell
-& $gcloud run services update nebulax-app --region us-central1 --scaling=0
+& $gcloud run services update nebulax-app --project qwiklabs-gcp-02-ebc381898f1f --region us-central1 --scaling=0
 ```
 
 Restore it before testing or judging:
 
 ```powershell
-& $gcloud run services update nebulax-app --region us-central1 --scaling=auto
+& $gcloud run services update nebulax-app --project qwiklabs-gcp-02-ebc381898f1f --region us-central1 --scaling=auto
 ```
 
 Manual scaling to zero makes requests fail, including judge visits. It does not remove Storage, Artifact Registry, or other resource charges. See [Cloud Run manual scaling](https://docs.cloud.google.com/run/docs/configuring/services/manual-scaling). The current private service is not yet accessible to judges without IAM permission or a proxy.
@@ -87,7 +106,15 @@ Manual scaling to zero makes requests fail, including judge visits. It does not 
 
 ### Windows PowerShell setup
 
-Install the [Google Cloud CLI for Windows](https://docs.cloud.google.com/sdk/docs/install-sdk). On this PC it is installed at `%LOCALAPPDATA%\Google\Cloud SDK\google-cloud-sdk\bin\gcloud.cmd`. If `gcloud` is not on `PATH`, set `$gcloud` as above and use `& $gcloud ...` for every command. Alternatively, add that `bin` directory to your user Path and reopen PowerShell.
+Install the [Google Cloud CLI for Windows](https://docs.cloud.google.com/sdk/docs/install-sdk). On this PC it is under `%LOCALAPPDATA%\Google\Cloud SDK`. Let PowerShell find the exact executable so spaces or copied line wrapping cannot corrupt the path:
+
+```powershell
+$gcloud = (Get-ChildItem "$env:LOCALAPPDATA\Google\Cloud SDK" -Filter gcloud.cmd -Recurse | Select-Object -First 1).FullName
+$gcloud
+& $gcloud --version
+```
+
+The printed value should end in `google-cloud-sdk\bin\gcloud.cmd`. PowerShell requires the call operator `&` when a command is stored in a variable: use `& $gcloud --version`, not `$gcloud --version`. If the search returns nothing, install the CLI or reopen PowerShell after installation. Alternatively, add its `bin` directory to your user Path and use `gcloud` directly.
 
 ```powershell
 & $gcloud auth login --no-launch-browser
@@ -142,17 +169,17 @@ Cloud Shell is another option: it has `gcloud` and the console's signed-in ident
 |---|---|
 | Project / region | `qwiklabs-gcp-02-ebc381898f1f` / `us-central1` |
 | Artifact Registry repository | `us-central1-docker.pkg.dev/qwiklabs-gcp-02-ebc381898f1f/nebulax` |
-| Private Cloud Run web service | `nebulax-app`, revision `nebulax-app-00001-msn`, 2 CPU, 2 GiB, at most 1 instance |
+| Private Cloud Run web service | `nebulax-app`, revision `nebulax-app-00003-kgm`, 2 CPU, 2 GiB, at most 1 instance |
 | Web service account | `nebulax-web@qwiklabs-gcp-02-ebc381898f1f.iam.gserviceaccount.com` |
-| Web image | `app@sha256:e32056b4540cdd8d04720fc58d171a9dd397520edcfb868b89342f46ef9c7146` |
+| Web image | `app@sha256:ea307967917c0d307bba864cde8f0fe5ddfd8990da05b53cd49120c34c9f2b94` |
 | Cloud Run batch job | `nebulax-ps3-batch`, 1 task, 2 CPU, 4 GiB, 20-minute timeout, no retry |
 | Batch service account | `nebulax-batch@qwiklabs-gcp-02-ebc381898f1f.iam.gserviceaccount.com` |
-| Batch image | `ps3-batch@sha256:e1bcd208e8e099371487bb5e81ff3a31f80612a176e029e0b85565cddeab7a87` |
+| Batch image | `ps3-batch@sha256:cf8b5fc1b1d21db9d224c2d272b8c0404da2b0d53951d2f1b0d0dfc4a6f671c7` |
 | Storage bucket | `gs://nebulax-ps3-qwiklabs-gcp-02-ebc381898f1f/` |
 
-The web service is private under Cloud Run IAM; the lab user has `roles/run.invoker`. Its authenticated `/api/health` and `/api/ps3/tasks` endpoints returned HTTP 200, and all four PS3 models were loaded. Uploading a **generated** SHM file and downloading its result succeeded. The output SHA-256 matched local inference using the earlier model version: `A7FB06B24DFEEC13234FECBDFAB9996164A767350A0BF821E8ED88F5E4FD5DBB`. The repository's Rail and SHM models have since changed; that hash does not describe the updated artifacts.
+The web service is private under Cloud Run IAM; the lab user has `roles/run.invoker`. Revision `nebulax-app-00003-kgm` became current after a concurrent deployment on 19 September 2026. Its authenticated `/api/health` returned HTTP 200 with `scores_loaded: true` and two Fleet demo trains; `/api/ps3/tasks` returned all four models as loaded and available. Revision `00002-bmr`, built by `scripts/gcp_deploy.py` from this branch immediately beforehand, also exposed the current Rail nested score (0.8051) and SHM nested score (0.9813). A generated SHM upload against the current service produced a CSV byte-identical to local inference: SHA-256 `A7FB06B24DFEEC13234FECBDFAB9996164A767350A0BF821E8ED88F5E4FD5DBB`.
 
-Batch execution `nebulax-ps3-batch-8vjc7` completed successfully on a generated SHM signal. Its output at `outputs/shm-smoke-001/shm_predictions.csv` had the same hash as local inference. The smoke input is at `inputs/shm-smoke-001/synthetic_shm.csv`.
+Batch execution `nebulax-ps3-batch-2r8tk` completed successfully with the current batch image on the same generated SHM signal. Its output at `outputs/shm-smoke-002/shm_predictions.csv` was byte-identical to current local inference. The reusable generated input is at `inputs/shm-smoke-001/synthetic_shm.csv`. The earlier execution and output remain as historical smoke evidence.
 
 The bucket has uniform bucket-level access, enforced public access prevention, and lifecycle rules in `configs/cloud_bucket_lifecycle.json`: delete `inputs/` objects after 7 days and `outputs/` objects after 30 days. The batch service account has object viewer and creator roles on this bucket. The app service account is separate.
 
@@ -217,14 +244,28 @@ For local testing against a bucket, install `requirements-cloud-batch.txt`, run 
 
 Earlier Cloud Build source archives included small organiser-derived test fixtures before `.gcloudignore` was updated to exclude `tests/`. Those two staging archives were removed; the staging bucket's 7-day soft-delete window may retain recoverable copies temporarily. The runtime batch image did not copy the fixtures. `.gcloudignore` now excludes `tests/`, local environments, raw data, and `.env`.
 
-## Next cloud work
+## Implementation progress
 
-| Stage | Current state and next work |
-|---|---|
-| 1. Web deployment | Private Cloud Run service is built and smoke tested. For judging, move to a durable competition project and provide reviewer access or a suitable public entry point. |
-| 2. Durable prediction workflow | Cloud Storage bucket and batch job are deployed. Add scoped direct browser uploads, API job launch/status/download controls, shared run metadata, and Fleet generation jobs. |
-| 3. Training and evaluation | Add a separate training image and [Vertex AI custom training](https://docs.cloud.google.com/vertex-ai/docs/training/overview), [Pipelines](https://docs.cloud.google.com/vertex-ai/docs/pipelines/introduction), Experiments, and Model Registry. Version data, splits, configs, and artifacts; use held-out release checks. |
-| 4. Shared state and telemetry | Move PS3 sessions, uploads, results, and Fleet overlays to durable storage such as Cloud Storage and Firestore before increasing web instances. For real telemetry, consider Pub/Sub, Dataflow or Cloud Run, and BigQuery. |
-| 5. Operations | Supply optional API keys through Secret Manager; add error, latency, job failure, and cost alerts. Add CI checks for image build, health, model loading, and representative uploads. |
+Status legend: `[x]` complete and verified, `[-]` partly implemented, `[ ]` not started, `[!]` requires an owner or competition decision.
+
+| Stage | Progress | Checklist | Next action |
+|---|---:|---|---|
+| 1. Web deployment | 85% | `[x]` Docker image; `[x]` Artifact Registry; `[x]` private Cloud Run service; `[x]` authenticated health/model/upload smoke test; `[x]` repeatable digest-pinned deployment script; `[x]` current Rail/SHM models and bundled Fleet demo deployed; `[!]` stable judge project and access | Decide the judge authentication and final project, then repeat the scripted deployment there. |
+| 2. Durable prediction workflow | 50% | `[x]` private bucket and lifecycle; `[x]` separate batch image; `[x]` Cloud Run Job; `[x]` current model image deployed; `[x]` generated SHM cloud/local parity test; `[x]` repeatable batch deployment script; `[ ]` browser-to-Storage upload; `[ ]` API job launch/status/download; `[ ]` shared run metadata; `[ ]` Fleet generation job | Design authenticated run ownership, then add Firestore run records and scoped upload URLs before changing the browser. |
+| 3. Training and evaluation | 10% | `[x]` existing local train/evaluate commands and saved evidence; `[ ]` training image; `[ ]` Vertex AI Custom Job; `[ ]` Pipeline; `[ ]` Experiments; `[ ]` Model Registry promotion | Define one reproducible task training entry point and artifact contract, starting with the smallest task. |
+| 4. Shared state and telemetry | 5% | `[-]` Cloud Storage handles batch objects; `[ ]` durable interactive sessions; `[ ]` Firestore job/owner state; `[ ]` Pub/Sub ingestion; `[ ]` queryable telemetry store; `[ ]` replay reconnect/resume | Implement the run metadata schema before allowing more than one web instance. |
+| 5. Operations | 20% | `[x]` Cloud Logging/Monitoring available; `[x]` scale-to-zero and one-instance cost limits; `[ ]` Secret Manager wiring; `[ ]` uptime/error/job alerts; `[ ]` budget alert; `[-]` build and focused local tests; `[ ]` automated cloud smoke gate | Add alerts and a CI smoke gate after the final project and billing permissions are known. |
+
+The cross-platform deployment entry point is:
+
+```powershell
+python scripts/gcp_deploy.py web    # build and deploy the browser/API image
+python scripts/gcp_deploy.py batch  # build and update the prediction job
+python scripts/gcp_deploy.py all    # do both sequentially
+```
+
+It uses the authenticated `gcloud` CLI, resolves each pushed tag to an immutable digest, and deploys that digest. On macOS and Linux the same Python commands work when `gcloud` is on `PATH`. Project and region can be overridden with `--project` and `--region`.
+
+## Remaining plan details
 
 The planned direct browser upload flow needs scoped upload URLs and bucket CORS for the web origin. The API should start the job with per-run environment overrides, store the run ID, object paths, status, and owner in shared state, and expose a validated result download. See [Cloud Run job overrides](https://docs.cloud.google.com/sdk/gcloud/reference/run/jobs/execute) and [Cloud Storage upload options](https://docs.cloud.google.com/storage/docs/uploads). Cloud Run WebSockets have request timeouts, so Fleet replay also needs reconnect/resume behavior before multi-instance scaling. See [Cloud Run WebSockets](https://docs.cloud.google.com/run/docs/triggering/websockets).
