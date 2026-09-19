@@ -11,7 +11,7 @@ export default function Eda({  }) {
   <section style={{ flex: "none", padding: "8px 120px 40px", display: "flex", flexDirection: "column", gap: "20px" }}>
     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
       <div className="eyebrow">Exploratory data analysis</div>
-      <h2 style={{ margin: "0", fontSize: "28px", fontWeight: "600" }}>What the released data look like, one track at a time</h2>
+      <h2 style={{ margin: "0", fontSize: "28px", fontWeight: "600" }}>Released dataset profiles</h2>
     </div>
     <div style={{ display: "flex", alignItems: "flex-end", gap: "12px" }}>
       <button type="button" className="arrow" onClick={() => setE((e + 3) % 4)} aria-label="Previous track"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></button>
@@ -53,7 +53,7 @@ export default function Eda({  }) {
             <div className="fact"><span className="mono" style={{ fontSize: "24px", fontWeight: "500" }}>110</span><span style={{ fontSize: "12px", color: "#5b6673" }}>labelled cycles, boundary-exact segmentation</span></div>
             <div className="fact"><span className="mono" style={{ fontSize: "24px", fontWeight: "500" }}>38</span><span style={{ fontSize: "12px", color: "#5b6673" }}>cycles inferred in the unlabelled Test stream</span></div>
           </div>
-          <div className="eyebrow" style={{ marginTop: "6px" }}>What the EDA changed in the model</div>
+          <div className="eyebrow" style={{ marginTop: "6px" }}>Design implications</div>
           <div style={{ display: "flex", flexDirection: "column", gap: "8px", fontSize: "13px", lineHeight: "1.5" }}>
             <div className="step" style={{ padding: "0" }}><div className="num" style={{ background: "#eef1f3", color: "#1d2633" }}>a</div><div>Gaps &gt; 0.5 s between samples mark every training cycle, so the segmenter is a rule, not a model.</div></div>
             <div className="step" style={{ padding: "0" }}><div className="num" style={{ background: "#eef1f3", color: "#1d2633" }}>b</div><div>Open and Close strokes have different current profiles: two baselines and two classifiers.</div></div>
@@ -99,7 +99,7 @@ export default function Eda({  }) {
             <div className="fact"><span className="mono" style={{ fontSize: "24px", fontWeight: "500" }}>3</span><span style={{ fontSize: "12px", color: "#5b6673" }}>spellings of indoor temperature across workbooks</span></div>
             <div className="fact"><span className="mono" style={{ fontSize: "24px", fontWeight: "500" }}>1</span><span style={{ fontSize: "12px", color: "#5b6673" }}>Test workbook, ranked in about 5 s</span></div>
           </div>
-          <div className="eyebrow" style={{ marginTop: "6px" }}>What the EDA changed in the model</div>
+          <div className="eyebrow" style={{ marginTop: "6px" }}>Design implications</div>
           <div style={{ display: "flex", flexDirection: "column", gap: "8px", fontSize: "13px", lineHeight: "1.5" }}>
             <div className="step" style={{ padding: "0" }}><div className="num" style={{ background: "#eef1f3", color: "#1d2633" }}>a</div><div>Column discovery by pattern, because workbook width and parameter names differ per case.</div></div>
             <div className="step" style={{ padding: "0" }}><div className="num" style={{ background: "#eef1f3", color: "#1d2633" }}>b</div><div>Cooling-mode and validity filters, because heating or invalid rows invert the temperature sign.</div></div>
@@ -140,9 +140,9 @@ export default function Eda({  }) {
             <div className="fact"><span className="mono" style={{ fontSize: "24px", fontWeight: "500" }}>129</span><span style={{ fontSize: "12px", color: "#5b6673" }}>columns: 1 tachometer + 64 vibration + 64 shock</span></div>
             <div className="fact"><span className="mono" style={{ fontSize: "24px", fontWeight: "500" }}>68</span><span style={{ fontSize: "12px", color: "#5b6673" }}>Test files, all predicted in about 30 s</span></div>
           </div>
-          <div className="eyebrow" style={{ marginTop: "6px" }}>What the EDA changed in the model</div>
+          <div className="eyebrow" style={{ marginTop: "6px" }}>Design implications</div>
           <div style={{ display: "flex", flexDirection: "column", gap: "8px", fontSize: "13px", lineHeight: "1.5" }}>
-            <div className="step" style={{ padding: "0" }}><div className="num" style={{ background: "#eef1f3", color: "#1d2633" }}>a</div><div>Left / right mirroring with labels swapped, to double the 14-file Side I class honestly.</div></div>
+            <div className="step" style={{ padding: "0" }}><div className="num" style={{ background: "#eef1f3", color: "#1d2633" }}>a</div><div>Left / right mirroring with labels swapped, to double the 14-file Side I class without changing the original labels.</div></div>
             <div className="step" style={{ padding: "0" }}><div className="num" style={{ background: "#eef1f3", color: "#1d2633" }}>b</div><div>Shock channels dropped: they add impulses, not the sustained side-wide pattern of corrugation.</div></div>
             <div className="step" style={{ padding: "0" }}><div className="num" style={{ background: "#eef1f3", color: "#1d2633" }}>c</div><div>Extra stress splits (contiguous filename, held-out speed range) reported next to the headline.</div></div>
           </div>
@@ -167,7 +167,7 @@ export default function Eda({  }) {
             <text x="600" y="146" fontFamily="IBM Plex Mono, monospace" fontSize="9" fill="#5b6673" textAnchor="end">released damage label →</text>
             <text x="380" y="118" fontFamily="IBM Plex Mono, monospace" fontSize="9" fill="#1d2633">y = x after one global scale</text>
           </svg>
-          <div style={{ fontSize: "13px", color: "#5b6673", lineHeight: "1.5" }}>Labels span almost the whole unit interval, so a relative-error metric punishes small-damage files most; that is why the model works in log space. An all-data diagnostic shows 4-point rainflow with half-cycle residue and m = 5 reproduces the labels after one global scale, i.e. the labels behave like Miner sums. This diagnostic is in-sample and is not the shipped estimator.</div>
+          <div style={{ fontSize: "13px", color: "#5b6673", lineHeight: "1.5" }}>Labels span almost the whole unit interval, so a relative-error metric punishes small-damage files most; that is why the model works in log space. An all-data diagnostic shows 4-point rainflow with half-cycle residue and m = 5 reproduces the labels after one global scale, i.e. the labels behave like Miner sums. This diagnostic is in-sample and is not the final estimator.</div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
           <div className="eyebrow">Dataset facts</div>
@@ -177,7 +177,7 @@ export default function Eda({  }) {
             <div className="fact"><span className="mono" style={{ fontSize: "24px", fontWeight: "500" }}>none</span><span style={{ fontSize: "12px", color: "#5b6673" }}>sample rate supplied: spectra in cycles per sample</span></div>
             <div className="fact"><span className="mono" style={{ fontSize: "24px", fontWeight: "500" }}>16</span><span style={{ fontSize: "12px", color: "#5b6673" }}>Test files, all predicted in about 6 s</span></div>
           </div>
-          <div className="eyebrow" style={{ marginTop: "6px" }}>What the EDA changed in the model</div>
+          <div className="eyebrow" style={{ marginTop: "6px" }}>Design implications</div>
           <div style={{ display: "flex", flexDirection: "column", gap: "8px", fontSize: "13px", lineHeight: "1.5" }}>
             <div className="step" style={{ padding: "0" }}><div className="num" style={{ background: "#eef1f3", color: "#1d2633" }}>a</div><div>Target modelled as log-damage, with a multiplicative bias correction fitted per fold.</div></div>
             <div className="step" style={{ padding: "0" }}><div className="num" style={{ background: "#eef1f3", color: "#1d2633" }}>b</div><div>Rainflow features carry almost all the signal (0.9771 alone); stats, spectral and FDS add 0.003.</div></div>

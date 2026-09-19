@@ -12,7 +12,7 @@ const MAX_CHIPS = 40;
 function Verdict({ ok }) {
   return (
     <span className="nx-tag" style={{ color: ok ? C.ok : C.crit, borderColor: ok ? C.ok : C.crit, flex: "none" }}>
-      {ok ? "MATCHES" : "DOES NOT MATCH"}
+      {ok ? "READY" : "CHECK FORMAT"}
     </span>
   );
 }
@@ -75,7 +75,7 @@ function FileList({ items }) {
           <span className="mono" style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: C.text }}>{it.report.name}</span>
           <span className="mono" style={{ color: C.dim2, flex: "none" }}>{fmtBytes(it.report.size)}</span>
           <span style={{ color: it.report.ok ? C.ok : C.crit, flex: "none", fontWeight: 600, letterSpacing: "0.06em", fontSize: 9.5 }}>
-            {it.report.ok ? "MATCHES" : "NO MATCH"}
+            {it.report.ok ? "READY" : "CHECK FORMAT"}
           </span>
           <span style={{ color: it.report.ok ? C.dim : C.crit, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
             {it.report.ok ? it.report.detail : it.report.problems[0] || ""}
@@ -105,20 +105,20 @@ export default function FileConfirm({ task, items, checking = false, onConfirm, 
   }, [onCancel, onConfirm, okItems, nOk, checking]);
 
   return (
-    <div className="nx-modal" role="dialog" aria-modal="true" aria-label="Confirm the picked files">
+    <div className="nx-modal" role="dialog" aria-modal="true" aria-label="Review selected files">
       <div className="nx-modal-card" style={{ width: 640 }}>
-        <div className="nx-tour-eyebrow">CHECK THE FILES · {(meta.tab || task).toUpperCase()}</div>
+        <div className="nx-tour-eyebrow">REVIEW FILES · {(meta.tab || task).toUpperCase()}</div>
         <div className="nx-tour-title">
-          {checking ? "Reading the files" : items.length === 1 ? `Is this the right input for ${meta.title || task}?` : `Are these the right inputs for ${meta.title || task}?`}
+          {checking ? "Reading the files" : items.length === 1 ? "Check this file before adding it" : "Check these files before adding them"}
         </div>
 
         <div className="nx-confirm-spec">
-          <div className="nx-eyebrow">THIS MODEL EXPECTS</div>
+          <div className="nx-eyebrow">REQUIRED FORMAT</div>
           <div><span style={{ color: C.dim }}>file:</span> {spec.file}</div>
           <div><span style={{ color: C.dim }}>columns:</span> {spec.columns}</div>
         </div>
 
-        <div className="nx-eyebrow">YOU PICKED {items.length} FILE{items.length === 1 ? "" : "S"}{checking ? " · checking" : ` · ${nOk} matching`}</div>
+        <div className="nx-eyebrow">SELECTED FILES · {items.length}{checking ? " · CHECKING" : ` · ${nOk} READY`}</div>
         <div className="nx-scroll nx-confirm-body">
           {checking ? (
             <div style={{ fontSize: 11, color: C.dim2, padding: "12px 0" }}>reading the header of each file{task === "acv" ? " and checking the workbook fields on the server" : ""}…</div>
@@ -131,11 +131,11 @@ export default function FileConfirm({ task, items, checking = false, onConfirm, 
 
         <div className="nx-tour-actions" style={{ marginTop: 6 }}>
           <button type="button" className="nx-btn nx-btn--primary" disabled={checking || !nOk} onClick={() => onConfirm?.(okItems.map((it) => it.file))}>
-            {!nOk ? "NOTHING TO QUEUE" : nOk < items.length ? `QUEUE THE ${nOk} THAT MATCH` : `QUEUE ${nOk} FILE${nOk === 1 ? "" : "S"}`}
+            {!nOk ? "NO VALID FILES" : nOk < items.length ? `ADD THE ${nOk} READY FILES` : `ADD ${nOk} FILE${nOk === 1 ? "" : "S"}`}
           </button>
           <button type="button" className="nx-btn" onClick={onCancel}>CANCEL</button>
           <span style={{ marginLeft: "auto", fontSize: 10, color: C.dim2 }}>
-            {nOk < items.length && !checking ? "files that do not match are left out" : "the server re-checks every file on upload"}
+            {nOk < items.length && !checking ? "Files with format issues will not be added." : "Files are checked again when processing starts."}
           </span>
         </div>
       </div>

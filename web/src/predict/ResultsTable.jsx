@@ -7,17 +7,17 @@ import { COLUMN_LABELS, rowHealth } from "./taskMeta.js";
 
 /** The grey "what to do here" line under the table, per system and state. */
 function guidance(task, n, running, selectedCar) {
-  if (running && !n) return "Predicting. Rows appear here as each file comes back from the server.";
-  if (!n) return "1. Pick a system on the left.  2. Choose or drop its Test files and confirm the check.  3. Press RUN. One row per prediction lands here; click it to see why.";
+  if (running && !n) return "Processing files. Results will appear as each file finishes.";
+  if (!n) return "Choose a system, add its Test files, and select Run. Results will appear here; select a row to inspect its details.";
   if (task === "acv") {
     return selectedCar
-      ? `Car ${selectedCar} is in focus: the train shows that car's roof unit and the explanation says where it ranks and why. Click the row itself (outside the chips) or SHOW ALL CARS to go back to all eight.`
-      : "Each row is one case workbook with its cars ranked most to least likely to be leaking. Click a car chip to see where that car is on the train and why it ranks there; the red chip is the model's call. Click a row to select the case.";
+      ? `Car ${selectedCar} is selected. The train view shows its roof unit, and the details panel shows its rank. Select the row or SHOW ALL CARS to return to the full ranking.`
+      : "Each row ranks the cars in one workbook by leak likelihood. Select a car to view its position and rank; the red car is ranked first.";
   }
-  if (task === "door") return "Each row is one door cycle with its prediction. Click a row: the door leaf lights up on the train (green Normal, red Abnormal) and the explanation on the right shows the current trace the model judged.";
-  if (task === "rail") return "Each row is one run. Click a row: the rail side the model flagged (Side I or Side II, red) lights up on the top view and the explanation shows the wavelength spectrum behind the call.";
-  if (task === "shm") return "Each row is one stress record with its predicted cumulative damage. Click a row: the underframe member is coloured by damage and the explanation shows the rainflow cycles behind the estimate.";
-  return "Click a row to inspect it: the train model and the explanation follow.";
+  if (task === "door") return "Each row is one door cycle. Select a result to highlight the door and review the current trace.";
+  if (task === "rail") return "Each row is one run. Select a result to highlight the predicted rail side and review its wavelength spectrum.";
+  if (task === "shm") return "Each row is one stress record. Select a result to review the predicted damage and rainflow cycles.";
+  return "Select a result to update the train view and details.";
 }
 
 /**
@@ -74,7 +74,7 @@ export default function ResultsTable({ task, rows = [], columns = [], selected =
       >
         <span style={{ fontSize: 9.5, letterSpacing: "0.16em", color: C.dim }}>PREDICTIONS</span>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          {n > 1 && <span className="nx-row-hint">CLICK A ROW TO INSPECT IT</span>}
+      {n > 1 && <span className="nx-row-hint">SELECT A ROW FOR DETAILS</span>}
           {task === "acv" && n > 0 && <button type="button" className="nx-inline-link" onClick={onShowAll}>SHOW ALL CARS</button>}
           <span className="mono" style={{ fontSize: 10, color: C.dim2 }}>
             {n} row{n === 1 ? "" : "s"}{progress ? ` · ${progress}` : ""}
@@ -84,7 +84,7 @@ export default function ResultsTable({ task, rows = [], columns = [], selected =
 
       {!n ? (
         <div style={{ flex: 1, display: "grid", placeItems: "center", color: C.dim2, fontSize: 11, textAlign: "center", padding: 16 }}>
-          {running ? "predicting…" : "no predictions yet: queue files on the left and press RUN"}
+          {running ? "Processing files…" : "No predictions yet. Add files on the left, then select Run."}
         </div>
       ) : (
         <div className="nx-scroll" style={{ flex: 1, minHeight: 0 }}>
@@ -124,7 +124,7 @@ export default function ResultsTable({ task, rows = [], columns = [], selected =
                     key={i}
                     className={sel ? "is-selected" : undefined}
                     onClick={() => onSelect && onSelect(i)}
-                    title={sel ? undefined : "Click to select this row: the train model and the explanation follow"}
+                    title={sel ? undefined : "Select this row to update the train view and details."}
                     style={{
                       cursor: "pointer",
                       background: sel ? C.accentBg : "transparent",

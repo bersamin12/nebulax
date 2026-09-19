@@ -18,51 +18,43 @@ const PAD = 6;
 export const TOUR_STEPS = [
   {
     target: null,
-    title: "Welcome to the Train Digital Twin",
-    body:
-      "This page runs the four Problem Statement 3 models on a released Test file and shows every prediction on the train model with an explanation. The tour takes about two minutes and walks the page from left to right. Everything inside a highlight stays clickable, so you can follow along as you read.",
+    title: "Prediction workspace",
+    body: "Choose a system, add Test files, run a model, and inspect the results on the train. This short tour covers the workflow from left to right.",
   },
   {
     target: "systems",
-    title: "Pick a subsystem",
-    body:
-      "Door, ACV, Rail corrugation and SHM are the four scored predictors, each with the honest cross-validation score of its shipped model. Brake air supply and Axle bearing are exploratory dataset profiles with no upload or prediction. Click a tile to select it; click it again to hide or show its description.",
+    title: "Choose a system",
+    body: "The four scored systems run prediction models. Brake air supply and Axle bearing are read-only research datasets. Select a tile to view its description.",
   },
   {
     target: "files",
-    title: "Queue the Test files",
-    body:
-      "Drop the file (Door: one CSV stream, ACV: one workbook per case) or the whole folder (Rail: 68 runs, SHM: 16 records). A dialog then shows the columns each file carries against what the model expects, and queues the ones that match. Nothing uploads yet: the queue lists what RUN will send.",
+    title: "Add Test files",
+    body: "Choose files, select a folder, or drag and drop. The app checks the format before adding valid files to the queue.",
   },
   {
     target: "run",
-    title: "Press RUN",
-    body:
-      "The server loads the same frozen model that predict.py uses, featurises each file with training-only baselines and answers with every row accumulated so far. The table fills as batches return; INCLUDE REPLAY FRAMES also streams preview frames to the train.",
+    title: "Run the model",
+    body: "Select Run to process the queue. Results appear as files finish.",
   },
   {
     target: "table",
-    title: "Read the predictions",
-    body:
-      "One row per door cycle, case, run or record, in the organiser's own column names. Click a row to select it: the train model and the explanation panel follow. For ACV, click a car chip to see where that car ranks and why.",
+    title: "Review results",
+    body: "Select a row to update the train view and the details panel. For ACV, select a car to inspect its rank.",
   },
   {
     target: "stage",
-    title: "The train lights up",
-    body:
-      "The component behind the selected row turns green for Normal and red for a fault: a door leaf, a roof unit, a bogie side or the underframe member. Drag to orbit, scroll to zoom, click a part to select the row that painted it.",
+    title: "Inspect the train view",
+    body: "The selected component is highlighted by status. Drag to rotate, scroll to zoom, or select a component directly.",
   },
   {
     target: "explanation",
-    title: "Why this prediction",
-    body:
-      "The numbers the model actually used for that row, its trace with the marks that mattered, and the target the train is pointed at. Hover the (i) next to a variable for its definition. Nothing here is invented: it is the explanation payload the API sent.",
+    title: "Review the details",
+    body: "This panel shows the values, trace, and train location returned for the selected result. Use the information icons for variable definitions.",
   },
   {
     target: "download",
-    title: "Download the submission CSV",
-    body:
-      "The download is the validated organiser CSV for this session, exactly the rows in the table. CLEAR empties the queue and the results. You can restart this tour any time from TUTORIAL in the header.",
+    title: "Download or start again",
+    body: "Download the validated submission CSV, or clear the session to begin another run. You can restart this tour from the header.",
   },
 ];
 
@@ -187,7 +179,7 @@ export default function Tutorial({ open, startStep = 0, onClose }) {
     return toast ? (
       <div className="nx-tour-toast" role="status">
         <span style={{ width: 7, height: 7, background: C.ok, display: "block", flex: "none", borderRadius: "50%" }} />
-        Tour finished. Restart it any time from TUTORIAL in the header.
+        Tour complete. You can restart it from the header.
         <button type="button" className="nx-tour-link" onClick={() => setToast(false)}>dismiss</button>
       </div>
     ) : null;

@@ -47,9 +47,9 @@ export default function ResearchExamplePanel({ info, examples, example, index, p
   const alert = example && (example.condition === "faulty" || !!point?.alert);
   return (
     <section className="nx-info-card nx-scroll" style={{ height, minHeight: 0, overflowY: "auto", padding: 18 }}>
-      <span className="nx-eyebrow">BUILT-IN DATASET EXCERPT · 3D ANIMATION</span>
+      <span className="nx-eyebrow">RECORDED DATASET EXCERPT · 3D VIEW</span>
       <h2>{info.dataset}</h2>
-      <p>Choose a short recorded excerpt. The train model highlights the corresponding component as the timeline plays.</p>
+      <p>Choose a recorded excerpt to view its signal and location on the train.</p>
       <div style={{ display: "flex", gap: 7, flexWrap: "wrap", marginBottom: 14 }}>
         {(examples || []).map((item) => <button key={item.id} type="button" className="nx-btn" aria-pressed={item.id === example?.id} style={{ height: 27, background: item.id === example?.id ? C.accentBg : C.panel2, borderColor: item.id === example?.id ? C.accent : C.line2, color: item.id === example?.id ? C.accentBright : C.text2 }} onClick={() => onSelect(item.id)}>{item.label.toUpperCase()}</button>)}
       </div>
@@ -67,7 +67,7 @@ export default function ResearchExamplePanel({ info, examples, example, index, p
         </div>
         <div className="nx-dataset-fact" style={{ marginTop: 13 }}><span>Source excerpt</span><strong>{example.record}</strong></div>
         <div className="nx-dataset-fact"><span>Position on train</span><strong>{info.location}</strong></div>
-        <p style={{ marginBottom: 0, color: C.dim }}>This short excerpt is bundled for display. Its colours follow the recorded condition or the existing MetroPT-3 score; it does not create a PS3 submission prediction.</p>
+        <p style={{ marginBottom: 0, color: C.dim }}>This excerpt is provided for reference. Its colours follow the recorded condition or existing MetroPT-3 score; it does not create a PS3 prediction.</p>
       </>}
     </section>
   );

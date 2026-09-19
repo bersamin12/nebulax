@@ -10,9 +10,9 @@ export default function Models({  }) {
 {/* MODELS carousel */}
   <section style={{ flex: "none", padding: "24px 120px 40px", display: "flex", flexDirection: "column", gap: "20px" }}>
     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-      <div className="eyebrow">Main models</div>
-      <h2 style={{ margin: "0", fontSize: "28px", fontWeight: "600" }}>One model per subsystem, chosen on a frozen ladder</h2>
-      <p style={{ margin: "0", fontSize: "15px", color: "#5b6673", maxWidth: "900px", lineHeight: "1.55" }}>Each page says what the model eats, how it decides, and which studies pointed us to it; the ablation section further down shows what the larger models scored. None of the four deployed models is a neural network: every artifact is under 1 MB and predicts in seconds on a laptop, which is what an offline twin needs.</p>
+      <div className="eyebrow">Prediction models</div>
+      <h2 style={{ margin: "0", fontSize: "28px", fontWeight: "600" }}>One model for each scored system</h2>
+      <p style={{ margin: "0", fontSize: "15px", color: "#5b6673", maxWidth: "900px", lineHeight: "1.55" }}>Each tab summarises the model input, decision method, validation result, and supporting research. All four models are under 1 MB and run locally on a laptop; larger alternatives are compared in the ablation section.</p>
     </div>
 
     <div style={{ display: "flex", alignItems: "flex-end", gap: "12px" }}>
@@ -59,12 +59,12 @@ export default function Models({  }) {
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "32px", alignItems: "start" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-            <div className="callout"><span className="mono" style={{ fontSize: "10px", letterSpacing: ".12em", color: "#006d73" }}>IN PLAIN TERMS</span><br />A door that is harder to move draws more current in the middle of its travel. We cut the 50 Hz stream into single open or close movements and compare each one with a normal door.</div>
+            <div className="callout"><span className="mono" style={{ fontSize: "10px", letterSpacing: ".12em", color: "#006d73" }}>SUMMARY</span><br />A door that is harder to move draws more current in the middle of its travel. The 50 Hz stream is divided into individual opening and closing movements, then compared with a normal door.</div>
             <div className="kv">
             <div className="eyebrow" style={{ paddingTop: "2px" }}>Input</div><div>One <span className="mono" style={{ fontSize: "12px" }}>Test.csv</span> stream: datetime, motor current, leaf position, voltage, back-EMF, commands</div>
             <div className="eyebrow" style={{ paddingTop: "2px" }}>Model</div><div>Separate Open / Close logistic regression on 24 physics features, class-weighted, saved threshold</div>
             <div className="eyebrow" style={{ paddingTop: "2px" }}>Output</div><div><span className="mono" style={{ fontSize: "12px" }}>start_time, end_time, prediction</span> · Normal / Abnormal resistance</div>
-            <div className="eyebrow" style={{ paddingTop: "2px" }}>Why this</div><div>Ties the deep rows (MultiRocket, LITETime = 1.0000) with a 5 s fit and readable coefficients; segmentation is boundary-exact on all 110 training cycles</div>
+            <div className="eyebrow" style={{ paddingTop: "2px" }}>Selection rationale</div><div>Ties the deep rows (MultiRocket, LITETime = 1.0000) with a 5 s fit and readable coefficients; segmentation is boundary-exact on all 110 training cycles</div>
           </div>
             <div>
               <div className="eyebrow" style={{ marginBottom: "4px" }}>Architecture &middot; 5 pipeline steps</div>
@@ -76,7 +76,7 @@ export default function Models({  }) {
             </div>
           </div>
           <div style={{ background: "#f7f8fa", borderRadius: "6px", padding: "14px 16px", display: "flex", flexDirection: "column" }}>
-            <div className="eyebrow" style={{ marginBottom: "4px" }}>Literature that pointed us here</div>
+            <div className="eyebrow" style={{ marginBottom: "4px" }}>Supporting research</div>
             <div className="ref" style={{ fontSize: "11px", gridTemplateColumns: "38px 1fr" }}><span className="mono" style={{ color: "#006d73" }}>R64</span><span>Ham et al., <em>Sensors</em> 2019. Traditional vs deep-learning fault diagnosis for train door systems: motor-current features with a linear model match deep nets on small labelled sets, which set our baseline.</span></div>
             <div className="ref" style={{ fontSize: "11px", gridTemplateColumns: "38px 1fr" }}><span className="mono" style={{ color: "#006d73" }}>R66</span><span>Shiao et al., <em>Sensors</em> 2026. Wavelet-based health monitoring of door actuation from motor current: source of the two coarse wavelet-band features.</span></div>
             <div className="ref" style={{ fontSize: "11px", gridTemplateColumns: "38px 1fr" }}><span className="mono" style={{ color: "#006d73" }}>R67</span><span>Shiao et al., <em>Applied Sciences</em> 2025. Motor-current analysis for door obstacles: why middle-travel current, not the start peak, separates resistance from obstruction.</span></div>
@@ -128,12 +128,12 @@ export default function Models({  }) {
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "32px", alignItems: "start" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-            <div className="callout"><span className="mono" style={{ fontSize: "10px", letterSpacing: ".12em", color: "#006d73" }}>IN PLAIN TERMS</span><br />On a hot afternoon, with the air-conditioning in cooling mode, the leaking car is the one that stays warmer than its seven sibling cars on the same train. The train is its own weather reference.</div>
+            <div className="callout"><span className="mono" style={{ fontSize: "10px", letterSpacing: ".12em", color: "#006d73" }}>SUMMARY</span><br />In warm weather, while the air-conditioning is cooling, a leaking car tends to stay warmer than the other cars on the same train. Comparing cars reduces the effect of shared weather conditions.</div>
             <div className="kv">
             <div className="eyebrow" style={{ paddingTop: "2px" }}>Input</div><div>One <span className="mono" style={{ fontSize: "12px" }}>.xlsx</span> per case: 30 s telemetry for up to 8 cars, headers <span className="mono" style={{ fontSize: "12px" }}>Car N - parameter</span>; parameter set varies by workbook</div>
             <div className="eyebrow" style={{ paddingTop: "2px" }}>Model</div><div>Fixed, pre-registered rule <span className="mono" style={{ fontSize: "12px" }}>peer_delta_hot</span>: hot, cooling-mode indoor temperature minus contemporaneous peer median</div>
             <div className="eyebrow" style={{ paddingTop: "2px" }}>Output</div><div><span className="mono" style={{ fontSize: "12px" }}>file_id, ranked_cars</span> · e.g. <span className="mono" style={{ fontSize: "12px" }}>01|03|04|08|07|06|02|05</span></div>
-            <div className="eyebrow" style={{ paddingTop: "2px" }}>Why this</div><div>Six labelled cases cannot support a credible supervised classifier; the rule was fixed before the cases were inspected and uses no car-ID prior</div>
+            <div className="eyebrow" style={{ paddingTop: "2px" }}>Selection rationale</div><div>Six labelled cases cannot support a credible supervised classifier; the rule was fixed before the cases were inspected and uses no car-ID prior</div>
           </div>
             <div>
               <div className="eyebrow" style={{ marginBottom: "4px" }}>Architecture &middot; 5 pipeline steps</div>
@@ -145,7 +145,7 @@ export default function Models({  }) {
             </div>
           </div>
           <div style={{ background: "#f7f8fa", borderRadius: "6px", padding: "14px 16px", display: "flex", flexDirection: "column" }}>
-            <div className="eyebrow" style={{ marginBottom: "4px" }}>Literature that pointed us here</div>
+            <div className="eyebrow" style={{ marginBottom: "4px" }}>Supporting research</div>
             <div className="ref" style={{ fontSize: "11px", gridTemplateColumns: "38px 1fr" }}><span className="mono" style={{ color: "#006d73" }}>R252</span><span>Rossi &amp; Braun, <em>HVAC&amp;R Research</em> 1997. The founding temperature-only residual + directional-rule method for vapour-compression faults: a refrigerant leak shows as a warm cabin with the unit in cooling.</span></div>
             <div className="ref" style={{ fontSize: "11px", gridTemplateColumns: "38px 1fr" }}><span className="mono" style={{ color: "#006d73" }}>R251</span><span>Guo et al., <em>Energy and AI</em> 2024. Electric-bus air-conditioning fault diagnosis with domain knowledge: peer-fleet residuals as the reference instead of a physics model, the basis of our same-train comparison.</span></div>
             <div className="ref" style={{ borderBottom: "none", fontSize: "11px", gridTemplateColumns: "38px 1fr" }}><span className="mono" style={{ color: "#006d73" }}>R253</span><span>Yoon et al., ORNL report 2024. Field HVAC fault data and manufacturer interviews: why runtime, recovery and persistence rules were added as alternatives, and why they were not promoted on six cases.</span></div>
@@ -195,12 +195,12 @@ export default function Models({  }) {
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "32px", alignItems: "start" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-            <div className="callout"><span className="mono" style={{ fontSize: "10px", letterSpacing: ".12em", color: "#006d73" }}>IN PLAIN TERMS</span><br />A corrugated rail shakes every axle box on that side of the train in step. An isolated bump shakes one box. We measure how much same-side boxes vibrate <em>together</em>, band by band, and which side is louder.</div>
+            <div className="callout"><span className="mono" style={{ fontSize: "10px", letterSpacing: ".12em", color: "#006d73" }}>SUMMARY</span><br />Rail corrugation produces a repeated vibration across the axle boxes on one side of the train, while an isolated impact affects fewer boxes. The model compares vibration coherence and level on each side.</div>
             <div className="kv">
             <div className="eyebrow" style={{ paddingTop: "2px" }}>Input</div><div>One 1 s, 10 kHz <span className="mono" style={{ fontSize: "12px" }}>.csv</span> per run: tachometer pulse + 64 vibration and 64 shock channels (8 positions × 8 cars); drop the whole Test folder</div>
             <div className="eyebrow" style={{ paddingTop: "2px" }}>Model</div><div>Three balanced LightGBM (seeds 0 / 1 / 2) on 201 features incl. same-side Welch coherence; mirror training + mirror test-time averaging</div>
             <div className="eyebrow" style={{ paddingTop: "2px" }}>Output</div><div><span className="mono" style={{ fontSize: "12px" }}>file_id, prediction</span> · Normal / Side I / Side II</div>
-            <div className="eyebrow" style={{ paddingTop: "2px" }}>Why this</div><div>Only 14 Side I training files: mirroring doubles the minority. Coherence lifted selection CV 0.8365 to 0.8441 and the portal score 0.7994 to 0.8310 for a 794 KB artifact</div>
+            <div className="eyebrow" style={{ paddingTop: "2px" }}>Selection rationale</div><div>Only 14 Side I training files: mirroring doubles the minority. Coherence lifted selection CV 0.8365 to 0.8441 and the portal score 0.7994 to 0.8310 for a 794 KB artifact</div>
           </div>
             <div>
               <div className="eyebrow" style={{ marginBottom: "4px" }}>Architecture &middot; 5 pipeline steps</div>
@@ -212,7 +212,7 @@ export default function Models({  }) {
             </div>
           </div>
           <div style={{ background: "#f7f8fa", borderRadius: "6px", padding: "14px 16px", display: "flex", flexDirection: "column" }}>
-            <div className="eyebrow" style={{ marginBottom: "4px" }}>Literature that pointed us here</div>
+            <div className="eyebrow" style={{ marginBottom: "4px" }}>Supporting research</div>
             <div className="ref" style={{ fontSize: "11px", gridTemplateColumns: "38px 1fr" }}><span className="mono" style={{ color: "#006d73" }}>R235</span><span>De Rosa et al., <em>Applied Sciences</em> 2024. Detecting corrugation from on-board measurements by isolating other excitation sources: the reason for side contrasts and the same-side coherence idea.</span></div>
             <div className="ref" style={{ fontSize: "11px", gridTemplateColumns: "38px 1fr" }}><span className="mono" style={{ color: "#006d73" }}>R233</span><span>Liu et al., <em>Vehicle System Dynamics</em> 2023. Corrugation maintenance limit from the axle-box acceleration spectrum (IEC 61373 bands): source of the fixed Hz band layout.</span></div>
             <div className="ref" style={{ fontSize: "11px", gridTemplateColumns: "38px 1fr" }}><span className="mono" style={{ color: "#006d73" }}>R239</span><span>Pieringer &amp; Kropp, <em>Applied Acoustics</em> 2022. Model-based rail roughness from axle-box acceleration: why wavelength (distance-domain) features were built and kept in the ladder.</span></div>
@@ -257,12 +257,12 @@ export default function Models({  }) {
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "32px", alignItems: "start" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-            <div className="callout"><span className="mono" style={{ fontSize: "10px", letterSpacing: ".12em", color: "#006d73" }}>IN PLAIN TERMS</span><br />Metal fatigues a little on every load swing, and big swings cost far more than small ones. We count the swings in the stress record (rainflow), weight them by a power law, and let a sparse linear model correct the sum.</div>
+            <div className="callout"><span className="mono" style={{ fontSize: "10px", letterSpacing: ".12em", color: "#006d73" }}>SUMMARY</span><br />Each load cycle contributes to metal fatigue, with larger cycles contributing more. Rainflow counting measures the cycles, a power law weights them, and a sparse linear model adjusts the estimate.</div>
             <div className="kv">
             <div className="eyebrow" style={{ paddingTop: "2px" }}>Input</div><div>Headerless <span className="mono" style={{ fontSize: "12px" }}>.csv</span>, one stress sample per line (581,120 samples); no sample rate given, so spectra use cycles per sample</div>
             <div className="eyebrow" style={{ paddingTop: "2px" }}>Model</div><div>StandardScaler + LassoCV on log-damage over 109 features, multiplicative bias correction, 50 / 50 blend with an m = 5 rainflow estimate when stress skew &gt; 0</div>
             <div className="eyebrow" style={{ paddingTop: "2px" }}>Output</div><div><span className="mono" style={{ fontSize: "12px" }}>file_id, prediction</span> · positive damage, 9 significant digits</div>
-            <div className="eyebrow" style={{ paddingTop: "2px" }}>Why this</div><div>The metric is relative error and fatigue is a power law, so log space fits both. The blend was selected in 62 / 64 nested outer folds and cut nested MAPE 0.0203 to 0.0187</div>
+            <div className="eyebrow" style={{ paddingTop: "2px" }}>Selection rationale</div><div>The metric is relative error and fatigue is a power law, so log space fits both. The blend was selected in 62 / 64 nested outer folds and cut nested MAPE 0.0203 to 0.0187</div>
           </div>
             <div>
               <div className="eyebrow" style={{ marginBottom: "4px" }}>Architecture &middot; 5 pipeline steps</div>
@@ -274,7 +274,7 @@ export default function Models({  }) {
             </div>
           </div>
           <div style={{ background: "#f7f8fa", borderRadius: "6px", padding: "14px 16px", display: "flex", flexDirection: "column" }}>
-            <div className="eyebrow" style={{ marginBottom: "4px" }}>Literature that pointed us here</div>
+            <div className="eyebrow" style={{ marginBottom: "4px" }}>Supporting research</div>
             <div className="ref" style={{ fontSize: "11px", gridTemplateColumns: "38px 1fr" }}><span className="mono" style={{ color: "#006d73" }}>R269</span><span>Zorman, Slavič &amp; Boltežar, <em>MSSP</em> 2023. Vibration fatigue by spectral methods, with the open-source FLife code: the reference implementation our spectral and rainflow features were checked against.</span></div>
             <div className="ref" style={{ fontSize: "11px", gridTemplateColumns: "38px 1fr" }}><span className="mono" style={{ color: "#006d73" }}>R270</span><span>Marsh et al., <em>Int. J. Fatigue</em> 2016. Rainflow residue processing: why the half-cycle residue convention was chosen and why 4-point counting reproduces the labels.</span></div>
             <div className="ref" style={{ fontSize: "11px", gridTemplateColumns: "38px 1fr" }}><span className="mono" style={{ color: "#006d73" }}>R275</span><span>Benasciutti &amp; Tovo, <em>Int. J. Fatigue</em> 2005. Spectral lifetime prediction for wide-band processes: the Tovo-Benasciutti damage feature.</span></div>

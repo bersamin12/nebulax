@@ -10,9 +10,9 @@ export default function Extra({  }) {
 {/* Additional systems carousel */}
   <section style={{ flex: "none", padding: "8px 120px 40px", display: "flex", flexDirection: "column", gap: "20px" }}>
     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-      <div className="eyebrow">Exploratory · not scored by PS3</div>
-      <h2 style={{ margin: "0", fontSize: "28px", fontWeight: "600" }}>Additional systems and datasets we brought into the twin</h2>
-      <p style={{ margin: "0", fontSize: "15px", color: "#5b6673", maxWidth: "900px", lineHeight: "1.55" }}>These are exploratory systems we found online using open public datasets, which we also include in our twin. Neither is scored by PS3. They appear on the Digital Twin page as read-only dataset profiles, they feed the research benchmark (285 retained runs, one seed each) and they drive the two physics simulators behind the FAULT / EXAMPLE controls.</p>
+      <div className="eyebrow">Research datasets · outside PS3 scoring</div>
+      <h2 style={{ margin: "0", fontSize: "28px", fontWeight: "600" }}>Additional condition-monitoring datasets</h2>
+      <p style={{ margin: "0", fontSize: "15px", color: "#5b6673", maxWidth: "900px", lineHeight: "1.55" }}>These public datasets support exploratory work on axle bearings and brake-air supply. They are not part of PS3 scoring. In the prediction workspace, each appears as a read-only dataset profile with a short recorded example.</p>
     </div>
 
     <div style={{ display: "flex", alignItems: "flex-end", gap: "12px" }}>
@@ -35,11 +35,11 @@ export default function Extra({  }) {
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}><span className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>page 1 / 2</span><span className="chip">research benchmark · nebulax/sim/bearing.py</span></div>
             <h3 style={{ margin: "0", fontSize: "24px", fontWeight: "600", lineHeight: "1.2" }}>Rolling-element bearing condition from axle-box vibration</h3>
-            <div className="callout"><span className="mono" style={{ fontSize: "10px", letterSpacing: ".12em", color: "#006d73" }}>IN PLAIN TERMS</span><br />A bearing that is starting to fail rings at its own frequencies and runs hotter. We learn what a healthy axle box sounds like from a public laboratory rig, then let the twin's simulator inject the same signature into any of the 32 axle boxes on the train.</div>
+            <div className="callout"><span className="mono" style={{ fontSize: "10px", letterSpacing: ".12em", color: "#006d73" }}>SUMMARY</span><br />A developing bearing fault produces characteristic vibration frequencies and additional heat. The research benchmark compares those vibration patterns with healthy recordings from a public laboratory dataset.</div>
             <div className="kv" style={{ gridTemplateColumns: "120px 1fr" }}>
               <div className="eyebrow" style={{ paddingTop: "2px" }}>Dataset</div><div>UORED-VAFCLS, University of Ottawa (Mendeley Data, CC BY): 20 bearings × 3 conditions = 60 recordings of 10 s, accelerometer + microphone + load cell + hall-effect recorded together</div>
               <div className="eyebrow" style={{ paddingTop: "2px" }}>Labels</div><div>healthy / fault-developing / faulty, one label per bearing, constant load and speed</div>
-              <div className="eyebrow" style={{ paddingTop: "2px" }}>On the twin</div><div>Click any axle box on the Digital Twin page: the detail panel shows the envelope features and the lumped thermal node for that box; FAULT injects a seeded defect</div>
+              <div className="eyebrow" style={{ paddingTop: "2px" }}>In the workspace</div><div>Open Axle bearing to view a recorded vibration excerpt and its location on the train. This view does not run a PS3 prediction.</div>
               <div className="eyebrow" style={{ paddingTop: "2px" }}>Simulator</div><div>8 boxes per car at 1 Hz: Palmgren friction torque feeds one thermal node per box (steady rise scales as v<sup>0.43</sup>, calibrated to 20 to 26 K at 80 km/h); vibration is a direct feature stream, no waveform</div>
             </div>
           </div>
@@ -47,7 +47,7 @@ export default function Extra({  }) {
 
         <div style={{ display: "grid", gridTemplateColumns: "1.15fr 1fr 1fr", gap: "24px", alignItems: "start" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}><div className="eyebrow">What we tried · macro F1</div><div className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>bearing-grouped 5-fold</div></div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}><div className="eyebrow">Model comparison · macro F1</div><div className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>bearing-grouped 5-fold</div></div>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               <div className="bar" style={{ gridTemplateColumns: "190px 1fr 52px" }}><div>logreg on envelope feat.</div><div className="track" style={{ height: "14px" }}><div className="fill sel" style={{ width: "82.8%" }}></div></div><div className="mono" style={{ textAlign: "right" }}>0.828</div></div>
               <div className="bar" style={{ gridTemplateColumns: "190px 1fr 52px" }}><div>LightGBM on envelope feat.</div><div className="track" style={{ height: "14px" }}><div className="fill" style={{ width: "81.5%" }}></div></div><div className="mono" style={{ textAlign: "right" }}>0.815</div></div>
@@ -63,11 +63,11 @@ export default function Extra({  }) {
             <div className="step" style={{ padding: "4px 0" }}><div className="num" style={{ background: "#eef1f3", color: "#1d2633" }}>a</div><div style={{ fontSize: "13px", lineHeight: "1.5" }}><strong>Bearing-grouped folds.</strong> All three recordings of a bearing stay in one fold; random window splits inflate accuracy from a genuine 20 to 60 % to 99.9 % on the same data.</div></div>
             <div className="step" style={{ padding: "4px 0" }}><div className="num" style={{ background: "#eef1f3", color: "#1d2633" }}>b</div><div style={{ fontSize: "13px", lineHeight: "1.5" }}><strong>Normal-only training.</strong> Detectors see healthy recordings only; thresholds come from the validation slice, never from test.</div></div>
             <div className="step" style={{ padding: "4px 0" }}><div className="num" style={{ background: "#eef1f3", color: "#1d2633" }}>c</div><div style={{ fontSize: "13px", lineHeight: "1.5" }}><strong>Synthetic fleet replay.</strong> On the simulated bearing fleet (leave-one-train-out) <span className="mono" style={{ fontSize: "12px" }}>cusum_cycle_scalar</span> scores VUS-PR 0.658, 10 / 12 injected events, 0.008 false-alarm episodes per scored day.</div></div>
-            <div className="step" style={{ padding: "4px 0" }}><div className="num" style={{ background: "#eef1f3", color: "#1d2633" }}>d</div><div style={{ fontSize: "13px", lineHeight: "1.5" }}><strong>Severity kept honest.</strong> Published rig data shows the axle box gains about 1 K per severity step against an 8 K healthy spread, so temperature alone cannot flag a defect; only an acute hot axle box drives it hard.</div></div>
+            <div className="step" style={{ padding: "4px 0" }}><div className="num" style={{ background: "#eef1f3", color: "#1d2633" }}>d</div><div style={{ fontSize: "13px", lineHeight: "1.5" }}><strong>Severity constraint.</strong> Published rig data shows the axle box gains about 1 K per severity step against an 8 K healthy spread, so temperature alone cannot flag a defect; only an acute hot axle box drives it hard.</div></div>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             <div style={{ background: "#f7f8fa", borderRadius: "6px", padding: "14px 16px", display: "flex", flexDirection: "column", gap: "8px" }}>
-              <div className="eyebrow">Honest notes</div>
+              <div className="eyebrow">Limitations</div>
               <div style={{ fontSize: "13px", lineHeight: "1.5" }}>Laboratory proxy: constant load and speed, no temperature channel, and a fabricated timeline. Read the classification numbers as evidence; do not read the synthetic false-alarm clock as field performance.</div>
               <div style={{ fontSize: "13px", lineHeight: "1.5" }}>Single seed everywhere on the research leaderboard: no interval on it is a confidence interval.</div>
             </div>
@@ -93,11 +93,11 @@ export default function Extra({  }) {
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}><span className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>page 2 / 2</span><span className="chip">research benchmark · nebulax/sim/pneumatic.py</span></div>
             <h3 style={{ margin: "0", fontSize: "24px", fontWeight: "600", lineHeight: "1.2" }}>Compressor air-leak detection from pneumatic telemetry</h3>
-            <div className="callout"><span className="mono" style={{ fontSize: "10px", letterSpacing: ".12em", color: "#006d73" }}>IN PLAIN TERMS</span><br />The compressor that feeds the brakes and air springs cycles between 8.06 and 10.2 bar. When air leaks, it runs more often and for longer. We learn the healthy cycle from a real metro's compressor log and raise an alarm when the pattern drifts for three windows in a row.</div>
+            <div className="callout"><span className="mono" style={{ fontSize: "10px", letterSpacing: ".12em", color: "#006d73" }}>SUMMARY</span><br />The compressor supplying the brakes and air springs cycles between 8.06 and 10.2 bar. Air leaks make it run more often and for longer, so the benchmark monitors changes from the normal cycle.</div>
             <div className="kv" style={{ gridTemplateColumns: "120px 1fr" }}>
               <div className="eyebrow" style={{ paddingTop: "2px" }}>Dataset</div><div>MetroPT-3, Metro do Porto (UCI 791, CC BY 4.0): 1,516,948 rows at 1 Hz, Feb to Aug 2020; 7 analogue channels (TP2, TP3, H1, DV_pressure, Reservoirs, Motor_current, Oil_temperature) + 8 digital</div>
               <div className="eyebrow" style={{ paddingTop: "2px" }}>Labels</div><div>4 high-severity air-leak windows (18 Apr, 29 to 30 May, 5 to 7 Jun, 15 Jul 2020); MetroPT-2 adds the oil-leak class this release lacks</div>
-              <div className="eyebrow" style={{ paddingTop: "2px" }}>On the twin</div><div>Click the APU under Car 3: reservoir pressure, motor current and tower switching trace live; FAULT opens a leak and the alarm episode appears on the transport bar</div>
+              <div className="eyebrow" style={{ paddingTop: "2px" }}>In the workspace</div><div>Open Brake air supply to view a recorded compressor excerpt and its location beneath Car 3. This view does not run a PS3 prediction.</div>
               <div className="eyebrow" style={{ paddingTop: "2px" }}>Simulator</div><div>Screw compressor, oil sump, twin-tower dryer and a 290 L main reservoir at 1 Hz with MetroPT-3 column names; all 31 constants are measured from the failure-free Feb to Mar 2020 window (3,141 cycles) by <span className="mono" style={{ fontSize: "12px" }}>scripts/calibrate_pneumatic.py</span></div>
             </div>
           </div>
@@ -105,17 +105,17 @@ export default function Extra({  }) {
 
         <div style={{ display: "grid", gridTemplateColumns: "1.15fr 1fr 1fr", gap: "24px", alignItems: "start" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}><div className="eyebrow">What we tried · VUS-PR</div><div className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>temporal split · 6 h windows</div></div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}><div className="eyebrow">Model comparison · VUS-PR</div><div className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>temporal split · 6 h windows</div></div>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               <div className="bar" style={{ gridTemplateColumns: "190px 1fr 52px" }}><div>k-of-n corroboration</div><div className="track" style={{ height: "14px" }}><div className="fill" style={{ width: "78.3%" }}></div></div><div className="mono" style={{ textAlign: "right" }}>0.783</div></div>
               <div className="bar" style={{ gridTemplateColumns: "190px 1fr 52px" }}><div>conformal threshold</div><div className="track" style={{ height: "14px" }}><div className="fill" style={{ width: "60.3%" }}></div></div><div className="mono" style={{ textAlign: "right" }}>0.603</div></div>
-              <div className="bar" style={{ gridTemplateColumns: "190px 1fr 52px" }}><div>LightGBM residual (shipped)</div><div className="track" style={{ height: "14px" }}><div className="fill sel" style={{ width: "58.7%" }}></div></div><div className="mono" style={{ textAlign: "right" }}>0.587</div></div>
+              <div className="bar" style={{ gridTemplateColumns: "190px 1fr 52px" }}><div>LightGBM residual (selected)</div><div className="track" style={{ height: "14px" }}><div className="fill sel" style={{ width: "58.7%" }}></div></div><div className="mono" style={{ textAlign: "right" }}>0.587</div></div>
               <div className="bar" style={{ gridTemplateColumns: "190px 1fr 52px" }}><div>moving-window variance</div><div className="track" style={{ height: "14px" }}><div className="fill" style={{ width: "57.2%" }}></div></div><div className="mono" style={{ textAlign: "right" }}>0.572</div></div>
               <div className="bar" style={{ gridTemplateColumns: "190px 1fr 52px" }}><div>single-feature threshold</div><div className="track" style={{ height: "14px" }}><div className="fill" style={{ width: "44.3%" }}></div></div><div className="mono" style={{ textAlign: "right" }}>0.443</div></div>
               <div className="bar" style={{ gridTemplateColumns: "190px 1fr 52px" }}><div>TCN autoencoder</div><div className="track" style={{ height: "14px" }}><div className="fill" style={{ width: "21.3%" }}></div></div><div className="mono" style={{ textAlign: "right" }}>0.213</div></div>
               <div className="bar" style={{ gridTemplateColumns: "190px 1fr 52px" }}><div>LSTM autoencoder</div><div className="track" style={{ height: "14px" }}><div className="fill" style={{ width: "8.3%" }}></div></div><div className="mono" style={{ textAlign: "right" }}>0.083</div></div>
             </div>
-            <div style={{ fontSize: "13px", color: "#5b6673", lineHeight: "1.5" }}>The no-skill floor is the 3 % positive rate, so 0.587 is an 18.8× lift. Simple residual and corroboration rules beat both neural autoencoders on four real leaks; the shipped default is the row with all 4 / 4 leaks caught at the lowest false-alarm rate, 0.105 episodes per scored day, with a 17 h lead to failure.</div>
+            <div style={{ fontSize: "13px", color: "#5b6673", lineHeight: "1.5" }}>The no-skill floor is the 3 % positive rate, so 0.587 is an 18.8× lift. Simple residual and corroboration rules beat both neural autoencoders on four real leaks; the selected default is the row with all 4 / 4 leaks caught at the lowest false-alarm rate, 0.105 episodes per scored day, with a 17 h lead to failure.</div>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             <div className="eyebrow">How the benchmark scores it</div>
@@ -126,8 +126,8 @@ export default function Extra({  }) {
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             <div style={{ background: "#f7f8fa", borderRadius: "6px", padding: "14px 16px", display: "flex", flexDirection: "column", gap: "8px" }}>
-              <div className="eyebrow">Honest notes</div>
-              <div style={{ fontSize: "13px", lineHeight: "1.5" }}>Model selection was deferred: the validation slice held no faults to select on, so the shipped default is hand-picked and labelled as such on the leaderboard.</div>
+              <div className="eyebrow">Limitations</div>
+              <div style={{ fontSize: "13px", lineHeight: "1.5" }}>Model selection was deferred: the validation slice held no faults to select on, so the default was selected manually and is labelled as such on the leaderboard.</div>
               <div style={{ fontSize: "13px", lineHeight: "1.5" }}>MetroPT-3 has air leaks only, so there is no multi-class pneumatic fault identification from it alone. Recall figures are over 2 to 4 events, one seed.</div>
             </div>
             <div style={{ background: "#f7f8fa", borderRadius: "6px", padding: "14px 16px", display: "flex", flexDirection: "column" }}>

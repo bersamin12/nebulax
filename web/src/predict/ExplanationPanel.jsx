@@ -142,7 +142,7 @@ export default function ExplanationPanel({ task, row, explanation, selectedCar =
 
       {!row ? (
         <div style={{ flex: 1, display: "grid", placeItems: "center", color: C.dim2, fontSize: 11 }}>
-          run a prediction, then pick a row
+          Run a prediction, then select a result.
         </div>
       ) : (
         <div className="nx-scroll" style={{ flex: 1, minHeight: 0, padding: "9px 10px 12px 10px" }}>
@@ -156,7 +156,7 @@ export default function ExplanationPanel({ task, row, explanation, selectedCar =
           {carRank > 0 && (
             <div className="nx-car-detail">
               <strong>CAR {selectedCar} · RANK {carRank}</strong>
-              <span>of {String(row.ranked_cars || "").split("|").length} cars · {carRank === 1 ? "most likely leak" : "ranking context"}</span>
+              <span>of {String(row.ranked_cars || "").split("|").length} cars · {carRank === 1 ? "highest leak likelihood" : "ranking context"}</span>
               {carDelta !== null && carDelta !== undefined && Number.isFinite(Number(carDelta)) && <span>peer hot-temperature difference: {numberCell(carDelta)} K</span>}
               {carRank > 1 && <span>Numbers below include all cars; fields marked “top car” describe rank 1.</span>}
             </div>
@@ -195,7 +195,7 @@ export default function ExplanationPanel({ task, row, explanation, selectedCar =
                 bands={bands}
                 xFormat={model.xFormat}
                 yFormat={(v) => fmtScore(v)}
-                empty="no trace"
+                empty="No trace available"
               />
               <div style={{ display: "flex", justifyContent: "space-between", fontFamily: MONO, fontSize: 8.5, color: C.dim2, marginTop: 2 }}>
                 <span>{model.xFormat(model.points[0][0])}</span>
@@ -235,7 +235,7 @@ export default function ExplanationPanel({ task, row, explanation, selectedCar =
 
           {!model && !numbers.length && (
             <div style={{ color: C.dim2, fontSize: 11, paddingTop: 6 }}>
-              this task sent no explanation payload for the row
+              No explanation is available for this result.
             </div>
           )}
         </div>
