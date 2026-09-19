@@ -61,7 +61,7 @@ function Brand() {
           <span className="nx-brand-sep"> &middot; </span>
           <span>TRAIN DIGITAL TWIN</span>
         </div>
-        <div className="nx-brand-sub">TRACK 3 &middot; PROBLEM STATEMENT 3</div>
+        {/* <div className="nx-brand-sub">TRACK 3 &middot; PROBLEM STATEMENT 3</div> */}
       </div>
     </div>
   );
