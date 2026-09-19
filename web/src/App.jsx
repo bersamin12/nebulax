@@ -1,11 +1,16 @@
-// NEBULA X console shell: fixed 1440x900, scaled (never reflowed).
+// NEBULA X console shell: fixed 1440x900, scaled (never reflowed) to fill the window, up on a
+// 2.5K or 4K screen and down on a small one, to MIN_SCALE where the stage scrolls instead.
+// Phones and tablets get the same console at whatever fits, under a "limited support" notice.
 //
-// Two pages share the shell and the 56 px header (`?page=` in the URL, the nav in Header.jsx):
-//   predict  (default)  the Problem Statement 3 upload-and-predict page - web/src/predict/
+// Three pages share the shell and the 56 px header (`?page=` in the URL, the nav in Header.jsx):
+//   overview (default)  the landing page: how the twin and its models work - web/src/overview/
+//   predict  `?page=predict`  the Problem Statement 3 upload-and-predict page - web/src/predict/
+//                             (`&tour=1` opens it with the tutorial running)
 //   twin     `?page=twin`  the replay operations console, unchanged:
 //                          header 56 / ticker 30 / schematic 206 / body 464 / transport 144
 // Only the chosen page is mounted, so the twin's replay websocket is never opened on the
-// predict page (and the predict page's /api/ps3/tasks is never fetched on the twin).
+// predict page (and the predict page's /api/ps3/tasks is never fetched on the twin or the
+// overview).
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import "./styles.css";
 
@@ -14,6 +19,8 @@ import TrainViewport from "./components/viewport/TrainViewport.jsx";
 import TransportBar from "./components/transport/TransportBar.jsx";
 
 import PredictPage from "./predict/PredictPage.jsx";
+import { setConsoleScale } from "./lib/consoleScale.js";
+import OverviewPage from "./overview/OverviewPage.jsx";
 import Header from "./components/Header.jsx";
 import AlertTicker from "./components/AlertTicker.jsx";
 import SubsystemLanes from "./components/SubsystemLanes.jsx";
@@ -53,19 +60,46 @@ function readDeepLink() {
   };
 }
 
-/** `?page=twin` selects the replay console; anything else (and no query at all) = Predict. */
+const PAGES = ["overview", "predict", "twin"];
+
+/** `?page=twin` / `?page=predict` select those pages; anything else (and no query) = Overview. */
 function readPage() {
-  if (typeof window === "undefined") return "predict";
-  return new URLSearchParams(window.location.search).get("page") === "twin" ? "twin" : "predict";
+  if (typeof window === "undefined") return "overview";
+  const q = new URLSearchParams(window.location.search);
+  const p = q.get("page");
+  if (PAGES.includes(p)) return p;
+  // an old deep link that names a task or a train still lands where it used to
+  if (q.get("task") || q.get("systems")) return "predict";
+  if (q.get("train") || q.get("component")) return "twin";
+  return "overview";
 }
 
-function useConsoleScale() {
+/**
+ * `?tour=1` on the predict page starts the tutorial (`tour=N` opens it at step N, for a demo
+ * that wants one spotlight); read once, then dropped from the URL.
+ */
+function readTour() {
+  if (typeof window === "undefined") return 0;
+  const n = Number(new URLSearchParams(window.location.search).get("tour"));
+  return Number.isInteger(n) && n > 0 ? n : 0;
+}
+
+// Below this the console is unreadable: a smaller desktop window scrolls the stage instead
+// (a handheld has no floor: it fits the screen and the user pinches to zoom).
+const MIN_SCALE = 0.6;
+const MAX_SCALE = 3;
+const NOTICE_H = 44; // the handheld notice bar, in screen pixels
+
+function useConsoleScale(handheld) {
   const [scale, setScale] = useState(1);
   useLayoutEffect(() => {
     const compute = () => {
       const w = window.innerWidth || W;
-      const h = window.innerHeight || H;
-      setScale(Math.max(0.2, Math.min(1, w / W, h / H)));
+      const h = (window.innerHeight || H) - (handheld ? NOTICE_H : 0);
+      const fit = Math.min(MAX_SCALE, w / W, h / H);
+      const next = handheld ? Math.max(0.2, fit) : Math.max(MIN_SCALE, fit);
+      setScale(next);
+      setConsoleScale(next);
     };
     compute();
     let ro = null;
@@ -78,7 +112,7 @@ function useConsoleScale() {
       if (ro) ro.disconnect();
       window.removeEventListener("resize", compute);
     };
-  }, []);
+  }, [handheld]);
   return scale;
 }
 
@@ -514,17 +548,49 @@ function TwinConsole({ page, onPage }) {
   );
 }
 
+/**
+ * True on a phone or tablet, where the fixed 1440x900 console gets a "limited support" notice
+ * and no minimum scale. Signals, any one of which counts: the browser's own mobile flag, a
+ * mobile / tablet user agent (iPadOS reports itself as a Mac, so a Mac with touch points
+ * counts), or a touch-only device with no fine pointer at all. A touch-screen laptop passes.
+ */
+function isHandheld() {
+  if (typeof navigator === "undefined" || typeof window === "undefined") return false;
+  const ua = navigator.userAgent || "";
+  if (navigator.userAgentData && navigator.userAgentData.mobile) return true;
+  if (/Android|iPhone|iPad|iPod|Mobile|Tablet|Silk|Kindle/i.test(ua)) return true;
+  if (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) return true;
+  const mq = (q) => (window.matchMedia ? window.matchMedia(q).matches : false);
+  return mq("(any-pointer: coarse)") && !mq("(any-pointer: fine)");
+}
+
+function HandheldNotice() {
+  return (
+    <div className="nx-handheld-notice" role="status">
+      <strong>Limited support on phones and tablets.</strong> This is a desktop console; pinch to zoom, or open the link on a PC for the full experience.
+    </div>
+  );
+}
+
 export default function App() {
-  const scale = useConsoleScale();
+  const [handheld] = useState(isHandheld);
+  const scale = useConsoleScale(handheld);
   const [page, setPage] = useState(readPage);
+  // bumps each time a page asks for the tutorial, so "Take the tour" works twice in a row
+  const [tourKey, setTourKey] = useState(() => (readPage() === "predict" ? readTour() : 0));
 
   // the nav writes `?page=` so a link can be pasted, and the Back button switches pages back
-  const onPage = useCallback((next) => {
+  const onPage = useCallback((next, opts = {}) => {
     setPage(next);
+    if (opts.tour) setTourKey((k) => k + 1); // always a fresh number, so the tour re-opens
     if (typeof window === "undefined") return;
     const q = new URLSearchParams(window.location.search);
     q.set("page", next);
-    if (next === "twin") q.delete("task");
+    q.delete("tour");
+    if (next !== "predict") {
+      q.delete("task");
+      q.delete("systems");
+    }
     window.history.pushState(null, "", `${window.location.pathname}?${q}`);
   }, []);
 
@@ -535,15 +601,21 @@ export default function App() {
   }, []);
 
   return (
-    <div className="nx-stage">
+    <div className="nx-stage" style={handheld ? { paddingTop: NOTICE_H } : undefined}>
+      {handheld && <HandheldNotice />}
       <div style={{ width: W * scale, height: H * scale, flex: "none" }}>
         <div className="nx-console" style={{ transform: `scale(${scale})` }}>
           {page === "twin" ? (
             <TwinConsole page={page} onPage={onPage} />
+          ) : page === "predict" ? (
+            <>
+              <Header page={page} onPage={onPage} />
+              <PredictPage height={H - 56} tourKey={tourKey} />
+            </>
           ) : (
             <>
               <Header page={page} onPage={onPage} />
-              <PredictPage height={H - 56} />
+              <OverviewPage height={H - 56} onPage={onPage} />
             </>
           )}
         </div>

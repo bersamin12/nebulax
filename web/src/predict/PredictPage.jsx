@@ -17,6 +17,7 @@ import ExplanationPanel from "./ExplanationPanel.jsx";
 import ResultsTable from "./ResultsTable.jsx";
 import ResearchExamplePanel from "./ResearchExamplePanel.jsx";
 import TaskColumn from "./TaskColumn.jsx";
+import Tutorial, { tourSeen } from "./Tutorial.jsx";
 import researchExamples from "./researchExamples.json";
 import { explanationFor, selectionFor } from "./selection.js";
 import { columnsFor, INFO_META, SYSTEM_ORDER, TASK_META, TASK_ORDER } from "./taskMeta.js";
@@ -35,10 +36,14 @@ function readTask() {
   return SYSTEM_ORDER.includes(t) ? t : null;
 }
 
-export default function PredictPage({ height = 844 }) {
+export default function PredictPage({ height = 844, tourKey = 0 }) {
   const p = usePs3Predict(TASK_ORDER.includes(readTask()) ? readTask() : null);
+  // the tutorial runs on a first visit, and again whenever the header / overview asks (tourKey)
+  const [tour, setTour] = useState(() => tourKey > 0 || !tourSeen());
+  useEffect(() => {
+    if (tourKey > 0) setTour(true);
+  }, [tourKey]);
   const [task, setActiveSystem] = useState(() => readTask() || TASK_ORDER[0]);
-  const [showAll, setShowAll] = useState(() => !!INFO_META[readTask()] || (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("systems") === "all"));
   const [resetKey, setResetKey] = useState(0);
   const [acvCar, setAcvCar] = useState(null);
   const info = INFO_META[task] || null;
@@ -59,7 +64,6 @@ export default function PredictPage({ height = 844 }) {
   const selectSystem = (name) => {
     if (!SYSTEM_ORDER.includes(name)) return;
     if (TASK_ORDER.includes(name)) p.setTask(name);
-    else setShowAll(true);
     setActiveSystem(name);
     setSelIdx(-1);
     setAcvCar(null);
@@ -70,13 +74,12 @@ export default function PredictPage({ height = 844 }) {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const q = new URLSearchParams(window.location.search);
-    if (q.get("page") === "predict" && q.get("task") === task && (q.get("systems") === "all") === showAll) return;
+    if (q.get("page") === "predict" && q.get("task") === task && !q.has("systems")) return;
     q.set("page", "predict");
     q.set("task", task);
-    if (showAll) q.set("systems", "all");
-    else q.delete("systems");
+    q.delete("systems"); // all six systems are always shown now; old links carrying it still work
     window.history.replaceState(null, "", `${window.location.pathname}?${q}`);
-  }, [task, showAll]);
+  }, [task]);
 
   // a new subsystem starts unselected; the first row of a result set is then selected for it,
   // so the twin is never blank - but a row the user picked survives the next batch's rows.
@@ -192,7 +195,7 @@ export default function PredictPage({ height = 844 }) {
           <span style={{ width: 7, height: 7, background: C.crit, display: "block", flex: "none" }} />
           <strong style={{ letterSpacing: "0.08em" }}>SERVER UNREACHABLE</strong>
           <span style={{ color: C.crit, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-            {String(fatal.message || fatal)} — the page still works, but nothing can be predicted until /api/ps3 answers.
+            {String(fatal.message || fatal)}. The page still works, but nothing can be predicted until /api/ps3 answers.
           </span>
           <button type="button" className="nx-btn" style={{ marginLeft: "auto", flex: "none" }} onClick={p.reload}>
             RETRY
@@ -200,7 +203,7 @@ export default function PredictPage({ height = 844 }) {
         </div>
       )}
 
-      <div style={{ height: VIEWPORT_H, flex: "none", borderBottom: `1px solid ${C.line}`, overflow: "hidden" }}>
+      <div data-tour="stage" style={{ height: VIEWPORT_H, flex: "none", borderBottom: `1px solid ${C.line}`, overflow: "hidden" }}>
         <TrainViewport
           healthMap={healthMap}
           trainId={null}
@@ -225,11 +228,6 @@ export default function PredictPage({ height = 844 }) {
           tasks={p.tasks}
           task={task}
           setTask={selectSystem}
-          showAll={showAll}
-          setShowAll={(next) => {
-            setShowAll(next);
-            if (!next && info) selectSystem(TASK_ORDER[0]);
-          }}
           resetKey={resetKey}
           meta={info ? null : p.meta}
           files={files}
@@ -237,6 +235,7 @@ export default function PredictPage({ height = 844 }) {
           addLocalPaths={p.addLocalPaths}
           removeFile={p.removeFile}
           run={p.run}
+          cancel={p.cancel}
           running={running}
           done={p.done}
           total={p.total}
@@ -248,6 +247,7 @@ export default function PredictPage({ height = 844 }) {
           height={innerH}
         />
 
+        <div data-tour="table" style={{ minWidth: 0 }}>
         {info ? (
           <ResearchExamplePanel
             info={info}
@@ -275,12 +275,15 @@ export default function PredictPage({ height = 844 }) {
             progress={p.total ? `${p.done} / ${p.total} files` : p.nDone ? `${p.nDone} files` : ""}
           />
         )}
+        </div>
 
+        <div data-tour="explanation" style={{ minWidth: 0 }}>
         {info ? (
           <DatasetPanel info={info} detail height={innerH} />
         ) : (
           <ExplanationPanel task={task} row={row} explanation={explanation} columns={columns} selectedCar={acvCar} height={innerH} />
         )}
+        </div>
       </div>
 
       <div
@@ -300,6 +303,7 @@ export default function PredictPage({ height = 844 }) {
             <strong>{info.tab}</strong> · built-in research excerpt · no PS3 prediction or CSV output
           </div>
         ) : <><a
+          data-tour="download"
           href={csvHref || undefined}
           target="_blank"
           rel="noreferrer"
@@ -338,15 +342,17 @@ export default function PredictPage({ height = 844 }) {
           <div style={{ fontSize: 10.5, color: C.text2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
             <span style={{ color: C.dim, letterSpacing: "0.1em", fontSize: 9 }}>HOW IT&rsquo;S SCORED&nbsp;&nbsp;</span>
             <span className="mono" style={{ color: C.violet }}>{meta.metric}</span>
-            <span style={{ color: C.dim }}> — {meta.scored}</span>
+            <span style={{ color: C.dim }}>: {meta.scored}</span>
           </div>
           <div className="mono" style={{ fontSize: 9.5, color: C.dim2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
             {p.session
               ? `session ${String(p.session).slice(0, 8)}… · ${p.nDone || files.filter((f) => f.status === "done").length} file(s) · ${rows.length} row(s) · the download is the validated submission CSV`
-              : "no session yet — the CSV link appears after the first successful batch"}
+              : "no session yet: the CSV link appears after the first successful batch"}
           </div>
         </div></>}
       </div>
+
+      <Tutorial open={tour} startStep={tourKey} onClose={() => setTour(false)} />
     </div>
   );
 }

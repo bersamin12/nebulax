@@ -29,7 +29,6 @@ from sklearn.ensemble import RandomForestClassifier, StackingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
-from xgboost import XGBClassifier
 
 from nebulax.bench.base import AnomalyDetector, BaseModel, Classifier
 from nebulax.bench.registry import build as _build_registered
@@ -539,6 +538,11 @@ class StackingRFXGBLogReg(Classifier):
             random_state=self.seed,
             n_jobs=self.n_jobs,
         )
+        # imported here, not at module level: xgboost is a research dependency (environment.yml,
+        # requirements-fleet.txt) that the app's lock does not ship, and importing this package
+        # (nebulax.models.__init__ registers every family) must not require it
+        from xgboost import XGBClassifier
+
         xgb = XGBClassifier(
             n_estimators=self.xgb_n_estimators,
             max_depth=self.xgb_max_depth,

@@ -45,12 +45,30 @@ body {
 .nx-stage {
   width: 100vw;
   height: 100vh;
-  overflow: hidden;
+  overflow: auto;
   display: flex;
-  align-items: center;
-  justify-content: center;
   background: #e6eef1;
 }
+.nx-stage > * { margin: auto; }
+/* phones and tablets: a fixed notice bar above the (fitted) console (App.jsx, isHandheld) */
+.nx-handheld-notice {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  background: #1d2633;
+  color: #ffffff;
+  font-family: var(--sans);
+  font-size: 11px;
+  line-height: 1.3;
+  overflow: hidden;
+}
+.nx-handheld-notice strong { margin-right: 6px; }
 .nx-console {
   width: 1440px;
   height: 900px;
@@ -186,6 +204,25 @@ body {
 }
 .nx-btn:hover { background: #e3e6fb; }
 .nx-btn[disabled] { opacity: 0.5; cursor: default; }
+.nx-btn--primary { background: var(--violet); color: #ffffff; }
+.nx-btn--primary:hover { background: #2a2f8f; }
+
+/* ---- header page nav (overview / digital twin) ---- */
+.nx-nav {
+  height: 26px;
+  padding: 0 11px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--dim);
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+}
+.nx-nav:hover { background: var(--panel3); color: var(--text); }
+.nx-nav.is-active { background: var(--accent-bg); color: var(--accent-bright); cursor: default; }
 
 /* Keep the file controls native and visible so Firefox owns the entire picker interaction. */
 .nx-file-pick-input {
@@ -221,6 +258,24 @@ svg text { font-variant-numeric: tabular-nums; }
 
 /* ---- PS3 predict page (web/src/predict/) ---- */
 .nx-predict-table tbody tr:hover { background: #edf7f7; }
+.nx-predict-table tbody tr:hover td:first-child { border-left-color: var(--accent) !important; }
+/* a chevron at the end of every row says "this opens something"; it brightens on hover */
+.nx-predict-table tbody td:last-child { position: relative; padding-right: 22px !important; }
+.nx-predict-table tbody td:last-child::after {
+  content: "\203A";
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-52%);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1;
+  color: var(--dim2);
+  opacity: 0.55;
+}
+.nx-predict-table tbody tr:hover td:last-child::after,
+.nx-predict-table tbody tr.is-selected td:last-child::after { color: var(--accent-bright); opacity: 1; }
+.nx-row-hint { font-size: 9.5px; color: var(--accent-bright); letter-spacing: .06em; font-weight: 600; white-space: nowrap; }
 .nx-predict-table th { user-select: none; }
 /* a disabled <a> download link keeps the button shape but stops being a link */
 a.nx-btn[aria-disabled="true"] { cursor: default; }
@@ -261,3 +316,190 @@ a.nx-btn[aria-disabled="true"] { cursor: default; }
 .nx-dataset-fact strong { color: var(--text); font-weight: 600; line-height: 1.4; }
 .nx-source-link { display: inline-flex; margin-top: 18px; color: var(--accent-bright); font-size: 10px; font-weight: 700; letter-spacing: .08em; text-decoration: none; }
 .nx-source-link:hover { text-decoration: underline; }
+
+/* ---- predict-page tutorial (web/src/predict/Tutorial.jsx) ---- */
+/* The overlay itself lets pointer events through: only the dim panels and the card catch them,
+   so whatever sits inside the spotlight can be used while the tour is open. */
+.nx-tour { position: absolute; inset: 0; z-index: 50; overflow: hidden; pointer-events: none; }
+.nx-tour-dim {
+  position: absolute;
+  background: rgba(29, 38, 51, 0.62);
+  pointer-events: auto;
+  transition: left .25s ease, top .25s ease, width .25s ease, height .25s ease;
+}
+.nx-tour-spot {
+  position: absolute;
+  border: 2px solid var(--accent);
+  border-radius: 6px;
+  box-shadow: 0 0 0 4px rgba(0, 143, 149, 0.25);
+  pointer-events: none;
+  transition: left .25s ease, top .25s ease, width .25s ease, height .25s ease;
+}
+.nx-tour-card {
+  position: absolute;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 18px 14px;
+  background: var(--panel);
+  border: 1px solid var(--line2);
+  border-radius: 6px;
+  box-shadow: 0 12px 32px rgba(29, 38, 51, 0.25);
+  color: var(--text);
+}
+.nx-tour-eyebrow { font-family: var(--mono); font-size: 9.5px; letter-spacing: .16em; color: var(--accent-bright); }
+.nx-tour-title { font-size: 16px; font-weight: 600; line-height: 1.25; }
+.nx-tour-body { font-size: 12px; line-height: 1.55; color: var(--text2); }
+.nx-tour-actions { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.nx-tour-actions .nx-btn { height: 26px; font-size: 10px; }
+.nx-tour-link { border: 0; background: none; color: var(--dim); font: 600 10px var(--sans); letter-spacing: .06em; cursor: pointer; padding: 0; }
+.nx-tour-link:hover { color: var(--text); text-decoration: underline; }
+.nx-tour-dots { display: flex; gap: 5px; }
+.nx-tour-dots span { width: 6px; height: 6px; border-radius: 50%; background: var(--line2); }
+.nx-tour-dots span.on { background: var(--accent); }
+.nx-tour-toast {
+  position: absolute;
+  left: 20px;
+  bottom: 84px;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  background: var(--panel);
+  border: 1px solid var(--line2);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(29, 38, 51, 0.18);
+  font-size: 11px;
+}
+
+/* ---- (i) definitions in the explanation panel ---- */
+.nx-info {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.nx-info-btn {
+  width: 14px;
+  height: 14px;
+  padding: 0;
+  border: 1px solid var(--line2);
+  border-radius: 50%;
+  background: var(--panel);
+  color: var(--dim);
+  font: 600 9px/1 var(--mono);
+  cursor: help;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.nx-info:hover .nx-info-btn, .nx-info:focus-within .nx-info-btn { border-color: var(--accent); color: var(--accent-bright); background: var(--accent-bg); }
+.nx-info-tip {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: calc(100% + 6px);
+  z-index: 30;
+  width: 250px;
+  padding: 8px 10px;
+  background: var(--panel);
+  border: 1px solid var(--line2);
+  border-radius: 4px;
+  box-shadow: 0 8px 24px rgba(29, 38, 51, 0.18);
+  color: var(--text2);
+  font-size: 11px;
+  line-height: 1.5;
+  letter-spacing: 0;
+  white-space: normal;
+}
+.nx-info-tip strong { display: block; color: var(--text); font-family: var(--mono); font-size: 10.5px; margin-bottom: 2px; }
+.nx-info:hover .nx-info-tip, .nx-info:focus-within .nx-info-tip { display: block; }
+
+/* ---- predict page: compact system tiles + the active system's description ---- */
+.nx-system-tile { border-top: 1px solid var(--line) !important; }
+.nx-system-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 7px 9px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+}
+
+/* ---- predict page: the grey guidance line under the predictions table ---- */
+.nx-guidance {
+  flex: none;
+  padding: 7px 10px 8px;
+  border-top: 1px solid var(--line);
+  background: var(--panel2);
+  font-size: 10px;
+  line-height: 1.45;
+  color: var(--dim2);
+  white-space: pre-wrap;
+}
+
+/* ---- modal dialogs inside the console (file confirmation) ---- */
+.nx-modal {
+  position: absolute;
+  inset: 0;
+  z-index: 45;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(29, 38, 51, 0.5);
+}
+.nx-modal-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 760px;
+  padding: 18px 20px 16px;
+  background: var(--panel);
+  border: 1px solid var(--line2);
+  border-radius: 6px;
+  box-shadow: 0 16px 40px rgba(29, 38, 51, 0.3);
+  color: var(--text);
+}
+.nx-confirm-spec {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 8px 10px;
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  font-size: 10.5px;
+  line-height: 1.45;
+  color: var(--text2);
+}
+.nx-confirm-body { min-height: 0; max-height: 380px; overflow: auto; border: 1px solid var(--line); padding: 8px 10px; }
+.nx-confirm-file { display: flex; flex-direction: column; gap: 6px; }
+.nx-confirm-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.nx-confirm-chip {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  padding: 2px 6px;
+  border: 1px solid var(--line2);
+  background: var(--panel2);
+  color: var(--dim);
+  white-space: nowrap;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nx-confirm-chip.is-known { color: var(--text); border-color: var(--line2); background: var(--panel); }
+.nx-confirm-chip.is-required { color: var(--accent-bright); border-color: var(--accent); background: var(--accent-bg); font-weight: 600; }
+.nx-confirm-list { display: flex; flex-direction: column; }
+.nx-confirm-row {
+  display: grid;
+  grid-template-columns: minmax(0, 150px) 56px 64px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--grid);
+  font-size: 10px;
+}
+.nx-confirm-row:last-child { border-bottom: 0; }

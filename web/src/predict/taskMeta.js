@@ -144,7 +144,7 @@ export function cvScore(cv) {
 /** "3 files · 41.2 MB" style byte size. */
 export function fmtBytes(n) {
   const b = Number(n);
-  if (!Number.isFinite(b)) return "—";
+  if (!Number.isFinite(b)) return "n/a";
   if (b >= 1024 * 1024 * 1024) return `${(b / 1024 ** 3).toFixed(1)} GB`;
   if (b >= 1024 * 1024) return `${(b / 1024 ** 2).toFixed(1)} MB`;
   if (b >= 1024) return `${(b / 1024).toFixed(0)} kB`;

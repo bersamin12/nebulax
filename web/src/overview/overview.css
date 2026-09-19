@@ -1,0 +1,40 @@
+/* Overview landing page (web/src/overview/). LTA-blue palette scoped to .nx-overview; the console keeps its own. */
+.nx-overview .nx-overview{font-family:'IBM Plex Sans','Segoe UI',Tahoma,sans-serif;background:#ffffff;color:#1d2633;font-size:14px}
+.nx-overview a{color:#1a4fa3}a:hover{color:#004f54}
+.nx-overview .mono{font-family:'IBM Plex Mono',Menlo,Consolas,monospace}
+.nx-overview .eyebrow{font-family:'IBM Plex Mono',Menlo,Consolas,monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#5b6673}
+.nx-overview .btn{font-family:'IBM Plex Mono',Menlo,Consolas,monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;height:44px;padding:0 20px;border-radius:4px;border:1px solid #1a4fa3;background:#ffffff;color:#1a4fa3;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-sizing:border-box}
+.nx-overview .btn.primary{background:#1a4fa3;color:#ffffff}
+.nx-overview .btn:hover{background:#e8eef9}.btn.primary:hover{background:#143f85}
+.nx-overview .toggle{width:100%;display:flex;align-items:center;justify-content:space-between;background:#ffffff;border:1px solid #dfe3e7;border-radius:6px;padding:0 20px;height:56px;cursor:pointer;color:#1d2633;text-align:left}
+.nx-overview .toggle:hover{background:#f1f3f5}
+.nx-overview .card{background:#ffffff;border:1px solid #dfe3e7;border-radius:6px}
+.nx-overview .callout{padding:12px 14px;background:#f1f3f5;border-radius:6px;font-size:14px;line-height:1.5}
+.nx-overview .chip{font-family:'IBM Plex Mono',Menlo,Consolas,monospace;font-size:11px;padding:4px 8px;border-radius:4px;background:#eef1f3;color:#1d2633}
+.nx-overview .step{display:flex;gap:14px;padding:7px 0}
+.nx-overview .num{font-family:'IBM Plex Mono',Menlo,Consolas,monospace;width:22px;height:22px;border-radius:11px;background:#1a4fa3;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;flex:none}
+.nx-overview .kv{display:grid;grid-template-columns:96px 1fr;gap:6px 12px;font-size:13px;line-height:1.45}
+.nx-overview .ref{display:grid;grid-template-columns:44px 1fr;gap:10px;font-size:12px;line-height:1.45;padding:6px 0;border-bottom:1px solid #eef1f3}
+.nx-overview .bar{display:grid;grid-template-columns:250px 1fr 56px;gap:12px;align-items:center;font-size:13px}
+.nx-overview .track{height:10px;background:#eceff2;border-radius:4px;overflow:hidden}
+.nx-overview .fill{height:100%;background:#b3c7ea;border-radius:0 4px 4px 0}
+.nx-overview .fill.sel{background:#2f62c4}
+.nx-overview .gl{background:#ffffff;border:1px solid #dfe3e7;border-radius:6px;padding:12px 14px}
+.nx-overview .tab{flex:1;display:flex;flex-direction:column;gap:4px;align-items:flex-start;padding:12px 16px;border:1px solid #dfe3e7;border-bottom-width:3px;border-radius:6px 6px 0 0;background:#ffffff;cursor:pointer;text-align:left;color:#1d2633;font-family:'IBM Plex Sans',sans-serif}
+.nx-overview .tab:hover{background:#f1f3f5}
+.nx-overview .arrow{width:44px;height:44px;border-radius:22px;border:1px solid #dfe3e7;background:#ffffff;color:#1d2633;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.nx-overview .arrow:hover{background:#f1f3f5}
+.nx-overview .fact{background:#f1f3f5;border-radius:6px;padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.nx-overview .spot{position:absolute;border:2px solid #2f62c4;border-radius:6px;box-shadow:0 0 0 4px rgba(47,98,196,.18),0 0 0 4000px rgba(255,255,255,.6);animation:ov-spot 16s infinite ease-in-out}
+@keyframes ov-spot{0%,20%{left:440px;top:60px;width:90px;height:130px}25%,45%{left:320px;top:8px;width:120px;height:46px}50%,70%{left:180px;top:168px;width:160px;height:62px}75%,95%{left:350px;top:170px;width:240px;height:52px}100%{left:440px;top:60px;width:90px;height:130px}}
+.nx-overview .cap{position:absolute;left:24px;top:262px;display:flex;align-items:center;gap:10px;opacity:0;animation:16s infinite}
+.nx-overview .cap1{animation-name:ov-cap1}.cap2{animation-name:ov-cap2}.cap3{animation-name:ov-cap3}.cap4{animation-name:ov-cap4}
+@keyframes ov-cap1{0%,20%{opacity:1}24%,100%{opacity:0}}
+@keyframes ov-cap2{0%,21%{opacity:0}25%,45%{opacity:1}49%,100%{opacity:0}}
+@keyframes ov-cap3{0%,46%{opacity:0}50%,70%{opacity:1}74%,100%{opacity:0}}
+@keyframes ov-cap4{0%,71%{opacity:0}75%,95%{opacity:1}99%,100%{opacity:0}}
+.nx-overview .ring{position:absolute;inset:0;border:3px solid #2f62c4;border-radius:6px;opacity:0;animation:16s infinite;pointer-events:none}
+.nx-overview .ring1{animation-name:ov-cap1}.ring2{animation-name:ov-cap2}.ring3{animation-name:ov-cap3}.ring4{animation-name:ov-cap4}
+.nx-overview .tab{border-bottom-color:#dfe3e7;background:#f5f6f7}
+.nx-overview .tab.on{border-bottom-color:#1a4fa3;background:#ffffff}
+

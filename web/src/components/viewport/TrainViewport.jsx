@@ -55,6 +55,7 @@ import {
 import { animateDoor, buildComponentIndex, paintComponent, setPickable } from "./useHealthMaterials.js";
 import TrainElevationFallback from "./TrainElevationFallback.jsx";
 import { fmtScore } from "../../lib/format.js";
+import { useConsoleScaleValue } from "../../lib/consoleScale.js";
 import "./viewport.css";
 
 const GLB_URL = "/r151.glb";
@@ -486,6 +487,9 @@ export default function TrainViewport({
   viewMode = null,
 }) {
   const [glFailed, setGlFailed] = useState(false);
+  // the console is CSS-scaled: draw at (device pixel ratio x console scale) so a 4K screen is sharp
+  const consoleScale = useConsoleScaleValue();
+  const dpr = Math.min(4, Math.max(1, (typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1) * consoleScale));
   const [hover, setHover] = useState(null);
   const [resetToken, setResetToken] = useState(0);
   const [stats, setStats] = useState(null);
@@ -606,7 +610,7 @@ export default function TrainViewport({
           <Canvas
             orthographic
             frameloop={animated ? "always" : "demand"}
-            dpr={[1, 2]}
+            dpr={dpr}
             // the console is a fixed 1440x900 board scaled with a CSS transform: measure the
             // layout box, not the transformed bounding rect, or the canvas shrinks with the scale
             resize={{ offsetSize: true }}

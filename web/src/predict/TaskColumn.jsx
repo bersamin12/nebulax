@@ -3,13 +3,20 @@
 // GET /api/ps3/tasks - a task whose module or artefact is missing says so and cannot be run.
 import { useCallback, useEffect, useRef, useState } from "react";
 import { C } from "../lib/format.js";
-import { inspectPs3LocalPath, validateAcvWorkbook } from "../api.js";
-import { cvScore, fmtBytes, INFO_META, SYSTEM_ORDER, TASK_META, TASK_ORDER, TASK_SUFFIXES } from "./taskMeta.js";
+import { inspectPs3LocalPath } from "../api.js";
+import FileConfirm from "./FileConfirm.jsx";
+import { checkFiles } from "./fileCheck.js";
+import { cvScore, fmtBytes, INFO_META, SYSTEM_ORDER, TASK_META, TASK_SUFFIXES } from "./taskMeta.js";
 import { filesFromDataTransfer } from "./usePs3Predict.js";
 
 const STATUS_COLOR = { queued: C.dim2, waiting: C.dim, running: C.accent, done: C.ok, error: C.crit };
 const STATUS_WORD = { queued: "queued", waiting: "waiting", running: "running", done: "done", error: "error" };
 
+/**
+ * One system tile: the name and its headline (the CV score of a shipped model, or EXPLORATORY
+ * for the two dataset profiles). The blurb lives in the panel under the grid, for the active
+ * tile only, so all six fit without clutter.
+ */
 function TaskTab({ name, entry, active, onClick }) {
   const infoOnly = !!INFO_META[name];
   const meta = TASK_META[name] || INFO_META[name] || {};
@@ -19,33 +26,49 @@ function TaskTab({ name, entry, active, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className="nx-cell"
+      className="nx-cell nx-system-tile"
+      aria-pressed={active}
       style={{
-        borderTop: `3px solid ${active ? C.accent : C.line2}`,
+        borderLeft: `3px solid ${active ? C.accent : infoOnly ? C.line2 : C.violet}`,
         outline: active ? `1px solid ${C.accentBright}` : "none",
         outlineOffset: -1,
         background: active ? C.accentBg : C.panel2,
         opacity: off ? 0.62 : 1,
-        gap: 3,
-        padding: "7px 8px",
-        minHeight: 57,
+        padding: "4px 8px",
+        height: 38,
+        justifyContent: "center",
+        gap: 2,
       }}
-      title={
-        off
-          ? entry.detail || "task unavailable"
-          : [meta.blurb, infoOnly ? `${meta.dataset} · dataset profile only` : entry && entry.cv ? `CV: ${entry.cv.scheme || "?"}${entry.cv.metric ? ` · ${entry.cv.metric}` : ""}` : "no CV results file yet"].join("\n")
-      }
+      title={off ? entry.detail || "task unavailable" : `${meta.blurb}\nclick to ${active ? "hide or show" : "read"} the description`}
     >
-      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 6 }}>
-        <span style={{ fontSize: 11.5, fontWeight: 600, color: active ? C.accentBright : C.text }}>
-          {meta.tab || name}
-        </span>
-        <span className="mono" style={{ fontSize: 9, color: off ? C.crit : cv ? C.violet : C.dim2 }}>
-          {infoOnly ? "INFO ONLY" : off ? "UNAVAILABLE" : cv ? `${cv.label} ${Number(cv.value).toFixed(3)}` : entry && entry.cv ? "cv · no headline" : "no cv yet"}
-        </span>
-      </div>
-      <div style={{ fontSize: 9.5, color: C.dim, lineHeight: 1.25, whiteSpace: "normal" }}>{meta.blurb}</div>
+      <span style={{ fontSize: 11, fontWeight: 600, color: active ? C.accentBright : C.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+        {meta.tab || name}
+      </span>
+      <span className="mono" style={{ fontSize: 8.5, color: infoOnly ? C.dim2 : off ? C.crit : cv ? C.violet : C.dim2, letterSpacing: "0.04em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+        {infoOnly ? "(EXPLORATORY)" : off ? "UNAVAILABLE" : cv ? `${cv.label} ${Number(cv.value).toFixed(3)}` : entry && entry.cv ? "cv: no headline" : "no cv yet"}
+      </span>
     </button>
+  );
+}
+
+/** The active system's description: what it does, what it eats, and how it was validated. */
+function SystemInfo({ name, entry }) {
+  const infoOnly = !!INFO_META[name];
+  const meta = TASK_META[name] || INFO_META[name] || {};
+  const cv = cvScore(entry && entry.cv);
+  return (
+    <div className="nx-system-info">
+      <div style={{ fontSize: 11, fontWeight: 600, color: C.text }}>
+        {meta.title || name}
+        {infoOnly && <span className="mono" style={{ fontSize: 8.5, color: C.dim2, marginLeft: 6 }}>EXPLORATORY · NO UPLOAD OR PREDICTION</span>}
+      </div>
+      <div style={{ fontSize: 10.5, color: C.text2, lineHeight: 1.4 }}>{meta.blurb}</div>
+      <div style={{ fontSize: 9.5, color: C.dim, lineHeight: 1.4 }}>
+        {infoOnly
+          ? `${meta.dataset} · ${meta.size}`
+          : `input: ${meta.input}${entry && entry.cv && entry.cv.scheme ? ` · CV: ${entry.cv.scheme}` : ""}${cv ? ` · ${cv.label} ${Number(cv.value).toFixed(3)}` : ""}`}
+      </div>
+    </div>
   );
 }
 
@@ -53,8 +76,6 @@ export default function TaskColumn({
   tasks,
   task,
   setTask,
-  showAll = false,
-  setShowAll,
   resetKey = 0,
   meta,
   files,
@@ -63,6 +84,7 @@ export default function TaskColumn({
   removeFile,
   run,
   running,
+  cancel,
   done,
   total,
   notice,
@@ -81,6 +103,8 @@ export default function TaskColumn({
   const [checkFailed, setCheckFailed] = useState(false);
   const [pickMessage, setPickMessage] = useState("");
   const [localPath, setLocalPath] = useState("");
+  const [pending, setPending] = useState(null); // { items: [{file, report}] } while the confirm dialog is up
+  const [showInfo, setShowInfo] = useState(true);
   const infoOnly = !!INFO_META[task];
   const tmeta = TASK_META[task] || INFO_META[task] || {};
   const queued = files.filter((f) => f.status === "queued").length;
@@ -97,42 +121,64 @@ export default function TaskColumn({
     setCheckFailed(false);
     setPickMessage("");
     setLocalPath("");
+    setPending(null);
     if (fileRef.current) fileRef.current.value = "";
     if (dirRef.current) dirRef.current.value = "";
   }, [resetKey, task]);
 
+  /**
+   * A pick never queues directly: the files are read (header, or the ACV workbook report from
+   * the server), the dialog shows what they carry against what the model expects, and CONFIRM
+   * queues the ones that match.
+   */
   const queuePicked = useCallback(async (list) => {
     if (!list.length) return;
-    if (task !== "acv") { addFiles(list); return; }
     checkAbort.current?.abort();
     const ctrl = new AbortController();
     checkAbort.current = ctrl;
     setChecking(true);
-    setCheckMessage("Checking ACV workbook fields…");
+    setCheckMessage("");
     setCheckFailed(false);
-    const valid = [];
-    const errors = [];
-    for (const file of list) {
-      if (!file.name.toLowerCase().endsWith(".xlsx")) {
-        errors.push(`${file.name}: choose a .xlsx workbook`);
-        continue;
-      }
-      try {
-        const report = await validateAcvWorkbook(file, { signal: ctrl.signal });
-        if (report.valid) valid.push(file);
-        else errors.push(`${file.name}: ${report.errors.join("; ")}`);
-      } catch (err) {
-        if (ctrl.signal.aborted) return;
-        errors.push(`${file.name}: ${err.message || err}`);
+    setPending({ items: list.map((file) => ({ file, report: { name: file.name, size: file.size, ok: false, columns: [], found: {}, missing: [], problems: [], detail: "" } })) });
+    try {
+      const reports = await checkFiles(task, list, { signal: ctrl.signal });
+      if (ctrl.signal.aborted || checkAbort.current !== ctrl) return;
+      setPending({ items: list.map((file, i) => ({ file, report: reports[i] })) });
+    } catch (err) {
+      if (ctrl.signal.aborted) return;
+      setPending(null);
+      setCheckMessage(`could not read the files: ${err.message || err}`);
+      setCheckFailed(true);
+    } finally {
+      if (checkAbort.current === ctrl) {
+        checkAbort.current = null;
+        setChecking(false);
       }
     }
-    if (ctrl.signal.aborted || checkAbort.current !== ctrl) return;
+  }, [task]);
+
+  const confirmPicked = useCallback((valid) => {
+    const total = pending ? pending.items.length : valid.length;
+    setPending(null);
     if (valid.length) addFiles(valid);
-    setCheckMessage(errors.length ? errors.join(" · ") : `${valid.length} ACV workbook${valid.length === 1 ? "" : "s"} passed the format check`);
-    setCheckFailed(errors.length > 0);
-    setChecking(false);
+    setCheckMessage(
+      valid.length === total
+        ? `${valid.length} file${valid.length === 1 ? "" : "s"} checked and queued`
+        : `${valid.length} of ${total} files matched and were queued; the rest were left out`
+    );
+    setCheckFailed(valid.length < total);
+  }, [addFiles, pending]);
+
+  const cancelPicked = useCallback(() => {
+    checkAbort.current?.abort();
     checkAbort.current = null;
-  }, [addFiles, task]);
+    setChecking(false);
+    setPending(null);
+    setCheckMessage("pick cancelled, nothing was queued");
+    setCheckFailed(false);
+    if (fileRef.current) fileRef.current.value = "";
+    if (dirRef.current) dirRef.current.value = "";
+  }, []);
 
   const onDrop = useCallback(
     async (e) => {
@@ -190,27 +236,37 @@ export default function TaskColumn({
 
   const accept = (task === "acv" ? [".xlsx"] : meta && meta.accepts ? meta.accepts : TASK_SUFFIXES[task] || [".csv"]).join(",");
 
+  const entryOf = (name) => (tasks || []).find((t) => t.name === name) || null;
   const systemPicker = (
-    <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "none" }}>
+    <div data-tour="systems" style={{ display: "flex", flexDirection: "column", gap: 6, flex: "none" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 6 }}>
         <span style={{ fontSize: 9.5, letterSpacing: "0.14em", color: C.dim }}>SYSTEMS</span>
-        <button type="button" className="nx-filter" onClick={() => setShowAll?.(!showAll)} aria-pressed={showAll}>
-          {showAll ? "ALL SIX" : "PREDICTIONS (4)"}
-        </button>
+        <span className="mono" style={{ fontSize: 9, color: C.dim2 }}>4 models · 2 exploratory</span>
       </div>
-      <div className="nx-system-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
-        {(showAll ? SYSTEM_ORDER : TASK_ORDER).map((name) => (
+      <div className="nx-system-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 5 }}>
+        {SYSTEM_ORDER.map((name) => (
           <TaskTab
             key={name}
             name={name}
-            entry={(tasks || []).find((t) => t.name === name) || null}
+            entry={entryOf(name)}
             active={name === task}
-            onClick={() => setTask(name)}
+            onClick={() => {
+              if (name === task) setShowInfo((v) => !v);
+              else {
+                setShowInfo(true);
+                setTask(name);
+              }
+            }}
           />
         ))}
       </div>
+      {showInfo && <SystemInfo name={task} entry={entryOf(task)} />}
     </div>
   );
+
+  const confirmDialog = pending ? (
+    <FileConfirm task={task} items={pending.items} checking={checking} onConfirm={confirmPicked} onCancel={cancelPicked} />
+  ) : null;
 
   if (infoOnly) {
     return (
@@ -221,7 +277,7 @@ export default function TaskColumn({
           <h2>{tmeta.dataset}</h2>
           <p>{tmeta.blurb}</p>
           <p><strong>{tmeta.size}</strong><br />{tmeta.signals}</p>
-          <span className="nx-info-badge">INFORMATION ONLY · NO UPLOAD OR PREDICTION</span>
+          <span className="nx-info-badge">EXPLORATORY · NO UPLOAD OR PREDICTION</span>
         </div>
       </div>
     );
@@ -238,6 +294,7 @@ export default function TaskColumn({
         }}
         onDragLeave={() => setHover(false)}
         onDrop={onDrop}
+        data-tour="files"
         style={{
           flex: "none",
           border: `1px dashed ${hover ? C.accentBright : C.line2}`,
@@ -249,8 +306,8 @@ export default function TaskColumn({
         }}
       >
         <div style={{ fontSize: 10.5, color: hover ? C.accentBright : C.dim }}>
-          drop {tmeta.multiple ? "files or a folder" : "the file"} here — {accept}
-          {meta && meta.max_files_per_request ? `, ${meta.max_files_per_request} per request` : ""}
+          drop {tmeta.multiple ? "files or a folder" : "the file"} here ({accept}
+          {meta && meta.max_files_per_request ? `, ${meta.max_files_per_request} per request` : ""})
         </div>
         <div style={{ display: "flex", gap: 6 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -414,12 +471,24 @@ export default function TaskColumn({
           <button
             type="button"
             className="nx-btn"
+            data-tour="run"
             onClick={run}
             disabled={running || checking || !queued || unavailable}
             style={{ borderColor: C.accent, background: C.accentBg, color: C.accentBright, height: 26, fontSize: 10.5 }}
           >
             {running ? `RUNNING ${done}/${total}` : `RUN ${queued || ""}`}
           </button>
+          {running && (
+            <button
+              type="button"
+              className="nx-btn"
+              onClick={cancel}
+              title="Stop after the file in flight; the rows already predicted stay, the rest of the queue waits"
+              style={{ borderColor: C.crit, color: C.crit, height: 26, fontSize: 10.5 }}
+            >
+              STOP
+            </button>
+          )}
           <span className="mono" style={{ fontSize: 9.5, color: C.dim2 }}>
             {running
               ? animateOnTwin
@@ -431,6 +500,7 @@ export default function TaskColumn({
           </span>
         </div>
       </div>
+      {confirmDialog}
     </div>
   );
 }

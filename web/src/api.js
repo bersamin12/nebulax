@@ -32,8 +32,9 @@ async function request(path, { method = "GET", body, timeout = DEFAULT_TIMEOUT_M
   try {
     res = await fetch(BASE + path, init);
   } catch (err) {
-    const e = new Error(`${method} ${BASE}${path}: ${err && err.name === "AbortError" ? "timeout" : err}`);
+    const e = new Error(`${method} ${BASE}${path}: ${err && err.name === "AbortError" ? (signal && signal.aborted ? "cancelled" : "timeout") : err}`);
     e.cause = err;
+    e.cancelled = !!(signal && signal.aborted);
     throw e;
   } finally {
     if (timer) clearTimeout(timer);
@@ -82,8 +83,9 @@ export async function postPs3Stream(task, file, session = null, { timeout = 6000
   try {
     res = await fetch(BASE + path, { method: "POST", body: fd, signal: ctrl ? ctrl.signal : signal });
   } catch (err) {
-    const e = new Error(`POST ${BASE}${path}: ${err && err.name === "AbortError" ? "timeout" : err}`);
+    const e = new Error(`POST ${BASE}${path}: ${err && err.name === "AbortError" ? (signal && signal.aborted ? "cancelled" : "timeout") : err}`);
     e.cause = err;
+    e.cancelled = !!(signal && signal.aborted);
     throw e;
   } finally {
     if (timer) clearTimeout(timer);
@@ -222,8 +224,9 @@ export async function postPs3Predict(task, files, session = null, { timeout = 60
     // no `headers`: the browser writes multipart/form-data; boundary=... itself
     res = await fetch(BASE + path, { method: "POST", body: fd, signal: ctrl ? ctrl.signal : signal });
   } catch (err) {
-    const e = new Error(`POST ${BASE}${path}: ${err && err.name === "AbortError" ? "timeout" : err}`);
+    const e = new Error(`POST ${BASE}${path}: ${err && err.name === "AbortError" ? (signal && signal.aborted ? "cancelled" : "timeout") : err}`);
     e.cause = err;
+    e.cancelled = !!(signal && signal.aborted);
     throw e;
   } finally {
     if (timer) clearTimeout(timer);

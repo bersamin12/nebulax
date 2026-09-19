@@ -9,6 +9,11 @@
 //
 // Nothing is retried automatically: a file the server refuses comes back in `errors` and is
 // marked on its queue row, and the batch after it still runs.
+//
+// STOP aborts the request in flight (`cancel`): the rows already returned stay, the file or batch
+// that was cut off goes back to `queued` with the rest, and nothing is treated as a server fault.
+// The server may still finish the cut-off file on its side; a re-run then reports it as "already
+// predicted", which the page reads as done rather than as an error.
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { deletePs3Session, getPs3Tasks, postPs3LocalStream, postPs3Predict, postPs3Stream, ps3CsvUrl } from "../api.js";
@@ -193,17 +198,25 @@ export function usePs3Predict(initialTask) {
             ? await postPs3LocalStream(name, item.localPath, session, { signal: ctrl ? ctrl.signal : undefined })
             : await postPs3Stream(name, item.file, session, { signal: ctrl ? ctrl.signal : undefined });
         } catch (err) {
+          if (err.cancelled || (ctrl && ctrl.signal.aborted)) {
+            stopped = err;
+            patch(name, (s) => stoppedState(s, [item.id]));
+            break;
+          }
           const msg = err.detail || err.message || String(err);
           const perFile = err.status === 400 || err.status === 413;
+          const finished = donePreviously(msg); // cut off by STOP, but the server had finished it
           patch(name, (s) => ({
             files: s.files.map((f) =>
               f.id === item.id
-                ? { ...f, status: "error", message: msg }
+                ? finished
+                  ? { ...f, status: "done", message: "predicted before the stop" }
+                  : { ...f, status: "error", message: msg }
                 : f.status === "waiting" && !perFile
                   ? { ...f, status: "queued" }
                   : f
             ),
-            error: msg,
+            error: finished ? "" : msg,
             done: s.done + 1,
           }));
           if (perFile) continue;
@@ -227,7 +240,9 @@ export function usePs3Predict(initialTask) {
           files: s.files.map((f) =>
             f.id === item.id
               ? failed.has(f.name)
-                ? { ...f, status: "error", message: failed.get(f.name) }
+                ? donePreviously(failed.get(f.name))
+                  ? { ...f, status: "done", message: "predicted before the stop" }
+                  : { ...f, status: "error", message: failed.get(f.name) }
                 : { ...f, status: "done", message: "" }
               : f
           ),
@@ -249,13 +264,23 @@ export function usePs3Predict(initialTask) {
             signal: ctrl ? ctrl.signal : undefined,
           });
         } catch (err) {
+          if (err.cancelled || (ctrl && ctrl.signal.aborted)) {
+            stopped = err;
+            patch(name, (s) => stoppedState(s, [...ids]));
+            break;
+          }
           const msg = err.detail || err.message || String(err);
           const perBatch = err.status === 400 || err.status === 413;
+          const finished = donePreviously(msg); // a one-file batch cut off by STOP that the server finished
           patch(name, (s) => ({
             files: s.files.map((f) =>
-              ids.has(f.id) ? { ...f, status: "error", message: msg } : f.status === "waiting" && !perBatch ? { ...f, status: "queued" } : f
+              ids.has(f.id)
+                ? finished
+                  ? { ...f, status: "done", message: "predicted before the stop" }
+                  : { ...f, status: "error", message: msg }
+                : f.status === "waiting" && !perBatch ? { ...f, status: "queued" } : f
             ),
-            error: msg,
+            error: finished ? "" : msg,
             done: s.done + (perBatch ? batch.length : 0),
           }));
           if (perBatch) continue;
@@ -277,7 +302,9 @@ export function usePs3Predict(initialTask) {
           files: s.files.map((f) =>
             ids.has(f.id)
               ? failed.has(f.name)
-                ? { ...f, status: "error", message: failed.get(f.name) }
+                ? donePreviously(failed.get(f.name))
+                  ? { ...f, status: "done", message: "predicted before the stop" }
+                  : { ...f, status: "error", message: failed.get(f.name) }
                 : { ...f, status: "done", message: "" }
               : f
           ),
@@ -322,6 +349,22 @@ export function usePs3Predict(initialTask) {
     setAnimateOnTwin,
     ...cur,
   };
+}
+
+/** The queue after STOP: the cut-off items and everything still waiting go back to `queued`. */
+function stoppedState(s, cutIds) {
+  const cut = new Set(cutIds);
+  const back = s.files.filter((f) => cut.has(f.id) || f.status === "waiting").length;
+  return {
+    files: s.files.map((f) => (cut.has(f.id) || f.status === "waiting" ? { ...f, status: "queued", message: "" } : f)),
+    error: "",
+    notice: `stopped: ${s.done} of ${s.total} processed, ${back} still queued (press RUN to continue)`,
+  };
+}
+
+/** The server's answer when a file cut off by STOP had been finished on its side after all. */
+function donePreviously(message) {
+  return /already predicted in this session/i.test(String(message || ""));
 }
 
 function blank() {

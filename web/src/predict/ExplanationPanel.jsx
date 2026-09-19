@@ -2,9 +2,11 @@
 //
 // It renders exactly what `explanation.as_dict()` carries (docs/ps3_contract.md section 2) and
 // invents nothing: the two or three `numbers`, the `trace` through the console's LineChart, its
-// `marks`, and the `viewport` target the 3D twin is pointed at.
+// `marks`, and the `viewport` target the 3D twin is pointed at. Each variable carries an (i)
+// icon whose hover / focus tooltip defines it (numberDefs.js), for engineers new to the task.
 import { C, MONO, fmtNum, fmtScore, health as healthOf } from "../lib/format.js";
 import LineChart from "../charts/LineChart.jsx";
+import { defineNumber } from "./numberDefs.js";
 import { COLUMN_LABELS, TASK_META } from "./taskMeta.js";
 
 const CHART_W = 356;
@@ -19,7 +21,7 @@ function keyLabel(k) {
 
 function numberCell(v) {
   const n = Number(v);
-  if (!Number.isFinite(n)) return "—";
+  if (!Number.isFinite(n)) return "n/a";
   if (Math.abs(n) >= 1e5 || (n !== 0 && Math.abs(n) < 1e-3)) return fmtScore(n);
   return fmtNum(n, Math.abs(n) >= 100 ? 1 : 3);
 }
@@ -64,10 +66,25 @@ function traceModel(trace) {
   return { points, marks, label, numeric, xFormat, xs };
 }
 
-function Row({ k, v }) {
+/** A variable name with its (i) definition, shown on hover or keyboard focus. */
+function InfoLabel({ label, name, def }) {
+  if (!def) return <span style={{ color: C.dim, fontSize: 10.5, letterSpacing: "0.04em" }}>{label}</span>;
+  return (
+    <span className="nx-info">
+      <span style={{ color: C.dim, fontSize: 10.5, letterSpacing: "0.04em" }}>{label}</span>
+      <button type="button" className="nx-info-btn" aria-label={`What is ${label}?`}>i</button>
+      <span className="nx-info-tip" role="tooltip">
+        <strong>{name}</strong>
+        {def}
+      </span>
+    </span>
+  );
+}
+
+function Row({ k, v, name, def }) {
   return (
     <div style={{ display: "flex", justifyContent: "space-between", gap: 10, padding: "3px 0", borderBottom: `1px solid ${C.grid}` }}>
-      <span style={{ color: C.dim, fontSize: 10.5, letterSpacing: "0.04em" }}>{k}</span>
+      <InfoLabel label={k} name={name || k} def={def} />
       <span className="mono" style={{ fontSize: 11.5, color: C.text }}>{v}</span>
     </div>
   );
@@ -148,7 +165,7 @@ export default function ExplanationPanel({ task, row, explanation, selectedCar =
           {/* the prediction itself, in the organiser's own column names */}
           <div style={{ marginBottom: 10 }}>
             {columns.map((c) => (
-              <Row key={c} k={COLUMN_LABELS[c] || c} v={String(row[c] ?? "—")} />
+              <Row key={c} k={COLUMN_LABELS[c] || c} name={c} def={defineNumber(task, c)} v={String(row[c] ?? "n/a")} />
             ))}
           </div>
 
@@ -159,7 +176,7 @@ export default function ExplanationPanel({ task, row, explanation, selectedCar =
               </div>
               <div style={{ marginBottom: 10 }}>
                 {numbers.map(([k, v]) => (
-                  <Row key={k} k={keyLabel(k)} v={numberCell(v)} />
+                  <Row key={k} k={keyLabel(k)} name={k} def={defineNumber(task, k)} v={numberCell(v)} />
                 ))}
               </div>
             </>
@@ -210,9 +227,9 @@ export default function ExplanationPanel({ task, row, explanation, selectedCar =
               <div style={{ fontSize: 9.5, letterSpacing: "0.16em", color: C.dim, margin: "10px 0 4px" }}>
                 VIEWPORT TARGET
               </div>
-              <Row k="car" v={selectedCar || (vp.car === null || vp.car === undefined ? "—" : String(vp.car))} />
-              <Row k="side" v={vp.side || "—"} />
-              <Row k="component" v={carRank ? `car${Number(selectedCar)}_ac1` : vp.component || "—"} />
+              <Row k="car" def={defineNumber(task, "car")} v={selectedCar || (vp.car === null || vp.car === undefined ? "n/a" : String(vp.car))} />
+              <Row k="side" def={defineNumber(task, "side")} v={vp.side || "n/a"} />
+              <Row k="component" def={defineNumber(task, "component")} v={carRank ? `car${Number(selectedCar)}_ac1` : vp.component || "n/a"} />
             </>
           )}
 

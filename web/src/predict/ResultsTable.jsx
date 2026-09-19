@@ -1,8 +1,24 @@
 // Centre column: the rows that will be written to the organiser CSV, in the contract's column
 // order, one row per predicted item. Clicking a row selects it (the 3D twin and the explanation
-// panel follow). Nothing is reformatted - a cell is the CSV cell.
+// panel follow): every row ends in a chevron and the header says so, since a
+// plain table does not look clickable. Nothing is reformatted - a cell is the CSV cell.
 import { C, health as healthOf } from "../lib/format.js";
 import { COLUMN_LABELS, rowHealth } from "./taskMeta.js";
+
+/** The grey "what to do here" line under the table, per system and state. */
+function guidance(task, n, running, selectedCar) {
+  if (running && !n) return "Predicting. Rows appear here as each file comes back from the server.";
+  if (!n) return "1. Pick a system on the left.  2. Choose or drop its Test files and confirm the check.  3. Press RUN. One row per prediction lands here; click it to see why.";
+  if (task === "acv") {
+    return selectedCar
+      ? `Car ${selectedCar} is in focus: the train shows that car's roof unit and the explanation says where it ranks and why. Click the row itself (outside the chips) or SHOW ALL CARS to go back to all eight.`
+      : "Each row is one case workbook with its cars ranked most to least likely to be leaking. Click a car chip to see where that car is on the train and why it ranks there; the red chip is the model's call. Click a row to select the case.";
+  }
+  if (task === "door") return "Each row is one door cycle with its prediction. Click a row: the door leaf lights up on the train (green Normal, red Abnormal) and the explanation on the right shows the current trace the model judged.";
+  if (task === "rail") return "Each row is one run. Click a row: the rail side the model flagged (Side I or Side II, red) lights up on the top view and the explanation shows the wavelength spectrum behind the call.";
+  if (task === "shm") return "Each row is one stress record with its predicted cumulative damage. Click a row: the underframe member is coloured by damage and the explanation shows the rainflow cycles behind the estimate.";
+  return "Click a row to inspect it: the train model and the explanation follow.";
+}
 
 /**
  * ACV's `ranked_cars` is the whole ranking, `|`-joined, most likely first: the rank-1 car is the
@@ -58,6 +74,7 @@ export default function ResultsTable({ task, rows = [], columns = [], selected =
       >
         <span style={{ fontSize: 9.5, letterSpacing: "0.16em", color: C.dim }}>PREDICTIONS</span>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          {n > 1 && <span className="nx-row-hint">CLICK A ROW TO INSPECT IT</span>}
           {task === "acv" && n > 0 && <button type="button" className="nx-inline-link" onClick={onShowAll}>SHOW ALL CARS</button>}
           <span className="mono" style={{ fontSize: 10, color: C.dim2 }}>
             {n} row{n === 1 ? "" : "s"}{progress ? ` · ${progress}` : ""}
@@ -67,7 +84,7 @@ export default function ResultsTable({ task, rows = [], columns = [], selected =
 
       {!n ? (
         <div style={{ flex: 1, display: "grid", placeItems: "center", color: C.dim2, fontSize: 11, textAlign: "center", padding: 16 }}>
-          {running ? "predicting…" : "no predictions yet — queue files on the left and press RUN"}
+          {running ? "predicting…" : "no predictions yet: queue files on the left and press RUN"}
         </div>
       ) : (
         <div className="nx-scroll" style={{ flex: 1, minHeight: 0 }}>
@@ -105,7 +122,9 @@ export default function ResultsTable({ task, rows = [], columns = [], selected =
                 return (
                   <tr
                     key={i}
+                    className={sel ? "is-selected" : undefined}
                     onClick={() => onSelect && onSelect(i)}
+                    title={sel ? undefined : "Click to select this row: the train model and the explanation follow"}
                     style={{
                       cursor: "pointer",
                       background: sel ? C.accentBg : "transparent",
@@ -140,6 +159,8 @@ export default function ResultsTable({ task, rows = [], columns = [], selected =
           </table>
         </div>
       )}
+
+      <div className="nx-guidance">{guidance(task, n, running, selectedCar)}</div>
     </div>
   );
 }

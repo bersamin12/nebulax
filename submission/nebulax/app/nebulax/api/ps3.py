@@ -943,7 +943,12 @@ async def ps3_stream(
     old_tokens = set(_SESSIONS)
     try:
         sess, explanations, errors, saved_paths, model = await _run_predict_batch(key, uploads, session)
-        frames = await run_in_threadpool(stream_file, key, saved_paths[0], model, max_frames=60)
+        # a refused upload (wrong suffix, or a name already predicted in this session after the
+        # page's STOP cut the reply off) has no saved path: report it in `errors`, with no frames
+        frames = (
+            await run_in_threadpool(stream_file, key, saved_paths[0], model, max_frames=60)
+            if saved_paths else []
+        )
     except Exception:
         if previous and snapshot:
             batch_number = previous.n_batches
