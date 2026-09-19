@@ -15,7 +15,7 @@ genuinely differ; the shared effort budget is totalled at the end.
 
 ---
 
-**W1 update (14 Sep).** This pass added two whole families the W0 ladder was missing and made a
+**W1 update (18 Sep).** This pass added two whole families the W0 ladder was missing and made a
 third symmetric. (a) **Change-point detection and concept drift** — verdict V4 made change-point
 scoring the central design decision, yet the only change-point machinery in the ladder was a
 hand-written CUSUM on a scalar. There are now `§1d / §2c / §3c` change-point sections with MUST, NICE
@@ -734,7 +734,7 @@ solutions to match [R70][R71]. See `datasets.md`.
 
 ---
 
-### Added in the W1 pass (14 Sep)
+### Added in the W1 pass (18 Sep)
 
 19. **A change-point / concept-drift family now exists** (§1d, §2c, §3c). The W0 ladder had made
     change-point scoring the central design decision in V4 but the only change-point machinery
@@ -804,6 +804,6 @@ forbidding redistribution [R139]; and the Ottawa variable-speed set we promoted 
 severity axis or a thermal model — but it *can* be used to fit our vibration-versus-speed exponents
 directly, which is a better justification than any literature value (see `rail_phm.md` §4.3.3).
 
-## Scope decision (14 Sep 2026)
+## Scope decision (18 Sep 2026)
 
 The team trimmed the ladder to the anomaly-detection and classification families as MUST. Of the change-point family only `page_hinkley_*`, `adwin_*` and the pneumatic `transition_mask` stay MUST (they share the residual stream and cost about 1 h). Every RUL, survival and remaining change-point row is demoted to NICE in `configs/model_ladder.yaml` (field `demoted_by`). The physics corrections and evaluation protocol in this document are kept in full.

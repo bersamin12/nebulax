@@ -140,7 +140,7 @@ Python env, to get the idea running on the 64 files.
 | U5 | *Interannual variability in fatigue damage estimation from short-term strain monitoring of offshore wind turbines*, Wind Energy Science Discussions, wes-2026-65 (reports up to 30% deviation in long-term mean damage from window choice, but <1% within-year bootstrap uncertainty) | **preprint under review**; numbers indicative only. Very close to our "how much of the error is irreducible" question. |
 | U6 | ASTM **E1049-85 (2017)** *Standard Practices for Cycle Counting in Fatigue Analysis* | the normative definition of 3-point rainflow, level-crossing, peak and range-pair counting. **Paywalled standard, not opened.** `rainflow` (PyPI) claims to implement it. |
 
-### Software (all checked live on GitHub/PyPI, 17 Sep 2026)
+### Software (all checked live on GitHub/PyPI, 18 Sep 2026)
 
 | package | licence | stars | what it gives us | verdict |
 |---|---|---|---|---|

@@ -10,7 +10,7 @@ is marked `UNVERIFIED` — verify before the result depends on it.
 - **ADD (stretch)** — worth having, only if the core is green.
 - **REJECT** — with the reason.
 
-**W1 update (14 Sep).** Three changes. (a) The three bearing **run-to-failure** sets (XJTU-SY, FEMTO,
+**W1 update (18 Sep).** Three changes. (a) The three bearing **run-to-failure** sets (XJTU-SY, FEMTO,
 Paderborn R2F) and **SCANIA Component X** were previously ingested for a prognostics capability the
 ladder did not deliver; `model_ladder.md` §2d and §3d now supply that arm, so their status notes are
 rewritten to say **which model rows consume them**. (b) A **targeted search for a bearing dataset
@@ -140,7 +140,7 @@ route redirected) — no number from either is used anywhere.
 | **REJECT as evidence** | GIFT-Eval [R34] | Forecasting only; known pre-training leakage for at least one leaderboard entry. |
 | **UNLABELLED ONLY** | Refinery compressor [R136], Huawei elevator door [R130] | No fault labels — unsupervised sanity cases; do not present derived anomalies as ground truth. |
 
-### W1 additions and status changes (14 Sep)
+### W1 additions and status changes (18 Sep)
 
 | Change | Dataset | Reason |
 |---|---|---|

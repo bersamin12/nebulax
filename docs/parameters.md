@@ -27,7 +27,7 @@ after this calibration reports **CONFIRMED** on the seven constants Ottawa can m
 **UNREFUTED** on the two speed exponents `vib_speed_exp_healthy` / `vib_speed_exp_defect`,
 which this dataset cannot test at all (§2) — nine rows, `7 CONFIRMED + 2 UNREFUTED`, and that
 is the audit. A run that printed CONFIRMED on all nine would mean the script had started
-claiming evidence it does not have. **Acceptance criterion (orchestrator decision, 15 Sep 2026):** `7 CONFIRMED + 2 UNREFUTED` is the accepted W1 verdict for this table; confirming the two exponents requires the variable-speed Ottawa release (`ottawa_variable_speed`, DOI 10.17632/v43hmbwxpm.2), which is an optional later download, not a W1 gate.
+claiming evidence it does not have. **Acceptance criterion (orchestrator decision, 18 Sep 2026):** `7 CONFIRMED + 2 UNREFUTED` is the accepted W1 verdict for this table; confirming the two exponents requires the variable-speed Ottawa release (`ottawa_variable_speed`, DOI 10.17632/v43hmbwxpm.2), which is an optional later download, not a W1 gate.
 
 ### 1. Vibration — calibrated against the University of Ottawa set
 
@@ -318,7 +318,7 @@ confirms it, so this is the physics rather than a tuning artefact. The practical
 that **the detection-relevant band is `s ≲ 0.15`**, which makes `gamma` the constant that
 controls how long the unit spends inside it.
 
-**The lead-time table was regenerated on 15 Sep 2026, and the rule behind it had to be
+**The lead-time table was regenerated on 18 Sep 2026, and the rule behind it had to be
 restated.** Until then this section quoted 6.3 / 9.2 / 10.8 d at γ = 1 / 2 / 3 for [R101]'s
 literal rule — a 6 h rolling median of `idle_run_ratio` below **the healthy 5th percentile of
 the raw feature**. That rule is not implementable on this unit and never was: `idle_run_ratio`
@@ -390,7 +390,7 @@ here as the open item rather than tuned into this table.
 
 Simulator: 21 days, seed 3, healthy, cycles extracted by the *same* code as the real ones.
 
-| Feature | MetroPT-3 median | Sim median | sim/real | **KS** | KS before 15 Sep 2026 |
+| Feature | MetroPT-3 median | Sim median | sim/real | **KS** | KS before 18 Sep 2026 |
 |---|---|---|---|---|---|
 | `t_loaded` | 109 s | 110 s | 1.01 | **0.324** | 0.472 |
 | `t_off` | 903 s | 952 s | 1.05 | **0.091** | 0.480 |
@@ -402,7 +402,7 @@ n = 3,141 real cycles, 1,310 simulated. Reproduce with
 `python scripts/calibrate_pneumatic.py` (19 s end to end, KS table and phase table printed).
 
 **What changed: the burst schedule is heavy-tailed and the phases are no longer alike.**
-Until 15 Sep 2026 every `run` segment drew exactly `brake_nl_per_stop` and every `dwell` exactly
+Until 18 Sep 2026 every `run` segment drew exactly `brake_nl_per_stop` and every `dwell` exactly
 its air-spring share, so every simulated cycle landed on the mean and **the medians agreed while
 the distributions did not** — every KS above 0.45. MetroPT-3 says the demand is not one number:
 `t_off` spreads **0–1,814 s** (sd 600 s, 17.3 % of cycles at zero), `duty_ratio` spreads
@@ -497,7 +497,7 @@ reason `t_loaded`'s KS is stuck (below). Simulated `t_off` spreads 0–1,651 s w
   own multi-hour gaps is **not identifiable**: the compressor state during a gap is unknown, and
   the fit lands at rms 9.5 K with `T_amb` running from −4 °C to +24 °C depending on which gaps
   are admitted. Recorded as a limitation, not a number. R² of the single-node fit is **0.29**.
-* **`TP2` / `H1` placement — FIXED on 15 Sep 2026.** `H1` was emitted inverted (high while
+* **`TP2` / `H1` placement — FIXED on 18 Sep 2026.** `H1` was emitted inverted (high while
   loaded, ~0 otherwise). The previous note said *both* channels were inverted; the measurement
   says only `H1` was — `TP2`'s state shape was already right and only its 0.02 bar idle floor
   moved (to 0.0, the SensorSpec clip floor). Measured on the failure-free window
@@ -539,7 +539,7 @@ reason `t_loaded`'s KS is stuck (below). Simulated `t_off` spreads 0–1,651 s w
   moved from ~9.6 bar to ~0.004 bar, which is what MetroPT-3 itself gives (−0.012 bar), so the
   simulator and `nebulax.adapters.metropt3` finally agree on that column instead of differing by
   9.5 bar. It is retained as a vent-integrity check and as the `clogged_filter` negative control.
-  **`TP2_minus_TP3_mean` mismatch — FIXED 15 Sep 2026** (was the remaining item here): the
+  **`TP2_minus_TP3_mean` mismatch — FIXED 18 Sep 2026** (was the remaining item here): the
   adapter used to average `TP2 − TP3` over the **whole** cycle while the simulator averages over
   the **loaded** samples only — the same column name, two incompatible quantities. `TP2` is zero
   for most of a cycle (off + unloaded), so the old adapter figure was ≈ **−7.9 bar** against the
@@ -563,7 +563,7 @@ reason `t_loaded`'s KS is stuck (below). Simulated `t_off` spreads 0–1,651 s w
   **+0.28 bar** mean and almost no negatives at positions 1–4 of the same run. Because the
   per-cycle mean pools every loaded run a cycle contains, cycles that reload more often carry
   *more* of these negative first-of-run samples, so **more loaded samples means more negative,
-  not less** — **corrected 15 Sep 2026** (the two counts below were carried over from an earlier
+  not less** — **corrected 18 Sep 2026** (the two counts below were carried over from an earlier
   draft of this note without being re-measured against the shipped adapter; re-measured here with
   the adapter's own cycle segmentation and its own `state == 2` sample count per cycle, on the
   same Feb–Mar 2020 healthy window as above): cycles with exactly one loaded sample (no ramp
@@ -574,7 +574,7 @@ reason `t_loaded`'s KS is stuck (below). Simulated `t_off` spreads 0–1,651 s w
   population `is_transition` is built to flag: averaging over `(state == 2) & ~is_transition`
   instead of plain `state == 2` on the same Feb–Mar window gives a **per-sample median of
   +0.350 bar** (39,601 of the window's 50,925 loaded samples survive the `transition_mask()`
-  exclusion) — **corrected 15 Sep 2026**, re-measured with
+  exclusion) — **corrected 18 Sep 2026**, re-measured with
   `nebulax.adapters.metropt3.transition_mask` on the calibration script's own state cut
   (`scripts/calibrate_pneumatic.segment_states`, `Motor_current < 2 A` off / `< 5 A` unloaded /
   else loaded) over `normal_window_mask`'s `NORMAL_WINDOW = ("2020-02-01", "2020-04-01")` minus
@@ -592,7 +592,7 @@ reason `t_loaded`'s KS is stuck (below). Simulated `t_off` spreads 0–1,651 s w
   `nebulax/adapters/metropt3.py::_build_cycle_features`'s docstring — **not** echoed in
   `nebulax/sim/pneumatic.py::_cycle_features`'s own docstring (that file is out of this fix
   task's scope and is untouched; an earlier draft of this note claimed the echo and was wrong —
-  corrected 15 Sep 2026) — and is cross-checked in
+  corrected 18 Sep 2026) — and is cross-checked in
   `tests/test_adapter_metropt3.py::test_loaded_off_features_match_simulator`, which now calls
   `nebulax.sim.pneumatic._cycle_features` itself (not just its private `_nan_mean_by` helper) on
   a shared synthetic 1 Hz trace and compares every `*_loaded_*` / `*_off_*` column the two sides
@@ -609,7 +609,7 @@ reason `t_loaded`'s KS is stuck (below). Simulated `t_off` spreads 0–1,651 s w
 * **The dataset card's "1 Hz" is wrong** — the file is 10 s, with 190 gaps longer than 30 min and
   one apparent 6 h "cooldown" that is actually a logger outage. Already flagged by
   `nebulax.adapters.metropt3`; repeated here because it changes every rate estimate.
-* **`SIGNAL_SPECS` and the module now agree about `H1`** (reconciled 15 Sep 2026, with the
+* **`SIGNAL_SPECS` and the module now agree about `H1`** (reconciled 18 Sep 2026, with the
   inversion above). The spec said "downstream of the cyclonic separator" while the module placed
   `H1` downstream of the air/oil filter; the file says it is neither — it is the separator's
   *discharge* tap, alive only while the compressor is not delivering. Both descriptions were

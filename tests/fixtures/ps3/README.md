@@ -1,6 +1,6 @@
 # PS3 test fixtures
 
-Tiny verbatim slices of the organisers' Problem Statement 3 datasets, cut on 17 Sep 2026 from
+Tiny verbatim slices of the organisers' Problem Statement 3 datasets, cut on 18 Sep 2026 from
 `readingmaterials/problem_statement/PS3/02_Datasets/` (that clone is gitignored; these slices are
 committed so the PS3 tests run on a fresh checkout with no data download).
 

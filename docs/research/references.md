@@ -10,7 +10,7 @@ the entry is tagged `NUMBERS UNVERIFIED`. Where a stated fact came from a second
 than the primary document, the entry is tagged `SECONDARY-SOURCE`. Nothing outside this list may be
 cited in our write-up; if a new item is needed it must be verified first and appended here.
 
-**W1 update pass (14 Sep).** Sections **H-K** were added to close four gaps the W0 sweep left open:
+**W1 update pass (18 Sep).** Sections **H-K** were added to close four gaps the W0 sweep left open:
 first-principles physics and the Singapore operating envelope (H, R149-R162), freely available
 regulatory text (I, R163-R172), change-point detection and concept drift (J, R173-R194), and
 prognostics / RUL / survival analysis (K, R195-R230). Section I in particular **retires** two numbers
@@ -20,7 +20,7 @@ values [R171]) and the framing of "100-200 N within 0.3 s" as an EN 14752 compli
 regulatory text delegates every number to the paywalled standard [R163]). Both are now labelled as
 what they are.
 
-**W4 PS3 pass (17 Sep).** Section **L** (R231-R314) was added for `ps3_addendum.md`, covering the
+**W4 PS3 pass (18 Sep).** Section **L** (R231-R314) was added for `ps3_addendum.md`, covering the
 four Problem Statement 3 subsystems: rail corrugation from axle-box acceleration (L1),
 refrigerant-leak / undercharge diagnosis in HVAC and vehicle air conditioning (L2), fatigue-damage
 estimation from stress time series (L3) and time-series data augmentation for small, imbalanced
@@ -529,7 +529,7 @@ R230. **Train Brake System Pipe Leakage Detection and Early Warning Method Based
 
 ---
 
-## L. PS3 subsystems (W4 pass, 17 Sep 2026) — rail corrugation, HVAC/refrigerant FDD, fatigue damage, time-series augmentation
+## L. PS3 subsystems (W4 pass, 18 Sep 2026) — rail corrugation, HVAC/refrigerant FDD, fatigue damage, time-series augmentation
 
 Added for `docs/research/ps3_addendum.md`. Four parallel finders produced ~90 candidate
 identifiers; a citation verifier resolved every one against Crossref, OpenAlex, Semantic Scholar,

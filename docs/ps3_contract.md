@@ -1,6 +1,6 @@
 # PS3 contract
 
-The interface every Problem Statement 3 agent codes against. Frozen on 17 Sep 2026; changing
+The interface every Problem Statement 3 agent codes against. Frozen on 18 Sep 2026; changing
 anything here means changing `tests/test_ps3_common.py` and telling the other PS3 agents.
 
 Code: `nebulax/ps3/common.py` (types, paths, timestamps, registry), `nebulax/ps3/scoring.py`

@@ -168,7 +168,7 @@ one process serves the demo.
 episode yet, or > 0.8 x threshold; `ok` = scored and below; `nodata` = component not
 instrumented. Components not instrumented are **omitted** from `components`; the UI fills the
 schematic with `nodata` for every other id. The latest score is the last scored row with
-`timestamp <= ts` and not older than 6 h for every subsystem (doors are out of service up to 5.1 h every night, so the earlier 2 h door window went stale mid-episode each night; changed 17 Sep); older than that -> `stale: true` and
+`timestamp <= ts` and not older than 6 h for every subsystem (doors are out of service up to 5.1 h every night, so the earlier 2 h door window went stale mid-episode each night; changed 18 Sep); older than that -> `stale: true` and
 `health` falls back to `ok`.
 
 ## 6. Advisory (`nebulax/advisory/`)
@@ -207,7 +207,7 @@ return an empty dict. `AdvisoryDraft.to_advisory()` returns the `Advisory` with 
 `{"type": "disabled"}`: Claude Opus 5 runs adaptive thinking by default and would spend the frozen
 1024-token budget before writing the advisory.
 
-Fix round 1 (17 Sep, after verification): (a) `Advisory.narrow_to` / `AdvisoryDraft.to_advisory`
+Fix round 1 (18 Sep, after verification): (a) `Advisory.narrow_to` / `AdvisoryDraft.to_advisory`
 clamp `confidence` to 0.3 whenever `likely_fault` ends up `"unknown"`; (b) the Claude call gets
 `timeout = max(1.0, 0.8 * timeout_s)` and `max_retries = 0` so the SDK gives up before the daemon
 join fires; (c) the template classifier resolves every top signal through an alias chain

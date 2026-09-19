@@ -8,7 +8,7 @@ be quoted as hard figures in the pitch.
 Ends with **"Implications for our simulators and features"** — concrete feature names and threshold
 values to put into `nebulax/sim/*.py` and `nebulax/features/*.py`.
 
-**W1 update (14 Sep).** Three things changed in this pass and they change simulator parameters, not
+**W1 update (18 Sep).** Three things changed in this pass and they change simulator parameters, not
 just prose. (a) A new **section 0** fixes the operating envelope: every thermal number in this
 document was previously written for a temperate climate, and Singapore's ambient band moves the
 bearing baseline by ~15 K and pins the dryer at its rated inlet condition year-round. (b) The

@@ -90,7 +90,7 @@ excludes.
   challenge that no HTTP client can pass. **Do not redistribute the raw files** until someone
   opens the DOI in a real browser and reads the licence there. (The `.mat` headers say only
   `MATLAB 5.0 MAT-file, Platform: PCWIN64, Created on: Wed Feb 28 ... 2018`.)
-- **Access status (2026-09-15)**: the release is **present** — 13 `.mat` files plus
+- **Access status (2026-09-18)**: the release is **present** — 13 `.mat` files plus
   `Data description.pdf` under `data/raw/cranfield/`, obtained by hand because
   `scripts/download_data.py --dataset cranfield` still cannot reach the DOI (Cloudflare
   challenge on the DSpace instance, AWS WAF on the `cranfield.figshare.com` mirror, and the
@@ -243,7 +243,7 @@ excludes.
   out of the full file this way.
 - **What `nebulax.adapters.metropt3.load()` extracts:**
   - `long`: all 15 signals verbatim, no resampling, no unit conversion (~22.75M long rows for the
-    full file; ~450 MB is the size of the resulting DataFrames alone -- the measured peak resident memory of a full `load()` + validation pass is **~5.85 GiB** (Codex audit, 15 Sep 2026: 6,129,648 KB max RSS), so budget 8 GB for the MetroPT-3 adapter, not 0.5 GB -- no
+    full file; ~450 MB is the size of the resulting DataFrames alone -- the measured peak resident memory of a full `load()` + validation pass is **~5.85 GiB** (Codex audit, 18 Sep 2026: 6,129,648 KB max RSS), so budget 8 GB for the MetroPT-3 adapter, not 0.5 GB -- no
     chunking was needed for this file size).
   - `features`: **the compressor-cycle table only** (plan: "compressor-cycle table keyed on COMP
     transitions"), one row per cycle above, columns `t_loaded, t_unloaded, t_off, duty_ratio,
@@ -262,12 +262,12 @@ excludes.
     - **`I_loaded_mean` / `H1_loaded_mean` / `TP2_minus_TP3_mean` are averaged over `state == 2`
       (loaded) samples only** -- the same 3-way off/unloaded/loaded cut on `Motor_current` that
       `scripts/calibrate_pneumatic.py` uses (`_classify_state`; off < 2 A, loaded >= 5 A).
-      **Fixed 15 Sep 2026**: `TP2_minus_TP3_mean` previously averaged `TP2 - TP3` over the
+      **Fixed 18 Sep 2026**: `TP2_minus_TP3_mean` previously averaged `TP2 - TP3` over the
       *whole* cycle (~-7.9 bar on real data -- `TP2` reads ~0 while off/unloaded, which is most
       of a cycle), a different quantity from `nebulax.sim.pneumatic`'s identically-named column
       (loaded-only, ~+0.55 bar simulated / +0.304 bar measured, docs/parameters.md pneumatic
       section 5). `H1_loaded_mean` was already loaded-only and did not need this fix.
-      **Also fixed 15 Sep 2026 (same-day follow-up, after an audit ran the adapter and the
+      **Also fixed 18 Sep 2026 (same-day follow-up, after an audit ran the adapter and the
       simulator's own `_cycle_features` side by side and found two more mismatches the first
       pass missed):** `I_loaded_mean` now also drops the first 4 samples of the cycle before
       averaging, matching `nebulax.sim.pneumatic._cycle_features`'s own starting-current-transient
@@ -320,7 +320,7 @@ excludes.
       `tests/test_adapter_metropt3.py::_multi_cycle_trace` now carries a later, higher current
       spike and a boundary-coincident `Towers` flip / purge pulse in its second cycle so the
       cross-check (and two new hand-computed assertions on that cycle) actually exercises this.
-    - **`transition_frac`** (added 15 Sep 2026, `docs/research/rail_phm.md` "Detector design
+    - **`transition_frac`** (added 18 Sep 2026, `docs/research/rail_phm.md` "Detector design
       additions": "Emit an `is_transition` mask and exclude +/-5 s around `Towers` flips and
       `COMP` load/offload edges from point scoring") -- the fraction of a cycle's samples within
       `nebulax.adapters.metropt3._TRANSITION_WINDOW_S` (**5.0 s, rail_phm's own number, CONFIRMED
@@ -373,7 +373,7 @@ excludes.
       its `is_transition` column, or the orchestrator/user explicitly accepts the deferral and
       records that acceptance themselves (outside this file's adapter-authored provenance
       narrative) -- this note only describes the gap, it does not close it.
-      **Accepted deferral (15 Sep 2026, orchestrator decision):** the gap above is accepted, not
+      **Accepted deferral (18 Sep 2026, orchestrator decision):** the gap above is accepted, not
       closed here either. The 10-s aggregate table (analogue mean/max per channel, digital duty
       fraction, and `is_transition` from `transition_mask()`) is built by the benchmark data
       loader `nebulax/bench/data.py` in the W2 stage, not by this adapter -- `nebulax/bench/`
