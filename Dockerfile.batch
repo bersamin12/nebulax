@@ -4,6 +4,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1
 WORKDIR /app
 
+RUN apt-get update && \
+    apt-get install --no-install-recommends -y libgomp1 && \
+    rm -rf /var/lib/apt/lists/*
+
 COPY submission/nebulax/app/requirements.lock.txt requirements-cloud-batch.txt /tmp/
 RUN python -m pip install --no-cache-dir -r /tmp/requirements.lock.txt -r /tmp/requirements-cloud-batch.txt
 COPY nebulax/ ./nebulax/
