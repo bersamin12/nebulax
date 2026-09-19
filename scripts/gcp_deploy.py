@@ -58,10 +58,21 @@ def digest_ref(gcloud: str, tag: str) -> str:
     return f"{tag.rsplit(':', 1)[0]}@{digest}"
 
 
-def deploy_web(gcloud: str, project: str, region: str) -> str:
+def deploy_web(
+    gcloud: str,
+    project: str,
+    region: str,
+    *,
+    public: bool = True,
+    autoscale: bool = True,
+) -> tuple[str, str]:
     tag = f"{region}-docker.pkg.dev/{project}/nebulax/app:dev"
     call(gcloud, "builds", "submit", "--region", region, "--tag", tag, ".")
     image = digest_ref(gcloud, tag)
+    access_flag = "--no-invoker-iam-check" if public else "--invoker-iam-check"
+    scaling = ["--scaling", "auto", "--max-instances", "1", "--min-instances", "0"] if autoscale else [
+        "--scaling", "0"
+    ]
     call(
         gcloud,
         "run", "deploy", "nebulax-app",
@@ -69,9 +80,8 @@ def deploy_web(gcloud: str, project: str, region: str) -> str:
         "--region", region,
         "--image", image,
         "--service-account", f"nebulax-web@{project}.iam.gserviceaccount.com",
-        "--no-allow-unauthenticated",
-        "--max-instances", "1",
-        "--min-instances", "0",
+        access_flag,
+        *scaling,
         "--memory", "2Gi",
         "--cpu", "2",
         "--concurrency", "10",
@@ -79,7 +89,17 @@ def deploy_web(gcloud: str, project: str, region: str) -> str:
         "--port", "8080",
         "--quiet",
     )
-    return image
+    url = call(
+        gcloud,
+        "run", "services", "describe", "nebulax-app",
+        "--project", project,
+        "--region", region,
+        "--format=value(status.url)",
+        capture=True,
+    )
+    if not url.startswith("https://"):
+        raise RuntimeError(f"Cloud Run returned an invalid service URL: {url!r}")
+    return image, url
 
 
 def deploy_batch(gcloud: str, project: str, region: str) -> str:
@@ -107,23 +127,54 @@ def deploy_batch(gcloud: str, project: str, region: str) -> str:
 
 def parser() -> argparse.ArgumentParser:
     out = argparse.ArgumentParser(description=__doc__)
-    out.add_argument("target", choices=("web", "batch", "all"), nargs="?", default="all")
+    out.add_argument("target", choices=("web", "batch", "all"), nargs="?", help="backward-compatible target")
+    targets = out.add_mutually_exclusive_group()
+    targets.add_argument("--all", dest="target_flag", action="store_const", const="all", help="deploy web and batch")
+    targets.add_argument("--web", dest="target_flag", action="store_const", const="web", help="deploy only the web service")
+    targets.add_argument("--batch", dest="target_flag", action="store_const", const="batch", help="deploy only the batch job")
+    visibility = out.add_mutually_exclusive_group()
+    visibility.add_argument("--public", dest="public", action="store_true", help="allow public web access (default)")
+    visibility.add_argument("--private", dest="public", action="store_false", help="require IAM authentication")
+    scaling = out.add_mutually_exclusive_group()
+    scaling.add_argument("--autoscale", dest="autoscale", action="store_true", help="enable scale-to-zero autoscaling (default)")
+    scaling.add_argument(
+        "--pause", "--no-autoscale", dest="autoscale", action="store_false",
+        help="deploy the web service at zero manual instances",
+    )
+    out.set_defaults(public=True, autoscale=True, target_flag=None)
     out.add_argument("--project", default=os.getenv("GOOGLE_CLOUD_PROJECT", DEFAULT_PROJECT))
     out.add_argument("--region", default=os.getenv("GOOGLE_CLOUD_REGION", DEFAULT_REGION))
     return out
 
 
 def main(argv: list[str] | None = None) -> int:
-    args = parser().parse_args(argv)
+    arg_parser = parser()
+    args = arg_parser.parse_args(argv)
+    if args.target and args.target_flag:
+        arg_parser.error("choose either a positional target or --all/--web/--batch, not both")
+    target = args.target_flag or args.target or "all"
     gcloud = find_gcloud()
     call(gcloud, "config", "set", "project", args.project)
     images: dict[str, str] = {}
-    if args.target in ("web", "all"):
-        images["web"] = deploy_web(gcloud, args.project, args.region)
-    if args.target in ("batch", "all"):
+    web_url: str | None = None
+    if target in ("web", "all"):
+        images["web"], web_url = deploy_web(
+            gcloud, args.project, args.region, public=args.public, autoscale=args.autoscale,
+        )
+    if target in ("batch", "all"):
         images["batch"] = deploy_batch(gcloud, args.project, args.region)
     for name, image in images.items():
         print(f"{name}: {image}")
+    if web_url:
+        state = "public" if args.public else "private"
+        scaling_state = "autoscale" if args.autoscale else "paused"
+        print(f"web_url: {web_url} ({state}, {scaling_state})")
+    if target in ("batch", "all"):
+        print(
+            "batch_console: "
+            f"https://console.cloud.google.com/run/jobs/details/{args.region}/"
+            f"nebulax-ps3-batch/executions?project={args.project}"
+        )
     return 0
 
 
