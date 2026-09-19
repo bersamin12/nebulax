@@ -4,6 +4,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { C } from "../lib/format.js";
 import { inspectPs3LocalPath } from "../api.js";
+import ColumnToggles from "./ColumnToggles.jsx";
 import FileConfirm from "./FileConfirm.jsx";
 import { checkFiles } from "./fileCheck.js";
 import { cvScore, fmtBytes, INFO_META, SYSTEM_ORDER, TASK_META, TASK_SUFFIXES } from "./taskMeta.js";
@@ -13,41 +14,37 @@ const STATUS_COLOR = { queued: C.dim2, waiting: C.dim, running: C.accent, done: 
 const STATUS_WORD = { queued: "queued", waiting: "waiting", running: "running", done: "done", error: "error" };
 
 /**
- * One system tile: the name and its headline (the CV score of the selected model, or RESEARCH
- * for the two dataset profiles). The blurb lives in the panel under the grid, for the active
- * tile only, so all six fit without clutter.
+ * One system row of the accordion: a thumbnail, the name and its headline (the CV score of the
+ * selected model, or RESEARCH for the two dataset profiles). The active row opens to show the
+ * description underneath; choosing another row closes it again.
  */
-function TaskTab({ name, entry, active, onClick }) {
+function SystemRow({ name, entry, active, open, onClick }) {
   const infoOnly = !!INFO_META[name];
   const meta = TASK_META[name] || INFO_META[name] || {};
   const cv = cvScore(entry && entry.cv);
   const off = entry && entry.available === false;
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="nx-cell nx-system-tile"
-      aria-pressed={active}
-      style={{
-        borderLeft: `3px solid ${active ? C.accent : infoOnly ? C.line2 : C.violet}`,
-        outline: active ? `1px solid ${C.accentBright}` : "none",
-        outlineOffset: -1,
-        background: active ? C.accentBg : C.panel2,
-        opacity: off ? 0.62 : 1,
-        padding: "4px 8px",
-        height: 38,
-        justifyContent: "center",
-        gap: 2,
-      }}
-      title={off ? entry.detail || "System unavailable" : `${meta.blurb}\nSelect to ${active ? "hide or show" : "read"} the description.`}
-    >
-      <span style={{ fontSize: 11, fontWeight: 600, color: active ? C.accentBright : C.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-        {meta.tab || name}
-      </span>
-      <span className="mono" style={{ fontSize: 8.5, color: infoOnly ? C.dim2 : off ? C.crit : cv ? C.violet : C.dim2, letterSpacing: "0.04em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-        {infoOnly ? "RESEARCH" : off ? "UNAVAILABLE" : cv ? `${cv.label} ${Number(cv.value).toFixed(3)}` : entry && entry.cv ? "cv: no headline" : "no cv yet"}
-      </span>
-    </button>
+    <div className={"nx-system-row" + (active ? " is-active" : "") + (infoOnly ? " is-research" : "")}>
+      <button
+        type="button"
+        onClick={onClick}
+        className="nx-system-btn"
+        aria-pressed={active}
+        aria-expanded={active && open}
+        style={{ opacity: off ? 0.62 : 1 }}
+        title={off ? entry.detail || "System unavailable" : undefined}
+      >
+        <span className="nx-system-thumb" aria-hidden="true">
+          {meta.thumb ? <img src={meta.thumb} alt="" loading="lazy" /> : null}
+        </span>
+        <span className="nx-system-name">{meta.tab || name}</span>
+        <span className="nx-system-cv mono" style={{ color: infoOnly ? C.dim2 : off ? C.crit : cv ? C.violet : C.dim2 }}>
+          {infoOnly ? "RESEARCH" : off ? "UNAVAILABLE" : cv ? `${cv.label} ${Number(cv.value).toFixed(3)}` : entry && entry.cv ? "cv: no headline" : "no cv yet"}
+        </span>
+        <svg className="nx-system-chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+      </button>
+      {active && open && <SystemInfo name={name} entry={entry} />}
+    </div>
   );
 }
 
@@ -89,6 +86,8 @@ export default function TaskColumn({
   total,
   notice,
   error,
+  dropFields = [],
+  toggleDropField,
   width = 340,
   height = 546,
 }) {
@@ -103,6 +102,9 @@ export default function TaskColumn({
   const [localPath, setLocalPath] = useState("");
   const [pending, setPending] = useState(null); // { items: [{file, report}] } while the confirm dialog is up
   const [showInfo, setShowInfo] = useState(true);
+  // canonical -> raw column of the last confirmed file, so the column toggles can mark absent ones
+  const [lastFound, setLastFound] = useState(null);
+  const droppable = (meta && meta.droppable_fields) || [];
   const infoOnly = !!INFO_META[task];
   const tmeta = TASK_META[task] || INFO_META[task] || {};
   const queued = files.filter((f) => f.status === "queued").length;
@@ -120,6 +122,7 @@ export default function TaskColumn({
     setPickMessage("");
     setLocalPath("");
     setPending(null);
+    setLastFound(null);
     if (fileRef.current) fileRef.current.value = "";
     if (dirRef.current) dirRef.current.value = "";
   }, [resetKey, task]);
@@ -157,6 +160,8 @@ export default function TaskColumn({
 
   const confirmPicked = useCallback((valid) => {
     const total = pending ? pending.items.length : valid.length;
+    const first = pending && pending.items.find((it) => it.report.ok && valid.includes(it.file));
+    if (first && task === "door") setLastFound(first.report.found || {});
     setPending(null);
     if (valid.length) addFiles(valid);
     setCheckMessage(
@@ -165,7 +170,7 @@ export default function TaskColumn({
         : `${valid.length} of ${total} files were added. The other ${total - valid.length} did not match the required format.`
     );
     setCheckFailed(valid.length < total);
-  }, [addFiles, pending]);
+  }, [addFiles, pending, task]);
 
   const cancelPicked = useCallback(() => {
     checkAbort.current?.abort();
@@ -241,13 +246,14 @@ export default function TaskColumn({
         <span style={{ fontSize: 9.5, letterSpacing: "0.14em", color: C.dim }}>SYSTEMS</span>
         <span className="mono" style={{ fontSize: 9, color: C.dim2 }}>4 prediction models · 2 research datasets</span>
       </div>
-      <div className="nx-system-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 5 }}>
+      <div className="nx-system-list">
         {SYSTEM_ORDER.map((name) => (
-          <TaskTab
+          <SystemRow
             key={name}
             name={name}
             entry={entryOf(name)}
             active={name === task}
+            open={showInfo}
             onClick={() => {
               if (name === task) setShowInfo((v) => !v);
               else {
@@ -258,12 +264,23 @@ export default function TaskColumn({
           />
         ))}
       </div>
-      {showInfo && <SystemInfo name={task} entry={entryOf(task)} />}
     </div>
   );
 
   const confirmDialog = pending ? (
-    <FileConfirm task={task} items={pending.items} checking={checking} onConfirm={confirmPicked} onCancel={cancelPicked} />
+    <FileConfirm
+      task={task}
+      items={pending.items}
+      checking={checking}
+      onConfirm={confirmPicked}
+      onCancel={cancelPicked}
+      droppable={droppable}
+      dropFields={dropFields}
+      toggleDropField={toggleDropField}
+    />
+  ) : null;
+  const columnStrip = droppable.length ? (
+    <ColumnToggles fields={droppable} dropped={dropFields} onToggle={toggleDropField} found={lastFound} compact disabled={running} />
   ) : null;
 
   if (infoOnly) {
@@ -361,6 +378,8 @@ export default function TaskColumn({
           </div>
         )}
       </div>
+
+      {columnStrip}
 
       <div
         style={{

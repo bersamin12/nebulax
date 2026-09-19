@@ -3,6 +3,7 @@
 // whether the two agree, and a button that queues only the files that match.
 import { useEffect } from "react";
 import { C } from "../lib/format.js";
+import ColumnToggles from "./ColumnToggles.jsx";
 import { INPUT_SPEC } from "./fileCheck.js";
 import { fmtBytes, TASK_META } from "./taskMeta.js";
 
@@ -18,10 +19,11 @@ function Verdict({ ok }) {
 }
 
 /** One picked file in full: its columns as chips, the recognised fields, and any problem. */
-function SingleFile({ task, item }) {
+function SingleFile({ task, item, dropFields = [] }) {
   const r = item.report;
   const requiredNames = new Set(Object.entries(r.found).filter(([k]) => (INPUT_SPEC[task]?.required || []).includes(k)).map(([, v]) => v));
   const recognised = new Set(Object.values(r.found));
+  const droppedNames = new Set(Object.entries(r.found).filter(([k]) => dropFields.includes(k)).map(([, v]) => v));
   const chips = r.columns.slice(0, MAX_CHIPS);
   return (
     <div className="nx-confirm-file">
@@ -37,8 +39,8 @@ function SingleFile({ task, item }) {
           {chips.map((c, i) => (
             <span
               key={`${c}-${i}`}
-              className={"nx-confirm-chip" + (requiredNames.has(c) ? " is-required" : recognised.has(c) ? " is-known" : "")}
-              title={requiredNames.has(c) ? "required by the model" : recognised.has(c) ? "recognised field" : "not used by the model"}
+              className={"nx-confirm-chip" + (droppedNames.has(c) ? " is-dropped" : requiredNames.has(c) ? " is-required" : recognised.has(c) ? " is-known" : "")}
+              title={droppedNames.has(c) ? "switched off below: removed before the model runs" : requiredNames.has(c) ? "required by the model" : recognised.has(c) ? "recognised field" : "not used by the model"}
             >
               {c}
             </span>
@@ -89,7 +91,7 @@ function FileList({ items }) {
   );
 }
 
-export default function FileConfirm({ task, items, checking = false, onConfirm, onCancel }) {
+export default function FileConfirm({ task, items, checking = false, onConfirm, onCancel, droppable = [], dropFields = [], toggleDropField }) {
   const meta = TASK_META[task] || {};
   const spec = INPUT_SPEC[task] || {};
   const okItems = items.filter((it) => it.report.ok);
@@ -106,7 +108,7 @@ export default function FileConfirm({ task, items, checking = false, onConfirm, 
 
   return (
     <div className="nx-modal" role="dialog" aria-modal="true" aria-label="Review selected files">
-      <div className="nx-modal-card" style={{ width: 640 }}>
+      <div className="nx-modal-card" data-tour="review" style={{ width: 640 }}>
         <div className="nx-tour-eyebrow">REVIEW FILES · {(meta.tab || task).toUpperCase()}</div>
         <div className="nx-tour-title">
           {checking ? "Reading the files" : items.length === 1 ? "Check this file before adding it" : "Check these files before adding them"}
@@ -123,11 +125,20 @@ export default function FileConfirm({ task, items, checking = false, onConfirm, 
           {checking ? (
             <div style={{ fontSize: 11, color: C.dim2, padding: "12px 0" }}>reading the header of each file{task === "acv" ? " and checking the workbook fields on the server" : ""}…</div>
           ) : items.length === 1 ? (
-            <SingleFile task={task} item={items[0]} />
+            <SingleFile task={task} item={items[0]} dropFields={dropFields} />
           ) : (
             <FileList items={items} />
           )}
         </div>
+
+        {!checking && droppable.length > 0 && (
+          <ColumnToggles
+            fields={droppable}
+            dropped={dropFields}
+            onToggle={toggleDropField}
+            found={task === "door" && items.length === 1 ? items[0].report.found : null}
+          />
+        )}
 
         <div className="nx-tour-actions" style={{ marginTop: 6 }}>
           <button type="button" className="nx-btn nx-btn--primary" disabled={checking || !nOk} onClick={() => onConfirm?.(okItems.map((it) => it.file))}>

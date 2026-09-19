@@ -1,4 +1,8 @@
 // Shared header for the Overview and Predict pages.
+//
+// `fluid` is the overview variant: full width, wraps on a phone, and carries only the page nav
+// (the hero holds the calls to action, so the header does not repeat them). The console variant
+// is 56 px on the fixed board and adds the TUTORIAL button.
 import { C } from "../lib/format.js";
 
 function PageNav({ page, onPage }) {
@@ -40,59 +44,42 @@ function TutorialButton({ onPage }) {
   );
 }
 
-export default function Header({ page = "overview", onPage }) {
+function Brand() {
   return (
-    <div
-      style={{
-        height: 56,
-        flex: "none",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 16,
-        padding: "0 20px",
-        background: C.panel,
-        borderBottom: `1px solid ${C.line}`,
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", gap: 14, flex: "none" }}>
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="1.6" strokeLinecap="round">
-          <path d="M5 4h14v11a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3z" />
-          <path d="M5 9h14" />
-          <path d="M8 18l-2.5 3" />
-          <path d="M16 18l2.5 3" />
-          <path d="M9 13h.01" />
-          <path d="M15 13h.01" />
-        </svg>
-        <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: "0.13em" }}>
-            <span style={{ color: C.accentBright }}>TEAM BUS MRT WALK</span> &middot; TRAIN DIGITAL TWIN
-          </div>
-          <div style={{ fontSize: 9.5, letterSpacing: "0.16em", color: C.dim }}>
-            TRACK 3 &middot; PROBLEM STATEMENT 3
-          </div>
+    <div className="nx-brand">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
+        <path d="M5 4h14v11a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3z" />
+        <path d="M5 9h14" />
+        <path d="M8 18l-2.5 3" />
+        <path d="M16 18l2.5 3" />
+        <path d="M9 13h.01" />
+        <path d="M15 13h.01" />
+      </svg>
+      <div style={{ display: "flex", flexDirection: "column", gap: 1, minWidth: 0 }}>
+        <div className="nx-brand-title">
+          <span style={{ color: C.accentBright }}>TEAM BUS MRT WALK</span>
+          <span className="nx-brand-sep"> &middot; </span>
+          <span>TRAIN DIGITAL TWIN</span>
         </div>
-      </div>
-
-      <PageNav page={page} onPage={onPage} />
-
-      <div style={{ display: "flex", alignItems: "center", gap: 10, flex: "none" }}>
-        <span className="nx-tag" style={{ color: C.dim, borderColor: C.line2 }}>
-          4 PREDICTION MODELS
-        </span>
-        {page === "predict" ? (
-          <TutorialButton onPage={onPage} />
-        ) : (
-          <>
-            <button type="button" className="nx-btn" style={{ height: 26, flex: "none" }} onClick={() => onPage?.("predict", { tour: true })}>
-              TAKE A TOUR
-            </button>
-            <button type="button" className="nx-btn nx-btn--primary" style={{ height: 26, flex: "none" }} onClick={() => onPage?.("predict")}>
-              OPEN PREDICTION WORKSPACE
-            </button>
-          </>
-        )}
+        <div className="nx-brand-sub">TRACK 3 &middot; PROBLEM STATEMENT 3</div>
       </div>
     </div>
+  );
+}
+
+export default function Header({ page = "overview", onPage, fluid = false }) {
+  return (
+    <header className={"nx-header" + (fluid ? " nx-header--fluid" : "")}>
+      <Brand />
+      <PageNav page={page} onPage={onPage} />
+      {!fluid && (
+        <div style={{ display: "flex", alignItems: "center", gap: 10, flex: "none" }}>
+          <span className="nx-tag" style={{ color: C.dim, borderColor: C.line2 }}>
+            4 PREDICTION MODELS
+          </span>
+          <TutorialButton onPage={onPage} />
+        </div>
+      )}
+    </header>
   );
 }

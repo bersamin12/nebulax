@@ -56,6 +56,7 @@ from nebulax.ps3.common import (
     get_task,
     natural_key,
 )
+from nebulax.ps3.dropout import apply_column_dropout, droppable_fields, parse_drop_list
 from nebulax.ps3.submission import CSV_HEADERS, validate_csv
 
 __all__ = [
@@ -638,6 +639,7 @@ def ps3_tasks(request: Request) -> list[dict[str, Any]]:
                 "model_loaded": common.model_path(name, model_dir=_model_dir()).exists(),
                 "max_file_bytes": MAX_UPLOAD_BYTES,
                 "max_files_per_request": MAX_BATCH_FILES,
+                "droppable_fields": list(droppable_fields(name)),
                 "local_paths": local_paths,
                 "available": available,
                 "detail": detail,
@@ -721,15 +723,25 @@ async def _extract_uploads(
     return uploads, session
 
 
+def _drop_list_or_400(key: str, drop_columns: str | None) -> list[str]:
+    """``drop_columns`` form field -> canonical fields (Door / ACV only), or a 400."""
+    try:
+        return parse_drop_list(key, drop_columns)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
 async def _run_predict_batch(
     key: str,
     uploads: list[UploadFile],
     session: str | None,
+    drop: list[str] | None = None,
 ) -> tuple[_Session, list[dict[str, Any]], list[dict[str, str]], list[Path], Any]:
     try:
         task_obj = resolve_task(key)
     except TaskUnavailable as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
+    drop = list(drop or [])
 
     if session:
         sess = _session_or_404(session)
@@ -773,9 +785,15 @@ async def _run_predict_batch(
         dest = batch_dir / name
         await _save_upload(upload, dest)
         try:
+            # simulated missing columns: removed from the saved file, so the loader's own
+            # fallbacks apply (nebulax.ps3.dropout)
+            removed = await run_in_threadpool(apply_column_dropout, key, dest, drop) if drop else []
             result = await run_in_threadpool(run_file, task_obj, dest, model)
             rows = task_obj.to_rows(result)
             explanation = task_obj.explain(result).as_dict()
+            if drop:
+                explanation["dropped_fields"] = list(drop)
+                explanation["dropped_columns"] = list(removed)
         except FileNotFoundError as exc:
             raise HTTPException(
                 status_code=503,
@@ -880,8 +898,13 @@ async def ps3_predict(
     request: Request,
     files: list[UploadFile] | None = File(default=None),
     session: str | None = Form(default=None),
+    drop_columns: str | None = Form(default=None),
 ) -> dict[str, Any]:
     """Predict one **batch** of uploads, appending to a session.
+
+    ``drop_columns`` (comma-separated canonical fields from ``GET /tasks`` ``droppable_fields``)
+    removes those columns from every file in the batch before it is loaded - a way to see how the
+    Door and ACV models behave with less data than the released files carry.
 
     The client repeats the call with the returned ``session`` for the next batch, so the 68 rail
     files (~1.1 GB) never travel in one request - at most ``MAX_BATCH_FILES`` per call, each at
@@ -901,7 +924,8 @@ async def ps3_predict(
             ),
         )
 
-    sess, explanations, errors, _, _ = await _run_predict_batch(key, uploads, session)
+    drop = _drop_list_or_400(key, drop_columns)
+    sess, explanations, errors, _, _ = await _run_predict_batch(key, uploads, session, drop)
     return {
         "session": sess.token,
         "task": key,
@@ -922,12 +946,14 @@ async def ps3_stream(
     request: Request,
     files: list[UploadFile] | None = File(default=None),
     session: str | None = Form(default=None),
+    drop_columns: str | None = Form(default=None),
 ) -> dict[str, Any]:
     """Predict and stream exactly one file, returning preview frames plus the session rows."""
     from nebulax.ps3.stream import stream_file
 
     _sweep()
     key = _task_or_404(task)
+    drop = _drop_list_or_400(key, drop_columns)
     uploads, session = await _extract_uploads(request, files, session)
     if len(uploads) != 1:
         raise HTTPException(
@@ -942,7 +968,7 @@ async def ps3_stream(
     )
     old_tokens = set(_SESSIONS)
     try:
-        sess, explanations, errors, saved_paths, model = await _run_predict_batch(key, uploads, session)
+        sess, explanations, errors, saved_paths, model = await _run_predict_batch(key, uploads, session, drop)
         # a refused upload (wrong suffix, or a name already predicted in this session after the
         # page's STOP cut the reply off) has no saved path: report it in `errors`, with no frames
         frames = (

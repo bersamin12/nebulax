@@ -67,13 +67,14 @@ async function request(path, { method = "GET", body, timeout = DEFAULT_TIMEOUT_M
  *     -> {session, task, output_filename, rows, explanations, csv_url, n_done, files, errors,
  *         frames, expires_at}
  */
-export async function postPs3Stream(task, file, session = null, { timeout = 600000, signal, onUploadProgress } = {}) {
+export async function postPs3Stream(task, file, session = null, { timeout = 600000, signal, onUploadProgress, dropFields } = {}) {
   const fd = new FormData();
   if (file) {
     const f = Array.isArray(file) ? file[0] : file;
     fd.append("files", f, f.name);
   }
   if (session) fd.append("session", session);
+  if (dropFields && dropFields.length) fd.append("drop_columns", dropFields.join(","));
   const ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
   const timer = ctrl && timeout ? setTimeout(() => ctrl.abort(), timeout) : null;
   if (signal && ctrl) signal.addEventListener("abort", () => ctrl.abort(), { once: true });
@@ -202,7 +203,7 @@ export const getPs3Cv = (task) => request(`/ps3/${enc(task)}/cv`);
  * gets back). Multipart, and deliberately *not* through `request`: setting a content-type by
  * hand would drop the boundary the browser computes for the FormData.
  *
- *   postPs3Predict("rail", [File, File], session|null)
+ *   postPs3Predict("rail", [File, File], session|null, {dropFields: ["voltage"]})
  *     -> {session, task, output_filename, rows, explanations, csv_url, n_done, files, errors,
  *         expires_at}
  *
@@ -210,10 +211,12 @@ export const getPs3Cv = (task) => request(`/ps3/${enc(task)}/cv`);
  * The timeout is per batch and generous: a rail file is ~17 MB and is predicted server-side
  * before the response comes back.
  */
-export async function postPs3Predict(task, files, session = null, { timeout = 600000, signal, onUploadProgress } = {}) {
+export async function postPs3Predict(task, files, session = null, { timeout = 600000, signal, onUploadProgress, dropFields } = {}) {
   const fd = new FormData();
   for (const f of files || []) fd.append("files", f, f.name);
   if (session) fd.append("session", session);
+  // simulated missing columns (Door / ACV): canonical fields from GET /tasks `droppable_fields`
+  if (dropFields && dropFields.length) fd.append("drop_columns", dropFields.join(","));
   const ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
   const timer = ctrl && timeout ? setTimeout(() => ctrl.abort(), timeout) : null;
   if (signal && ctrl) signal.addEventListener("abort", () => ctrl.abort(), { once: true });

@@ -68,6 +68,8 @@ export function usePs3Predict(initialTask) {
   const [state, setState] = useState(() => Object.fromEntries(TASK_ORDER.map((t) => [t, blank()])));
   const [running, setRunning] = useState(false);
   const [fatal, setFatal] = useState(null); // "the server is unreachable" banner
+  // simulated missing columns per task (Door / ACV): canonical fields sent as `drop_columns`
+  const [dropFields, setDropFieldsState] = useState(() => Object.fromEntries(TASK_ORDER.map((t) => [t, []])));
   const abort = useRef(null);
 
   const reload = useCallback(() => {
@@ -164,12 +166,24 @@ export function usePs3Predict(initialTask) {
     [patch, task]
   );
 
+  /** Switch one optional field off or on for the current task (applies to the next RUN). */
+  const toggleDropField = useCallback(
+    (field) =>
+      setDropFieldsState((d) => {
+        const cur = d[task] || [];
+        return { ...d, [task]: cur.includes(field) ? cur.filter((f) => f !== field) : [...cur, field] };
+      }),
+    [task]
+  );
+  const setDropFields = useCallback((fields) => setDropFieldsState((d) => ({ ...d, [task]: [...fields] })), [task]);
+
   /** Upload + predict every queued file, using per-file requests only for local paths. */
   const run = useCallback(async () => {
     const name = task;
     const snapshot = state[name];
     const queued = snapshot.files.filter((f) => f.status === "queued");
     if (!queued.length || running) return;
+    const drop = dropFields[name] || [];
     const ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
     abort.current = ctrl;
     setRunning(true);
@@ -193,7 +207,7 @@ export function usePs3Predict(initialTask) {
         try {
           res = item.localPath
             ? await postPs3LocalStream(name, item.localPath, session, { signal: ctrl ? ctrl.signal : undefined })
-            : await postPs3Stream(name, item.file, session, { signal: ctrl ? ctrl.signal : undefined });
+            : await postPs3Stream(name, item.file, session, { signal: ctrl ? ctrl.signal : undefined, dropFields: drop });
         } catch (err) {
           if (err.cancelled || (ctrl && ctrl.signal.aborted)) {
             stopped = err;
@@ -258,6 +272,7 @@ export function usePs3Predict(initialTask) {
         try {
           res = await postPs3Predict(name, batch.map((f) => f.file), session, {
             signal: ctrl ? ctrl.signal : undefined,
+            dropFields: drop,
           });
         } catch (err) {
           if (err.cancelled || (ctrl && ctrl.signal.aborted)) {
@@ -312,7 +327,7 @@ export function usePs3Predict(initialTask) {
     abort.current = null;
     setRunning(false);
     if (!stopped) patch(name, (s) => ({ files: s.files.map((f) => (f.status === "waiting" ? { ...f, status: "queued" } : f)) }));
-  }, [meta, patch, running, state, task]);
+  }, [dropFields, meta, patch, running, state, task]);
 
   const cancel = useCallback(() => {
     if (abort.current) abort.current.abort();
@@ -338,6 +353,9 @@ export function usePs3Predict(initialTask) {
     addFiles,
     addLocalPaths,
     removeFile,
+    dropFields: dropFields[task] || [],
+    toggleDropField,
+    setDropFields,
     run,
     cancel,
     clear,

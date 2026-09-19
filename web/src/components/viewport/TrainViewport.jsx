@@ -69,6 +69,9 @@ const HOME_OFFSET = new THREE.Vector3(0, 11, 100); // elevation, a few degrees a
 // axis of the orthographic projection (the design mock does the same). 1 = true scale; the
 // stretch eases out to 1 as the camera is orbited away from the elevation.
 const VERTICAL_EXAGGERATION = 1.85;
+// The camera orbits freely (full 360, from overhead to a little below the horizon). Once the
+// pointer has been idle this long the view drifts back to the task's home framing.
+const IDLE_RETURN_MS = 3500;
 const ACCENT = "#008f95";
 // before the glb resolves: an 8-car set, so the first frame is already about right
 const GUESS_BOUNDS = { minX: -1.16, maxX: 190.17, centreX: 94.5, length: 191.33, maxY: 3.985 };
@@ -156,6 +159,28 @@ function CameraRig({ focus, resetToken, exaggerationRef, baseZoom, bounds, cars,
     return { ...common, target: new THREE.Vector3(carX(car), TARGET_Y, 0), zoom: carZoom, carZoom };
   }, [bounds, cars, width, height, viewMode, baseZoom]);
   const want = useRef({ target: preset.target.clone(), zoom: preset.zoom });
+  // orbit state: `dragging` while the pointer is down on the controls, `idleAt` when it let go
+  const orbit = useRef({ dragging: false, idleAt: 0 });
+  useEffect(() => {
+    if (!controls) return undefined;
+    const onStart = () => {
+      orbit.current.dragging = true;
+    };
+    const onEnd = () => {
+      orbit.current.dragging = false;
+      orbit.current.idleAt = performance.now();
+      // the canvas renders on demand: wake it once the idle period is over so the drift can run
+      timer = setTimeout(invalidate, IDLE_RETURN_MS + 20);
+    };
+    let timer = null;
+    controls.addEventListener("start", onStart);
+    controls.addEventListener("end", onEnd);
+    return () => {
+      controls.removeEventListener("start", onStart);
+      controls.removeEventListener("end", onEnd);
+      if (timer) clearTimeout(timer);
+    };
+  }, [controls, invalidate]);
 
   // Changing systems and double-clicking reset both land on the current task's home view.
   useLayoutEffect(() => {
@@ -170,6 +195,7 @@ function CameraRig({ focus, resetToken, exaggerationRef, baseZoom, bounds, cars,
     camera.lookAt(preset.target);
     camera.updateProjectionMatrix();
     controls.update();
+    orbit.current.idleAt = 0;
     invalidate();
   }, [controls, camera, preset, resetToken, exaggerationRef, invalidate]);
 
@@ -196,10 +222,14 @@ function CameraRig({ focus, resetToken, exaggerationRef, baseZoom, bounds, cars,
     const k = 1 - Math.pow(0.002, Math.min(dt, 0.1)); // frame-rate independent easing
     let moving = false;
 
-    // ease the vertical stretch out as the camera is orbited away from the elevation
+    // ease the vertical stretch out as the camera is orbited away from the elevation (either
+    // around the set or up towards the overhead view; from the far side the set reads mirrored)
     const az = Math.abs(controls.getAzimuthalAngle ? controls.getAzimuthalAngle() : 0);
+    const homePolar = Math.atan2(Math.hypot(preset.offset.x, preset.offset.z), preset.offset.y);
+    const pol = Math.abs((controls.getPolarAngle ? controls.getPolarAngle() : homePolar) - homePolar);
+    const away = Math.max(Math.min(az, Math.PI - az), pol);
     const framingExag = focus && (viewMode === "acv" || !viewMode) ? 1 : preset.exaggeration;
-    const wantExag = THREE.MathUtils.lerp(framingExag, 1, Math.min(1, az / 0.52));
+    const wantExag = THREE.MathUtils.lerp(framingExag, 1, Math.min(1, away / 0.52));
     if (Math.abs(wantExag - exaggerationRef.current) > 2e-3) {
       exaggerationRef.current = THREE.MathUtils.lerp(exaggerationRef.current, wantExag, k);
       camera.updateProjectionMatrix();
@@ -207,6 +237,20 @@ function CameraRig({ focus, resetToken, exaggerationRef, baseZoom, bounds, cars,
     }
 
     const off = camera.position.clone().sub(controls.target);
+
+    // rubber band: after a few idle seconds the orbit drifts slowly back to the home direction
+    const o = orbit.current;
+    if (!o.dragging && o.idleAt && performance.now() - o.idleAt > IDLE_RETURN_MS) {
+      const home = preset.offset.clone().setLength(off.length());
+      if (home.distanceTo(off) > 0.05) {
+        const slow = 1 - Math.pow(0.35, Math.min(dt, 0.1)); // ~3 s to settle
+        off.lerp(home, slow).setLength(home.length());
+        moving = true;
+      } else {
+        o.idleAt = 0;
+      }
+    }
+
     if (want.current.target.distanceTo(controls.target) > 0.01) {
       controls.target.lerp(want.current.target, k);
       moving = true;
@@ -451,10 +495,8 @@ function SceneContents(props) {
         enableDamping
         dampingFactor={0.08}
         enablePan={false}
-        minAzimuthAngle={-Math.PI / 6}
-        maxAzimuthAngle={Math.PI / 6}
-        minPolarAngle={viewMode === "rail" ? 0 : Math.PI / 2 - 0.5}
-        maxPolarAngle={viewMode === "rail" ? Math.PI / 2 : Math.PI / 2 + 0.12}
+        minPolarAngle={viewMode === "rail" ? 0 : 0.08}
+        maxPolarAngle={viewMode === "rail" ? Math.PI / 2 : Math.PI / 2 + 0.55}
         minZoom={baseZoom * 0.85}
         maxZoom={baseZoom * 12}
         zoomSpeed={0.7}
@@ -694,7 +736,7 @@ export default function TrainViewport({
           </div>
         ) : null}
         <div className="nx-vp-hint">
-          DRAG TO ROTATE &middot; SCROLL TO ZOOM &middot; DOUBLE-CLICK TO RESET
+          DRAG TO ORBIT 360&deg; &middot; SCROLL TO ZOOM &middot; DOUBLE-CLICK TO RESET &middot; RETURNS HOME WHEN IDLE
         </div>
       </div>
     </div>

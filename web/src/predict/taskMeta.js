@@ -17,6 +17,7 @@ export const SYSTEM_ORDER = [...TASK_ORDER, ...INFO_ORDER];
 export const INFO_META = {
   pneumatic: {
     tab: "Brake air supply",
+    thumb: "/overview/view_apu.png",
     title: "Brake air supply research",
     blurb: "Air-compressor condition monitoring using MetroPT-3 and a calibrated fleet simulation.",
     dataset: "MetroPT-3 (Air Compressor)",
@@ -30,6 +31,7 @@ export const INFO_META = {
   },
   bearing: {
     tab: "Axle bearing",
+    thumb: "/overview/view_bogie.png",
     title: "Axle bearing research",
     blurb: "Bearing-condition research using vibration recordings from the Ottawa rolling-element dataset.",
     dataset: "UORED-VAFCLS",
@@ -46,6 +48,7 @@ export const INFO_META = {
 export const TASK_META = {
   door: {
     tab: "Door",
+    thumb: "/overview/view_door.png",
     title: "Door cycle classification",
     blurb: "Identify each door cycle in the motor-current stream and classify it as Normal or Abnormal resistance.",
     input: "one Test.csv stream (datetime, motor current, …)",
@@ -56,6 +59,7 @@ export const TASK_META = {
   },
   acv: {
     tab: "ACV",
+    thumb: "/overview/cab_roof.png",
     title: "Refrigerant-leak car ranking",
     blurb: "Rank the cars in each workbook from most to least likely to have a refrigerant leak.",
     input: "one .xlsx workbook per case",
@@ -66,6 +70,7 @@ export const TASK_META = {
   },
   rail: {
     tab: "Rail corrugation",
+    thumb: "/overview/view_bogie.png",
     title: "Rail corrugation classification",
     blurb: "Classify each run as Normal, Side I, or Side II using the 64 axle-box accelerometers.",
     input: "one .csv per run (speed + 64 boxes × 2 axes); drop the whole folder",
@@ -76,6 +81,7 @@ export const TASK_META = {
   },
   shm: {
     tab: "SHM",
+    thumb: "/overview/cab_underframe.png",
     title: "Fatigue damage prediction",
     blurb: "Estimate cumulative fatigue damage from a dynamic stress record.",
     input: "one headerless single-column .csv per record; drop the whole folder",
@@ -84,6 +90,33 @@ export const TASK_META = {
     multiple: true,
     directory: true,
   },
+};
+
+/** Readable names for the canonical input fields a user may switch off (ColumnToggles.jsx). */
+export const FIELD_LABELS = {
+  // door (door_features.CANONICAL_COLUMNS minus the three required ones)
+  voltage: "Motor voltage",
+  emf: "Back-EMF",
+  open_time: "Open cmd time",
+  close_time: "Close cmd time",
+  open_cmd: "Open command",
+  close_cmd: "Close command",
+  dcsr: "DCSR switch",
+  dcsl: "DCSL switch",
+  dlsr: "DLSR switch",
+  dlsl: "DLSL switch",
+  door_opened: "Door opened",
+  door_locked: "Door locked",
+  is_opening: "Is opening",
+  is_closing: "Is closing",
+  // acv (acv_features.SYNONYMS minus indoor)
+  outdoor: "Outdoor temp",
+  setpoint: "Cooling setpoint",
+  setpoint_heat: "Heating setpoint",
+  running_mode: "Running mode",
+  setting_mode: "Setting mode",
+  valid: "Validity flag",
+  load_halved: "Load halved",
 };
 
 /** Organiser CSV columns per task (`nebulax.ps3.submission.CSV_HEADERS`; order is the contract). */

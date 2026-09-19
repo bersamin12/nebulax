@@ -7,7 +7,7 @@
 import { C, MONO, fmtNum, fmtScore, health as healthOf } from "../lib/format.js";
 import LineChart from "../charts/LineChart.jsx";
 import { defineNumber } from "./numberDefs.js";
-import { COLUMN_LABELS, TASK_META } from "./taskMeta.js";
+import { COLUMN_LABELS, FIELD_LABELS, TASK_META } from "./taskMeta.js";
 
 const CHART_W = 356;
 
@@ -152,6 +152,16 @@ export default function ExplanationPanel({ task, row, explanation, selectedCar =
           <div style={{ fontSize: 10, color: C.dim, marginTop: 2, marginBottom: 8 }}>
             {meta.title || task}
           </div>
+
+          {Array.isArray(explanation?.dropped_fields) && explanation.dropped_fields.length > 0 && (
+            <div className="nx-dropped-note">
+              <strong>SIMULATED MISSING COLUMNS</strong>
+              <span>{explanation.dropped_fields.map((f) => FIELD_LABELS[f] || f).join(", ")} removed before the model ran; the numbers below are what it produced without them.</span>
+              {Array.isArray(explanation.dropped_columns) && explanation.dropped_columns.length === 0 && (
+                <span style={{ color: C.dim }}>(the file did not carry those columns anyway)</span>
+              )}
+            </div>
+          )}
 
           {carRank > 0 && (
             <div className="nx-car-detail">

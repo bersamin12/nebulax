@@ -8,32 +8,27 @@ export default function Extra({  }) {
   return (
     <>
 {/* Additional systems carousel */}
-  <section style={{ flex: "none", padding: "8px 120px 40px", display: "flex", flexDirection: "column", gap: "20px" }}>
-    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-      <div className="eyebrow">Research datasets · outside PS3 scoring</div>
-      <h2 style={{ margin: "0", fontSize: "28px", fontWeight: "600" }}>Additional condition-monitoring datasets</h2>
-      <p style={{ margin: "0", fontSize: "15px", color: "#5b6673", maxWidth: "900px", lineHeight: "1.55" }}>These public datasets support exploratory work on axle bearings and brake-air supply. They are not part of PS3 scoring. In the prediction workspace, each appears as a read-only dataset profile with a short recorded example.</p>
-    </div>
+  <section className="ov-sec" style={{ paddingTop: "4px", paddingBottom: "40px", display: "flex", flexDirection: "column", gap: "20px" }}>
 
     <div style={{ display: "flex", alignItems: "flex-end", gap: "12px" }}>
       <button type="button" className="arrow" onClick={() => setX((x + 1) % 2)} aria-label="Previous system"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></button>
-      <div style={{ flexGrow: "1", display: "flex", gap: "8px" }}>
-        <button type="button" className={"tab" + (x === 0 ? " on" : "")} onClick={() => setX(0)}><span className="mono" style={{ fontSize: "11px", letterSpacing: ".12em", color: "#1a4fa3" }}>05 · BOGIE · AXLE BEARING</span><span style={{ fontSize: "14px", fontWeight: "600" }}>Bearing condition from vibration</span><span className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>UORED-VAFCLS · 0.828 macro F1 · bearing-grouped</span></button>
-        <button type="button" className={"tab" + (x === 1 ? " on" : "")} onClick={() => setX(1)}><span className="mono" style={{ fontSize: "11px", letterSpacing: ".12em", color: "#1a4fa3" }}>06 · BRAKE AIR SUPPLY</span><span style={{ fontSize: "14px", fontWeight: "600" }}>Compressor air-leak detection</span><span className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>MetroPT-3 · 4 / 4 leaks · 0.105 false alarms per day</span></button>
+      <div className="ov-tabs">
+        <button type="button" className={"tab" + (x === 0 ? " on" : "")} onClick={() => setX(0)}><span className="mono" style={{ fontSize: "11px", letterSpacing: ".12em", color: "var(--accent)" }}>05 · BOGIE · AXLE BEARING</span><span style={{ fontSize: "14px", fontWeight: "600" }}>Bearing condition from vibration</span><span className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>UORED-VAFCLS · 0.828 macro F1 · bearing-grouped</span></button>
+        <button type="button" className={"tab" + (x === 1 ? " on" : "")} onClick={() => setX(1)}><span className="mono" style={{ fontSize: "11px", letterSpacing: ".12em", color: "var(--accent)" }}>06 · BRAKE AIR SUPPLY</span><span style={{ fontSize: "14px", fontWeight: "600" }}>Compressor air-leak detection</span><span className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>MetroPT-3 · 4 / 4 leaks · 0.105 false alarms per day</span></button>
       </div>
       <button type="button" className="arrow" onClick={() => setX((x + 1) % 2)} aria-label="Next system"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6"></path></svg></button>
     </div>
 
     {/* page 1 BOGIE */}
     {x === 0 && (<>
-      <div className="card" style={{ padding: "28px 32px 32px", display: "flex", flexDirection: "column", gap: "24px" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "440px 1fr", gap: "32px", alignItems: "start" }}>
+      <div className="card ov-card-lg" style={{ padding: "28px 32px 32px", display: "flex", flexDirection: "column", gap: "24px" }}>
+        <div className="ov-side-l" style={{ display: "grid", gridTemplateColumns: "440px 1fr", gap: "32px", alignItems: "start" }}>
           <div style={{ position: "relative", borderRadius: "6px", overflow: "hidden", background: "#f1f3f5" }}>
             <img src="/overview/view_bogie.png" alt="Close-up render of a bogie with axle boxes under the train model" style={{ width: "100%", height: "300px", objectFit: "cover", display: "block" }} />
             <div className="mono" style={{ position: "absolute", left: "12px", bottom: "10px", fontSize: "11px", background: "rgba(255,255,255,.92)", padding: "4px 8px", borderRadius: "4px" }}>axle boxes 1L to 4R on every bogie</div>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}><span className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>page 1 / 2</span><span className="chip">research benchmark · nebulax/sim/bearing.py</span></div>
+            <div className="ov-row" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}><span></span><span className="chip">research benchmark · nebulax/sim/bearing.py</span></div>
             <h3 style={{ margin: "0", fontSize: "24px", fontWeight: "600", lineHeight: "1.2" }}>Rolling-element bearing condition from axle-box vibration</h3>
             <div className="callout"><span className="mono" style={{ fontSize: "10px", letterSpacing: ".12em", color: "#006d73" }}>SUMMARY</span><br />A developing bearing fault produces characteristic vibration frequencies and additional heat. The research benchmark compares those vibration patterns with healthy recordings from a public laboratory dataset.</div>
             <div className="kv" style={{ gridTemplateColumns: "120px 1fr" }}>
@@ -45,9 +40,9 @@ export default function Extra({  }) {
           </div>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1.15fr 1fr 1fr", gap: "24px", alignItems: "start" }}>
+        <div className="ov-g3" style={{ display: "grid", gridTemplateColumns: "1.15fr 1fr 1fr", gap: "24px", alignItems: "start" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}><div className="eyebrow">Model comparison · macro F1</div><div className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>bearing-grouped 5-fold</div></div>
+            <div className="ov-row" style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}><div className="eyebrow">Model comparison · macro F1</div><div className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>bearing-grouped 5-fold</div></div>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               <div className="bar" style={{ gridTemplateColumns: "190px 1fr 52px" }}><div>logreg on envelope feat.</div><div className="track" style={{ height: "14px" }}><div className="fill sel" style={{ width: "82.8%" }}></div></div><div className="mono" style={{ textAlign: "right" }}>0.828</div></div>
               <div className="bar" style={{ gridTemplateColumns: "190px 1fr 52px" }}><div>LightGBM on envelope feat.</div><div className="track" style={{ height: "14px" }}><div className="fill" style={{ width: "81.5%" }}></div></div><div className="mono" style={{ textAlign: "right" }}>0.815</div></div>
@@ -69,12 +64,11 @@ export default function Extra({  }) {
             <div style={{ background: "#f7f8fa", borderRadius: "6px", padding: "14px 16px", display: "flex", flexDirection: "column", gap: "8px" }}>
               <div className="eyebrow">Limitations</div>
               <div style={{ fontSize: "13px", lineHeight: "1.5" }}>Laboratory proxy: constant load and speed, no temperature channel, and a fabricated timeline. Read the classification numbers as evidence; do not read the synthetic false-alarm clock as field performance.</div>
-              <div style={{ fontSize: "13px", lineHeight: "1.5" }}>Single seed everywhere on the research leaderboard: no interval on it is a confidence interval.</div>
             </div>
             <div style={{ background: "#f7f8fa", borderRadius: "6px", padding: "14px 16px", display: "flex", flexDirection: "column" }}>
               <div className="eyebrow" style={{ marginBottom: "4px" }}>Sources and next data</div>
-              <div className="ref" style={{ fontSize: "11px", gridTemplateColumns: "38px 1fr" }}><span className="mono" style={{ color: "#006d73" }}>R119</span><span>Sehri, Dumond et al., <em>Data in Brief</em> 2023. The UORED-VAFCLS data paper; per-bearing structure is what makes bearing-wise splitting possible.</span></div>
-              <div className="ref" style={{ fontSize: "11px", gridTemplateColumns: "38px 1fr" }}><span className="mono" style={{ color: "#006d73" }}>R115</span><span>Vieira et al., <em>MSSP</em> 2026. Why bearing fault diagnosis must be evaluated with bearing-disjoint splits.</span></div>
+              <div className="ref" style={{ fontSize: "11px", gridTemplateColumns: "38px 1fr" }}><span className="mono" style={{ color: "#006d73" }}>R119</span><span>Sehri, Dumond et al., <em>Data in Brief</em> 2023. The UORED-VAFCLS data paper; per-bearing structure is what makes bearing-wise splitting possible. <a href="https://doi.org/10.1016/j.dib.2023.109327" target="_blank" rel="noreferrer" className="mono" style={{ fontSize: "10px" }}>doi:10.1016/j.dib.2023.109327</a></span></div>
+              <div className="ref" style={{ fontSize: "11px", gridTemplateColumns: "38px 1fr" }}><span className="mono" style={{ color: "#006d73" }}>R115</span><span>Vieira, Bauler, Rosa and Silva, <em>MSSP</em> 258:114640, 2026. Why bearing fault diagnosis must be evaluated with bearing-disjoint splits. <a href="https://doi.org/10.1016/j.ymssp.2026.114640" target="_blank" rel="noreferrer" className="mono" style={{ fontSize: "10px" }}>doi:10.1016/j.ymssp.2026.114640</a></span></div>
               <div className="ref" style={{ borderBottom: "none", fontSize: "11px", gridTemplateColumns: "38px 1fr" }}><span className="mono" style={{ color: "#006d73" }}>R118</span><span>uOttawa variable-speed set with an encoder channel: the planned primary, because a metro axle box never runs at constant speed. CITEF railway axle-box rig (R140) adds graded severity.</span></div>
             </div>
           </div>
@@ -84,14 +78,14 @@ export default function Extra({  }) {
 
     {/* page 2 BRAKE AIR SUPPLY */}
     {x === 1 && (<>
-      <div className="card" style={{ padding: "28px 32px 32px", display: "flex", flexDirection: "column", gap: "24px" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "440px 1fr", gap: "32px", alignItems: "start" }}>
+      <div className="card ov-card-lg" style={{ padding: "28px 32px 32px", display: "flex", flexDirection: "column", gap: "24px" }}>
+        <div className="ov-side-l" style={{ display: "grid", gridTemplateColumns: "440px 1fr", gap: "32px", alignItems: "start" }}>
           <div style={{ position: "relative", borderRadius: "6px", overflow: "hidden", background: "#f1f3f5" }}>
             <img src="/overview/view_apu.png" alt="Close-up render of the air production unit under the train model" style={{ width: "100%", height: "300px", objectFit: "cover", display: "block" }} />
             <div className="mono" style={{ position: "absolute", left: "12px", bottom: "10px", fontSize: "11px", background: "rgba(255,255,255,.92)", padding: "4px 8px", borderRadius: "4px" }}>air production unit beneath Car 3</div>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}><span className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>page 2 / 2</span><span className="chip">research benchmark · nebulax/sim/pneumatic.py</span></div>
+            <div className="ov-row" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}><span></span><span className="chip">research benchmark · nebulax/sim/pneumatic.py</span></div>
             <h3 style={{ margin: "0", fontSize: "24px", fontWeight: "600", lineHeight: "1.2" }}>Compressor air-leak detection from pneumatic telemetry</h3>
             <div className="callout"><span className="mono" style={{ fontSize: "10px", letterSpacing: ".12em", color: "#006d73" }}>SUMMARY</span><br />The compressor supplying the brakes and air springs cycles between 8.06 and 10.2 bar. Air leaks make it run more often and for longer, so the benchmark monitors changes from the normal cycle.</div>
             <div className="kv" style={{ gridTemplateColumns: "120px 1fr" }}>
@@ -103,9 +97,9 @@ export default function Extra({  }) {
           </div>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1.15fr 1fr 1fr", gap: "24px", alignItems: "start" }}>
+        <div className="ov-g3" style={{ display: "grid", gridTemplateColumns: "1.15fr 1fr 1fr", gap: "24px", alignItems: "start" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}><div className="eyebrow">Model comparison · VUS-PR</div><div className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>temporal split · 6 h windows</div></div>
+            <div className="ov-row" style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}><div className="eyebrow">Model comparison · VUS-PR</div><div className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>temporal split · 6 h windows</div></div>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               <div className="bar" style={{ gridTemplateColumns: "190px 1fr 52px" }}><div>k-of-n corroboration</div><div className="track" style={{ height: "14px" }}><div className="fill" style={{ width: "78.3%" }}></div></div><div className="mono" style={{ textAlign: "right" }}>0.783</div></div>
               <div className="bar" style={{ gridTemplateColumns: "190px 1fr 52px" }}><div>conformal threshold</div><div className="track" style={{ height: "14px" }}><div className="fill" style={{ width: "60.3%" }}></div></div><div className="mono" style={{ textAlign: "right" }}>0.603</div></div>
@@ -127,12 +121,11 @@ export default function Extra({  }) {
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             <div style={{ background: "#f7f8fa", borderRadius: "6px", padding: "14px 16px", display: "flex", flexDirection: "column", gap: "8px" }}>
               <div className="eyebrow">Limitations</div>
-              <div style={{ fontSize: "13px", lineHeight: "1.5" }}>Model selection was deferred: the validation slice held no faults to select on, so the default was selected manually and is labelled as such on the leaderboard.</div>
               <div style={{ fontSize: "13px", lineHeight: "1.5" }}>MetroPT-3 has air leaks only, so there is no multi-class pneumatic fault identification from it alone. Recall figures are over 2 to 4 events, one seed.</div>
             </div>
             <div style={{ background: "#f7f8fa", borderRadius: "6px", padding: "14px 16px", display: "flex", flexDirection: "column" }}>
               <div className="eyebrow" style={{ marginBottom: "4px" }}>Sources</div>
-              <div className="ref" style={{ fontSize: "11px", gridTemplateColumns: "38px 1fr" }}><span className="mono" style={{ color: "#006d73" }}>R88</span><span>Davari, Veloso, Ribeiro and Gama. <em>MetroPT-3 Dataset</em>, UCI Machine Learning Repository #791, 2023.</span></div>
+              <div className="ref" style={{ fontSize: "11px", gridTemplateColumns: "38px 1fr" }}><span className="mono" style={{ color: "#006d73" }}>R88</span><span>Davari, Veloso, Ribeiro and Gama. <em>MetroPT-3 Dataset</em>, UCI Machine Learning Repository, dataset 791. <a href="https://doi.org/10.24432/C5VW3R" target="_blank" rel="noreferrer" className="mono" style={{ fontSize: "10px" }}>doi:10.24432/C5VW3R</a></span></div>
               <div className="ref" style={{ fontSize: "11px", gridTemplateColumns: "38px 1fr" }}><span className="mono" style={{ color: "#006d73" }}>R93</span><span>Jakobs, Veloso and Gama, <em>Int. J. Data Science and Analytics</em> 2026. Interpretable rules for online failure prediction on the Metro do Porto sets: the interpretable one-feature-rule baseline that our single-feature threshold row mirrors.</span></div>
               <div className="ref" style={{ borderBottom: "none", fontSize: "11px", gridTemplateColumns: "38px 1fr" }}><span className="mono" style={{ color: "#006d73" }}>R89</span><span>MetroPT-2 (Zenodo 7766691): 7.1 M records with one air leak and one oil leak; source of the oil-leak class and the R93 protocol.</span></div>
             </div>

@@ -1,13 +1,13 @@
 // Tutorial mode for the Digital Twin (predict) page: a guided tour that spotlights one control
 // at a time, greys out everything else and explains what to do there.
 //
-// Targets are DOM nodes tagged `data-tour="<id>"` (TaskColumn, PredictPage). The overlay sits
+// Targets are DOM nodes tagged `data-tour="<id>"` (TaskColumn, FileConfirm, ColumnToggles, PredictPage). The overlay sits
 // inside the scaled 1440x900 console, so every measurement is converted from screen pixels back
 // to console pixels with the console's own scale; it re-measures on resize and while the page
 // loads, so a spotlight follows its control. Keyboard: → / Enter next, ← back, Esc skip.
 //
-// The tour starts by itself on a first visit (localStorage `nx.tour.seen`), from the header's
-// TUTORIAL button, and from the overview page's "Take the 2-minute tour" (`?tour=1`).
+// The tour is opt-in: the header's TUTORIAL button and the overview page's "Take the tour"
+// (`?tour=1`). localStorage `nx.tour.seen` records that it was completed once.
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { C } from "../lib/format.js";
 
@@ -24,12 +24,19 @@ export const TOUR_STEPS = [
   {
     target: "systems",
     title: "Choose a system",
-    body: "The four scored systems run prediction models. Brake air supply and Axle bearing are read-only research datasets. Select a tile to view its description.",
+    body: "The four scored systems run prediction models. Brake air supply and Axle bearing are read-only research datasets. Select a system to open its description; select it again to close it.",
   },
   {
     target: "files",
     title: "Add Test files",
-    body: "Choose files, select a folder, or drag and drop. The app checks the format before adding valid files to the queue.",
+    body: "Choose files, select a folder, or drag and drop. Nothing is queued until you have reviewed it in the next step.",
+  },
+  {
+    // the review dialog only exists while a pick is being confirmed: spotlight it when it is up,
+    // otherwise the "simulate missing columns" strip (Door / ACV), otherwise the file picker
+    target: ["review", "columns", "files"],
+    title: "Review the files",
+    body: "A check dialog lists the columns each file carries against what the model expects and marks it READY or CHECK FORMAT; only matching files join the queue. For Door and ACV you can also switch optional columns off (Simulate missing columns) to see how the model copes without them.",
   },
   {
     target: "run",
@@ -44,7 +51,7 @@ export const TOUR_STEPS = [
   {
     target: "stage",
     title: "Inspect the train view",
-    body: "The selected component is highlighted by status. Drag to rotate, scroll to zoom, or select a component directly.",
+    body: "The selected component is highlighted by status. Drag to orbit all the way round, scroll to zoom, or select a component directly; the view drifts back home after a few idle seconds, and a double-click resets it.",
   },
   {
     target: "explanation",
@@ -58,9 +65,11 @@ export const TOUR_STEPS = [
   },
 ];
 
+/** The spotlight rectangle for `target` (an id, or a list of ids: the first one on screen wins). */
 function measure(target) {
   if (typeof document === "undefined") return null;
-  const el = document.querySelector(`[data-tour="${target}"]`);
+  const ids = Array.isArray(target) ? target : [target];
+  const el = ids.map((id) => document.querySelector(`[data-tour="${id}"]`)).find(Boolean);
   const console_ = el && el.closest(".nx-console");
   if (!el || !console_) return null;
   const cr = console_.getBoundingClientRect();
@@ -151,7 +160,7 @@ export default function Tutorial({ open, startStep = 0, onClose }) {
       window.clearInterval(id);
       window.removeEventListener("resize", update);
     };
-  }, [open, s.target]);
+  }, [open, s]);
 
   useEffect(() => {
     if (!open) return undefined;

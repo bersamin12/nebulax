@@ -40,6 +40,77 @@ body {
   -webkit-font-smoothing: antialiased;
   overflow: hidden;
 }
+/* the overview is an ordinary page: the document scrolls (App.jsx sets data-page) */
+body[data-page="overview"] { overflow: auto; height: auto; background: #ffffff; }
+body[data-page="overview"] #root { height: auto; }
+.nx-page { min-height: 100vh; display: flex; flex-direction: column; background: #ffffff; }
+
+/* ---- header (console: 56 px on the board; fluid: full width, wraps on a phone) ---- */
+.nx-header {
+  height: 56px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 20px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+}
+.nx-header--fluid {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: auto;
+  min-height: 56px;
+  padding: 8px clamp(16px, 4vw, 40px);
+  flex-wrap: wrap;
+}
+.nx-brand { display: flex; align-items: center; gap: 14px; flex: none; min-width: 0; }
+.nx-brand-title { font-size: 13px; font-weight: 700; letter-spacing: 0.13em; white-space: nowrap; }
+.nx-brand-sub { font-size: 9.5px; letter-spacing: 0.16em; color: var(--dim); }
+@media (max-width: 560px) {
+  .nx-header--fluid { gap: 8px 12px; }
+  .nx-header--fluid .nx-brand-title { font-size: 11px; white-space: normal; line-height: 1.3; }
+  .nx-header--fluid .nx-brand-sep, .nx-header--fluid .nx-brand-sub { display: none; }
+  .nx-header--fluid .nx-brand-title > span:last-child { display: block; }
+}
+
+/* ---- small-screen gate in front of the console (App.jsx SmallScreenGate) ---- */
+.nx-gate {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background: #e6eef1;
+}
+.nx-gate-card {
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 28px 24px;
+  background: var(--panel);
+  border: 1px solid var(--line2);
+  border-radius: 8px;
+  color: var(--accent-bright);
+  box-shadow: 0 12px 32px rgba(29, 38, 51, 0.12);
+}
+.nx-gate-card h1 { margin: 0; font-size: 20px; line-height: 1.25; color: var(--text); }
+.nx-gate-card p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--text2); }
+.nx-gate-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+.nx-gate-btn {
+  height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--panel);
+  color: var(--accent-bright);
+  font: 600 13px var(--sans);
+  cursor: pointer;
+}
+.nx-gate-btn--primary { background: var(--accent); color: #ffffff; }
 
 /* ---- fixed console, scaled (never reflowed) ---- */
 .nx-stage {
@@ -292,7 +363,6 @@ a.nx-btn[aria-disabled="true"] { cursor: default; }
 .nx-filter:hover, .nx-inline-link:hover { background: var(--accent-bg); }
 .nx-filter:focus-visible, .nx-inline-link:focus-visible,
 .nx-car-rank:focus-visible, .nx-source-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.nx-system-grid { max-height: 198px; overflow-y: auto; scrollbar-width: thin; }
 .nx-ranked-cars { display: flex; gap: 3px; flex-wrap: wrap; }
 .nx-car-rank {
   border: 1px solid var(--line2);
@@ -418,16 +488,43 @@ a.nx-btn[aria-disabled="true"] { cursor: default; }
 .nx-info-tip strong { display: block; color: var(--text); font-family: var(--mono); font-size: 10.5px; margin-bottom: 2px; }
 .nx-info:hover .nx-info-tip, .nx-info:focus-within .nx-info-tip { display: block; }
 
-/* ---- predict page: compact system tiles + the active system's description ---- */
-.nx-system-tile { border-top: 1px solid var(--line) !important; }
+/* ---- predict page: the systems accordion (TaskColumn.jsx SystemRow) ---- */
+.nx-system-list { display: flex; flex-direction: column; gap: 2px; }
+.nx-system-row { border: 1px solid var(--line); border-left: 3px solid var(--violet); background: var(--panel2); }
+.nx-system-row.is-research { border-left-color: var(--line2); }
+.nx-system-row.is-active { border-color: var(--accent); border-left-color: var(--accent); background: var(--accent-bg); }
+.nx-system-btn {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto 12px;
+  align-items: center;
+  gap: 8px;
+  height: 27px;
+  padding: 0 7px 0 4px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.nx-system-btn:hover { background: rgba(0, 143, 149, 0.06); }
+.nx-system-btn:focus-visible { outline: 1px solid var(--accent-bright); outline-offset: -1px; }
+.nx-system-thumb { width: 34px; height: 20px; overflow: hidden; border-radius: 2px; background: var(--panel3); display: block; }
+.nx-system-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.nx-system-name { font-size: 11px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nx-system-row.is-active .nx-system-name { color: var(--accent-bright); }
+.nx-system-cv { font-size: 8.5px; letter-spacing: 0.04em; white-space: nowrap; }
+.nx-system-chev { color: var(--dim2); transition: transform .15s ease; }
+.nx-system-row.is-active .nx-system-chev { color: var(--accent-bright); }
+.nx-system-row.is-active .nx-system-btn[aria-expanded="true"] .nx-system-chev { transform: rotate(180deg); }
 .nx-system-info {
   display: flex;
   flex-direction: column;
   gap: 3px;
-  padding: 7px 9px;
+  padding: 6px 9px 8px 10px;
   background: var(--panel);
-  border: 1px solid var(--line);
-  border-left: 3px solid var(--accent);
+  border-top: 1px solid var(--line);
 }
 
 /* ---- predict page: the grey guidance line under the predictions table ---- */
@@ -503,3 +600,41 @@ a.nx-btn[aria-disabled="true"] { cursor: default; }
   font-size: 10px;
 }
 .nx-confirm-row:last-child { border-bottom: 0; }
+
+/* ---- simulated missing columns (predict/ColumnToggles.jsx) ---- */
+.nx-coltoggles { display: flex; flex-direction: column; gap: 5px; padding: 7px 9px; background: var(--panel); border: 1px solid var(--line); }
+.nx-coltoggles.is-compact { flex: none; padding: 0 0 4px; gap: 4px; }
+.nx-coltoggles.is-compact .nx-coltoggles-chips { padding: 0 9px; }
+.nx-coltoggles-head { display: flex; align-items: center; gap: 6px; height: 24px; padding: 0 9px; border: 0; background: var(--panel2); color: var(--dim2); font: inherit; cursor: pointer; text-align: left; }
+.nx-coltoggles-head:hover { background: var(--panel3); }
+.nx-coltoggles-head .nx-eyebrow { flex: none; }
+.nx-coltoggles-sum { flex: 1 1 auto; min-width: 0; font-size: 8.5px; letter-spacing: .04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right; }
+.nx-coltoggles.is-compact:not(:has(.nx-coltoggles-chips)) { padding-bottom: 0; }
+.nx-coltoggles-chips { display: flex; flex-wrap: wrap; gap: 3px; }
+.nx-coltoggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 18px;
+  padding: 0 6px 0 5px;
+  border: 1px solid var(--line2);
+  border-radius: 3px;
+  background: var(--panel);
+  color: var(--text2);
+  font: 600 9px var(--sans);
+  letter-spacing: .02em;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.nx-coltoggle:hover { background: var(--accent-bg); border-color: var(--accent); }
+.nx-coltoggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.nx-coltoggle-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ok); flex: none; }
+.nx-coltoggle.is-off { color: var(--warn); border-color: var(--warn); background: #fff7e8; text-decoration: line-through; }
+.nx-coltoggle.is-off .nx-coltoggle-dot { background: var(--warn); }
+.nx-coltoggle.is-absent, .nx-coltoggle[disabled] { opacity: .45; cursor: default; text-decoration: none; }
+.nx-coltoggle.is-absent .nx-coltoggle-dot { background: var(--line2); }
+.nx-coltoggle.is-absent:hover, .nx-coltoggle[disabled]:hover { background: var(--panel); border-color: var(--line2); }
+/* a chip in the file-check dialog that the toggles have switched off */
+.nx-confirm-chip.is-dropped { color: var(--warn); border-color: var(--warn); background: #fff7e8; text-decoration: line-through; }
+.nx-dropped-note { display: flex; flex-direction: column; gap: 2px; padding: 6px 8px; margin-bottom: 8px; border: 1px solid #e8c88a; background: #fff7e8; color: var(--text2); font-size: 10px; line-height: 1.4; }
+.nx-dropped-note strong { color: var(--warn); font-size: 9px; letter-spacing: .12em; }

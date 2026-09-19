@@ -8,45 +8,40 @@ export default function Models({  }) {
   return (
     <>
 {/* MODELS carousel */}
-  <section style={{ flex: "none", padding: "24px 120px 40px", display: "flex", flexDirection: "column", gap: "20px" }}>
-    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-      <div className="eyebrow">Prediction models</div>
-      <h2 style={{ margin: "0", fontSize: "28px", fontWeight: "600" }}>One model for each scored system</h2>
-      <p style={{ margin: "0", fontSize: "15px", color: "#5b6673", maxWidth: "900px", lineHeight: "1.55" }}>Each tab summarises the model input, decision method, validation result, and supporting research. All four models are under 1 MB and run locally on a laptop; larger alternatives are compared in the ablation section.</p>
-    </div>
+  <section className="ov-sec" style={{ paddingTop: "4px", paddingBottom: "40px", display: "flex", flexDirection: "column", gap: "20px" }}>
 
     <div style={{ display: "flex", alignItems: "flex-end", gap: "12px" }}>
       <button type="button" className="arrow" onClick={() => setM((m + 3) % 4)} aria-label="Previous model"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></button>
-      <div style={{ flexGrow: "1", display: "flex", gap: "8px" }}>
-        <button type="button" className={"tab" + (m === 0 ? " on" : "")} onClick={() => setM(0)}><span className="mono" style={{ fontSize: "11px", letterSpacing: ".12em", color: "#1a4fa3" }}>01 · DOOR</span><span style={{ fontSize: "14px", fontWeight: "600" }}>Segment + classify cycles</span><span className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>0.9818 IoU-F1 · logistic</span></button>
-        <button type="button" className={"tab" + (m === 1 ? " on" : "")} onClick={() => setM(1)}><span className="mono" style={{ fontSize: "11px", letterSpacing: ".12em", color: "#1a4fa3" }}>02 · ACV</span><span style={{ fontSize: "14px", fontWeight: "600" }}>Rank the leaking car</span><span className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>0.9792 rank decay · fixed rule</span></button>
-        <button type="button" className={"tab" + (m === 2 ? " on" : "")} onClick={() => setM(2)}><span className="mono" style={{ fontSize: "11px", letterSpacing: ".12em", color: "#1a4fa3" }}>03 · RAIL</span><span style={{ fontSize: "14px", fontWeight: "600" }}>Normal / Side I / Side II</span><span className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>0.8051 macro F1 · LightGBM × 3</span></button>
-        <button type="button" className={"tab" + (m === 3 ? " on" : "")} onClick={() => setM(3)}><span className="mono" style={{ fontSize: "11px", letterSpacing: ".12em", color: "#1a4fa3" }}>04 · SHM</span><span style={{ fontSize: "14px", fontWeight: "600" }}>Fatigue-damage regression</span><span className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>0.9813 (1 − MAPE) · sparse linear</span></button>
+      <div className="ov-tabs">
+        <button type="button" className={"tab" + (m === 0 ? " on" : "")} onClick={() => setM(0)}><span className="mono" style={{ fontSize: "11px", letterSpacing: ".12em", color: "var(--accent)" }}>01 · DOOR</span><span style={{ fontSize: "14px", fontWeight: "600" }}>Segment + classify cycles</span><span className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>0.9818 IoU-F1 · logistic</span></button>
+        <button type="button" className={"tab" + (m === 1 ? " on" : "")} onClick={() => setM(1)}><span className="mono" style={{ fontSize: "11px", letterSpacing: ".12em", color: "var(--accent)" }}>02 · ACV</span><span style={{ fontSize: "14px", fontWeight: "600" }}>Rank the leaking car</span><span className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>0.9792 rank decay · fixed rule</span></button>
+        <button type="button" className={"tab" + (m === 2 ? " on" : "")} onClick={() => setM(2)}><span className="mono" style={{ fontSize: "11px", letterSpacing: ".12em", color: "var(--accent)" }}>03 · RAIL</span><span style={{ fontSize: "14px", fontWeight: "600" }}>Normal / Side I / Side II</span><span className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>0.8051 macro F1 · LightGBM × 3</span></button>
+        <button type="button" className={"tab" + (m === 3 ? " on" : "")} onClick={() => setM(3)}><span className="mono" style={{ fontSize: "11px", letterSpacing: ".12em", color: "var(--accent)" }}>04 · SHM</span><span style={{ fontSize: "14px", fontWeight: "600" }}>Fatigue-damage regression</span><span className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>0.9813 (1 − MAPE) · sparse linear</span></button>
       </div>
       <button type="button" className="arrow" onClick={() => setM((m + 1) % 4)} aria-label="Next model"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6"></path></svg></button>
     </div>
 
     {/* page 1 DOOR */}
     {m === 0 && (<>
-      <div className="card" style={{ padding: "28px 32px 32px", display: "flex", flexDirection: "column", gap: "18px" }}>
+      <div className="card ov-card-lg" style={{ padding: "28px 32px 32px", display: "flex", flexDirection: "column", gap: "18px" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}><span className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>page 1 / 4</span><span className="chip">0.9818 IoU-F1 · logistic regression · models/ps3/door.pkl</span></div>
+          <div className="ov-row" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}><span></span><span className="chip">0.9818 IoU-F1 · logistic regression · models/ps3/door.pkl</span></div>
           <h3 style={{ margin: "0", fontSize: "24px", fontWeight: "600", lineHeight: "1.2" }}>Door segmentation + resistance classification</h3>
         </div>
-        <div style={{ border: "1px solid #dfe3e7", borderRadius: "6px", padding: "16px 20px 10px", display: "flex", flexDirection: "column", gap: "6px", background: "#ffffff" }}>
+        <div className="ov-diagram-box" style={{ border: "1px solid #dfe3e7", borderRadius: "6px", padding: "16px 20px 10px", display: "flex", flexDirection: "column", gap: "6px", background: "#ffffff" }}>
           <div className="eyebrow">Model diagram · linear classifier, one per direction</div>
-          <svg width="1094" height="210" viewBox="0 0 1094 210" style={{ width: "100%", height: "auto", display: "block" }} aria-hidden="true">
+          <svg className="ov-diagram" width="1094" height="210" viewBox="0 0 1094 210" style={{ width: "100%", height: "auto", display: "block" }} aria-hidden="true">
               <g fontFamily="IBM Plex Mono, monospace" fontSize="12" fill="#5b6673"><text x="20" y="44">i_cruise_rel</text><text x="20" y="68">i_peak_rel</text><text x="20" y="92">profile_dist</text><text x="20" y="116">emf_resid</text><text x="20" y="140">dur_ratio</text><text x="20" y="164">… 24 features</text></g>
               <g stroke="#b8c4cc" strokeWidth="1"><line x1="130" y1="40" x2="258" y2="100"></line><line x1="130" y1="64" x2="258" y2="100"></line><line x1="130" y1="88" x2="258" y2="100"></line><line x1="130" y1="112" x2="258" y2="100"></line><line x1="130" y1="136" x2="258" y2="100"></line><line x1="130" y1="160" x2="258" y2="100"></line></g>
-              <g fontFamily="IBM Plex Mono, monospace" fontSize="11" fill="#1a4fa3"><text x="180" y="58">w₁</text><text x="180" y="78">w₂</text><text x="180" y="96">w₃</text><text x="180" y="122">w₄</text><text x="180" y="142">w₅</text></g>
-              <circle cx="300" cy="100" r="42" fill="#ffffff" stroke="#1a4fa3" strokeWidth="1.5"></circle>
+              <g fontFamily="IBM Plex Mono, monospace" fontSize="11" fill="var(--accent)"><text x="180" y="58">w₁</text><text x="180" y="78">w₂</text><text x="180" y="96">w₃</text><text x="180" y="122">w₄</text><text x="180" y="142">w₅</text></g>
+              <circle cx="300" cy="100" r="42" fill="#ffffff" stroke="var(--accent)" strokeWidth="1.5"></circle>
               <text x="300" y="105" fontFamily="IBM Plex Mono, monospace" fontSize="12" fill="#1d2633" textAnchor="middle">Σ w·x + b</text>
-              <path d="M346 100h36" stroke="#1a4fa3" strokeWidth="2"></path><path d="M374 94l8 6-8 6" fill="none" stroke="#1a4fa3" strokeWidth="2"></path>
-              <circle cx="424" cy="100" r="34" fill="#ffffff" stroke="#1a4fa3" strokeWidth="1.5"></circle>
+              <path d="M346 100h36" stroke="var(--accent)" strokeWidth="2"></path><path d="M374 94l8 6-8 6" fill="none" stroke="var(--accent)" strokeWidth="2"></path>
+              <circle cx="424" cy="100" r="34" fill="#ffffff" stroke="var(--accent)" strokeWidth="1.5"></circle>
               <path d="M402 118 C 418 118, 418 82, 446 82" fill="none" stroke="#1d2633" strokeWidth="1.5"></path>
               <text x="424" y="154" fontFamily="IBM Plex Mono, monospace" fontSize="12" fill="#5b6673" textAnchor="middle">sigmoid → p</text>
-              <path d="M462 100h44" stroke="#1a4fa3" strokeWidth="2"></path><path d="M498 94l8 6-8 6" fill="none" stroke="#1a4fa3" strokeWidth="2"></path>
-              <rect x="514" y="76" width="120" height="48" rx="6" fill="#ffffff" stroke="#1a4fa3" strokeWidth="1.5"></rect>
+              <path d="M462 100h44" stroke="var(--accent)" strokeWidth="2"></path><path d="M498 94l8 6-8 6" fill="none" stroke="var(--accent)" strokeWidth="2"></path>
+              <rect x="514" y="76" width="120" height="48" rx="6" fill="#ffffff" stroke="var(--accent)" strokeWidth="1.5"></rect>
               <text x="574" y="105" fontFamily="IBM Plex Mono, monospace" fontSize="14" fill="#1d2633" textAnchor="middle">p ≥ τ ?</text>
               <path d="M634 88 L 690 58" stroke="#8a97a3"></path><path d="M634 112 L 690 142" stroke="#8a97a3"></path>
               <text x="650" y="64" fontFamily="IBM Plex Mono, monospace" fontSize="11" fill="#5b6673">no</text><text x="650" y="142" fontFamily="IBM Plex Mono, monospace" fontSize="11" fill="#5b6673">yes</text>
@@ -57,7 +52,7 @@ export default function Models({  }) {
               <text x="20" y="198" fontFamily="IBM Plex Sans, sans-serif" fontSize="12" fill="#5b6673">Before this step the raw stream is cut into single open or close movements; each movement becomes one feature row.</text>
             </svg>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "32px", alignItems: "start" }}>
+        <div className="ov-side" style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "32px", alignItems: "start" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
             <div className="callout"><span className="mono" style={{ fontSize: "10px", letterSpacing: ".12em", color: "#006d73" }}>SUMMARY</span><br />A door that is harder to move draws more current in the middle of its travel. The 50 Hz stream is divided into individual opening and closing movements, then compared with a normal door.</div>
             <div className="kv">
@@ -81,7 +76,7 @@ export default function Models({  }) {
             <div className="ref" style={{ fontSize: "11px", gridTemplateColumns: "38px 1fr" }}><span className="mono" style={{ color: "#006d73" }}>R66</span><span>Shiao et al., <em>Sensors</em> 2026. Wavelet-based health monitoring of door actuation from motor current: source of the two coarse wavelet-band features.</span></div>
             <div className="ref" style={{ fontSize: "11px", gridTemplateColumns: "38px 1fr" }}><span className="mono" style={{ color: "#006d73" }}>R67</span><span>Shiao et al., <em>Applied Sciences</em> 2025. Motor-current analysis for door obstacles: why middle-travel current, not the start peak, separates resistance from obstruction.</span></div>
             <div className="ref" style={{ fontSize: "11px", gridTemplateColumns: "38px 1fr" }}><span className="mono" style={{ color: "#006d73" }}>R68</span><span>Song et al., <em>Scientific Reports</em> 2026. Stacking ensemble for subway door fault prediction: reproduced as the RF + XGB + calibrated logistic ladder row (0.9909).</span></div>
-            <div className="ref" style={{ borderBottom: "none", fontSize: "11px", gridTemplateColumns: "38px 1fr" }}><span className="mono" style={{ color: "#006d73" }}>R43</span><span>Middlehurst et al., <em>DMKD</em> 2024, bake-off redux. Chose the raw-series comparison rows: MultiRocket (R47), QUANT (R49) and LITETime (R53).</span></div>
+            <div className="ref" style={{ borderBottom: "none", fontSize: "11px", gridTemplateColumns: "38px 1fr" }}><span className="mono" style={{ color: "#006d73" }}>R43</span><span>Middlehurst et al., <em>DMKD</em> 2024, bake-off redux. Chose the raw-series comparison rows: MultiRocket (R47), QUANT (R49, <a href="https://doi.org/10.1007/s10618-024-01036-9" target="_blank" rel="noreferrer" className="mono" style={{ fontSize: "10px" }}>doi:10.1007/s10618-024-01036-9</a>) and LITETime (R53, <a href="https://doi.org/10.1109/DSAA60987.2023.10302569" target="_blank" rel="noreferrer" className="mono" style={{ fontSize: "10px" }}>doi:10.1109/DSAA60987.2023.10302569</a>).</span></div>
           </div>
         </div>
       </div>
@@ -89,14 +84,14 @@ export default function Models({  }) {
 
     {/* page 2 ACV */}
     {m === 1 && (<>
-      <div className="card" style={{ padding: "28px 32px 32px", display: "flex", flexDirection: "column", gap: "18px" }}>
+      <div className="card ov-card-lg" style={{ padding: "28px 32px 32px", display: "flex", flexDirection: "column", gap: "18px" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}><span className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>page 2 / 4</span><span className="chip">0.9792 rank decay · fixed rule · models/ps3/acv.json</span></div>
+          <div className="ov-row" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}><span></span><span className="chip">0.9792 rank decay · fixed rule · models/ps3/acv.json</span></div>
           <h3 style={{ margin: "0", fontSize: "24px", fontWeight: "600", lineHeight: "1.2" }}>Refrigerant-leak car ranking</h3>
         </div>
-        <div style={{ border: "1px solid #dfe3e7", borderRadius: "6px", padding: "16px 20px 10px", display: "flex", flexDirection: "column", gap: "6px", background: "#ffffff" }}>
+        <div className="ov-diagram-box" style={{ border: "1px solid #dfe3e7", borderRadius: "6px", padding: "16px 20px 10px", display: "flex", flexDirection: "column", gap: "6px", background: "#ffffff" }}>
           <div className="eyebrow">Model diagram · peer-residual rule, zero learned parameters</div>
-          <svg width="1094" height="210" viewBox="0 0 1094 210" style={{ width: "100%", height: "auto", display: "block" }} aria-hidden="true">
+          <svg className="ov-diagram" width="1094" height="210" viewBox="0 0 1094 210" style={{ width: "100%", height: "auto", display: "block" }} aria-hidden="true">
               <g fontFamily="IBM Plex Mono, monospace" fontSize="10" fill="#5b6673" textAnchor="middle"><text x="49" y="16">01</text><text x="117" y="16">02</text><text x="185" y="16">03</text><text x="253" y="16">04</text><text x="321" y="16">05</text><text x="389" y="16">06</text><text x="457" y="16">07</text><text x="525" y="16">08</text></g>
               <g fontFamily="IBM Plex Mono, monospace" fontSize="13" textAnchor="middle">
                 <rect x="20" y="24" width="58" height="40" rx="4" fill="#ffffff" stroke="#8a97a3"></rect><text x="49" y="49" fill="#1d2633">27.4</text>
@@ -110,23 +105,23 @@ export default function Models({  }) {
               </g>
               <text x="287" y="84" fontFamily="IBM Plex Sans, sans-serif" fontSize="12" fill="#5b6673" textAnchor="middle">indoor °C for cars 01 to 08 at one hot, cooling-mode timestamp</text>
               <g fontFamily="IBM Plex Sans, sans-serif" fontSize="12" fill="#5b6673"><text x="610" y="36">usable rows = finite T, valid flag, cooling mode</text><text x="610" y="56">hot rows = outdoor T ≥ the case median</text><text x="610" y="76">fewer than 30 usable or 15 hot rows: car sorts last</text></g>
-              <path d="M287 90v22" stroke="#1a4fa3" strokeWidth="2"></path><path d="M280 106l7 7 7-7" fill="none" stroke="#1a4fa3" strokeWidth="2"></path>
-              <rect x="140" y="118" width="294" height="44" rx="6" fill="#ffffff" stroke="#1a4fa3" strokeWidth="1.5"></rect>
+              <path d="M287 90v22" stroke="var(--accent)" strokeWidth="2"></path><path d="M280 106l7 7 7-7" fill="none" stroke="var(--accent)" strokeWidth="2"></path>
+              <rect x="140" y="118" width="294" height="44" rx="6" fill="#ffffff" stroke="var(--accent)" strokeWidth="1.5"></rect>
               <text x="287" y="145" fontFamily="IBM Plex Mono, monospace" fontSize="14" fill="#1d2633" textAnchor="middle">Δᵢ = Tᵢ − median(peers)</text>
-              <path d="M440 140h44" stroke="#1a4fa3" strokeWidth="2"></path><path d="M476 134l8 6-8 6" fill="none" stroke="#1a4fa3" strokeWidth="2"></path>
-              <rect x="490" y="118" width="200" height="44" rx="6" fill="#ffffff" stroke="#1a4fa3" strokeWidth="1.5"></rect>
+              <path d="M440 140h44" stroke="var(--accent)" strokeWidth="2"></path><path d="M476 134l8 6-8 6" fill="none" stroke="var(--accent)" strokeWidth="2"></path>
+              <rect x="490" y="118" width="200" height="44" rx="6" fill="#ffffff" stroke="var(--accent)" strokeWidth="1.5"></rect>
               <text x="590" y="145" fontFamily="IBM Plex Mono, monospace" fontSize="13" fill="#1d2633" textAnchor="middle">mean over hot rows</text>
-              <path d="M696 140h44" stroke="#1a4fa3" strokeWidth="2"></path><path d="M732 134l8 6-8 6" fill="none" stroke="#1a4fa3" strokeWidth="2"></path>
-              <rect x="746" y="110" width="170" height="60" rx="6" fill="#ffffff" stroke="#1a4fa3" strokeWidth="1.5"></rect>
+              <path d="M696 140h44" stroke="var(--accent)" strokeWidth="2"></path><path d="M732 134l8 6-8 6" fill="none" stroke="var(--accent)" strokeWidth="2"></path>
+              <rect x="746" y="110" width="170" height="60" rx="6" fill="#ffffff" stroke="var(--accent)" strokeWidth="1.5"></rect>
               <text x="831" y="134" fontFamily="IBM Plex Mono, monospace" fontSize="12" fill="#5b6673" textAnchor="middle">sort descending</text>
               <text x="831" y="156" fontFamily="IBM Plex Mono, monospace" fontSize="13" fill="#c43d36" textAnchor="middle">03 | 04 | 01 | …</text>
-              <path d="M922 140h44" stroke="#1a4fa3" strokeWidth="2"></path><path d="M958 134l8 6-8 6" fill="none" stroke="#1a4fa3" strokeWidth="2"></path>
-              <rect x="972" y="118" width="104" height="44" rx="22" fill="#e8eef9" stroke="#1a4fa3" strokeWidth="1.5"></rect>
-              <text x="1024" y="145" fontFamily="IBM Plex Mono, monospace" fontSize="13" fill="#1a4fa3" textAnchor="middle">ranking</text>
+              <path d="M922 140h44" stroke="var(--accent)" strokeWidth="2"></path><path d="M958 134l8 6-8 6" fill="none" stroke="var(--accent)" strokeWidth="2"></path>
+              <rect x="972" y="118" width="104" height="44" rx="22" fill="var(--accent-bg)" stroke="var(--accent)" strokeWidth="1.5"></rect>
+              <text x="1024" y="145" fontFamily="IBM Plex Mono, monospace" fontSize="13" fill="var(--accent)" textAnchor="middle">ranking</text>
               <text x="20" y="198" fontFamily="IBM Plex Sans, sans-serif" fontSize="12" fill="#5b6673">Ties: indoor minus cooling setpoint, then car ID. Zero learned parameters: the rule was fixed before any case was scored.</text>
             </svg>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "32px", alignItems: "start" }}>
+        <div className="ov-side" style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "32px", alignItems: "start" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
             <div className="callout"><span className="mono" style={{ fontSize: "10px", letterSpacing: ".12em", color: "#006d73" }}>SUMMARY</span><br />In warm weather, while the air-conditioning is cooling, a leaking car tends to stay warmer than the other cars on the same train. Comparing cars reduces the effect of shared weather conditions.</div>
             <div className="kv">
@@ -156,44 +151,44 @@ export default function Models({  }) {
 
     {/* page 3 RAIL */}
     {m === 2 && (<>
-      <div className="card" style={{ padding: "28px 32px 32px", display: "flex", flexDirection: "column", gap: "18px" }}>
+      <div className="card ov-card-lg" style={{ padding: "28px 32px 32px", display: "flex", flexDirection: "column", gap: "18px" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}><span className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>page 3 / 4</span><span className="chip">0.8051 macro F1 · LightGBM × 3 · models/ps3/rail.pkl</span></div>
+          <div className="ov-row" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}><span></span><span className="chip">0.8051 macro F1 · LightGBM × 3 · models/ps3/rail.pkl</span></div>
           <h3 style={{ margin: "0", fontSize: "24px", fontWeight: "600", lineHeight: "1.2" }}>Normal / Side I / Side II from 64 axle-box accelerometers</h3>
         </div>
-        <div style={{ border: "1px solid #dfe3e7", borderRadius: "6px", padding: "16px 20px 10px", display: "flex", flexDirection: "column", gap: "6px", background: "#ffffff" }}>
+        <div className="ov-diagram-box" style={{ border: "1px solid #dfe3e7", borderRadius: "6px", padding: "16px 20px 10px", display: "flex", flexDirection: "column", gap: "6px", background: "#ffffff" }}>
           <div className="eyebrow">Model diagram · gradient-boosted tree ensemble with mirror averaging</div>
-          <svg width="1094" height="232" viewBox="0 0 1094 232" style={{ width: "100%", height: "auto", display: "block" }} aria-hidden="true">
+          <svg className="ov-diagram" width="1094" height="232" viewBox="0 0 1094 232" style={{ width: "100%", height: "auto", display: "block" }} aria-hidden="true">
               <rect x="20" y="40" width="140" height="56" rx="6" fill="#ffffff" stroke="#8a97a3"></rect>
               <text x="90" y="62" fontFamily="IBM Plex Mono, monospace" fontSize="12" fill="#5b6673" textAnchor="middle">one file</text><text x="90" y="82" fontFamily="IBM Plex Mono, monospace" fontSize="13" fill="#1d2633" textAnchor="middle">201 features</text>
               <rect x="20" y="140" width="140" height="56" rx="6" fill="#ffffff" stroke="#8a97a3" strokeDasharray="4 3"></rect>
               <text x="90" y="162" fontFamily="IBM Plex Mono, monospace" fontSize="12" fill="#5b6673" textAnchor="middle">mirrored file</text><text x="90" y="182" fontFamily="IBM Plex Mono, monospace" fontSize="13" fill="#1d2633" textAnchor="middle">L ↔ R swapped</text>
-              <path d="M164 68h40" stroke="#1a4fa3" strokeWidth="2"></path><path d="M196 62l8 6-8 6" fill="none" stroke="#1a4fa3" strokeWidth="2"></path>
-              <path d="M164 168h40" stroke="#1a4fa3" strokeWidth="2"></path><path d="M196 162l8 6-8 6" fill="none" stroke="#1a4fa3" strokeWidth="2"></path>
-              <g stroke="#1a4fa3" strokeWidth="1.2" fill="#ffffff">
+              <path d="M164 68h40" stroke="var(--accent)" strokeWidth="2"></path><path d="M196 62l8 6-8 6" fill="none" stroke="var(--accent)" strokeWidth="2"></path>
+              <path d="M164 168h40" stroke="var(--accent)" strokeWidth="2"></path><path d="M196 162l8 6-8 6" fill="none" stroke="var(--accent)" strokeWidth="2"></path>
+              <g stroke="var(--accent)" strokeWidth="1.2" fill="#ffffff">
                 <g transform="translate(212,26) scale(1.7)"><circle cx="20" cy="6" r="5"></circle><line x1="20" y1="11" x2="9" y2="22"></line><line x1="20" y1="11" x2="31" y2="22"></line><circle cx="9" cy="26" r="4"></circle><circle cx="31" cy="26" r="4"></circle><line x1="9" y1="30" x2="3" y2="40"></line><line x1="9" y1="30" x2="15" y2="40"></line><line x1="31" y1="30" x2="25" y2="40"></line><line x1="31" y1="30" x2="37" y2="40"></line></g>
                 <g transform="translate(302,26) scale(1.7)"><circle cx="20" cy="6" r="5"></circle><line x1="20" y1="11" x2="9" y2="22"></line><line x1="20" y1="11" x2="31" y2="22"></line><circle cx="9" cy="26" r="4"></circle><circle cx="31" cy="26" r="4"></circle><line x1="9" y1="30" x2="3" y2="40"></line><line x1="9" y1="30" x2="15" y2="40"></line><line x1="31" y1="30" x2="25" y2="40"></line><line x1="31" y1="30" x2="37" y2="40"></line></g>
                 <g transform="translate(392,26) scale(1.7)"><circle cx="20" cy="6" r="5"></circle><line x1="20" y1="11" x2="9" y2="22"></line><line x1="20" y1="11" x2="31" y2="22"></line><circle cx="9" cy="26" r="4"></circle><circle cx="31" cy="26" r="4"></circle><line x1="9" y1="30" x2="3" y2="40"></line><line x1="9" y1="30" x2="15" y2="40"></line><line x1="31" y1="30" x2="25" y2="40"></line><line x1="31" y1="30" x2="37" y2="40"></line></g>
               </g>
               <text x="336" y="114" fontFamily="IBM Plex Mono, monospace" fontSize="12" fill="#5b6673" textAnchor="middle">3 balanced LightGBM, seeds 0 / 1 / 2, hundreds of trees each</text>
-              <g stroke="#1a4fa3" strokeWidth="1.2" fill="#ffffff" opacity="0.5">
+              <g stroke="var(--accent)" strokeWidth="1.2" fill="#ffffff" opacity="0.5">
                 <g transform="translate(212,126) scale(1.7)"><circle cx="20" cy="6" r="5"></circle><line x1="20" y1="11" x2="9" y2="22"></line><line x1="20" y1="11" x2="31" y2="22"></line><circle cx="9" cy="26" r="4"></circle><circle cx="31" cy="26" r="4"></circle><line x1="9" y1="30" x2="3" y2="40"></line><line x1="9" y1="30" x2="15" y2="40"></line><line x1="31" y1="30" x2="25" y2="40"></line><line x1="31" y1="30" x2="37" y2="40"></line></g>
                 <g transform="translate(302,126) scale(1.7)"><circle cx="20" cy="6" r="5"></circle><line x1="20" y1="11" x2="9" y2="22"></line><line x1="20" y1="11" x2="31" y2="22"></line><circle cx="9" cy="26" r="4"></circle><circle cx="31" cy="26" r="4"></circle><line x1="9" y1="30" x2="3" y2="40"></line><line x1="9" y1="30" x2="15" y2="40"></line><line x1="31" y1="30" x2="25" y2="40"></line><line x1="31" y1="30" x2="37" y2="40"></line></g>
                 <g transform="translate(392,126) scale(1.7)"><circle cx="20" cy="6" r="5"></circle><line x1="20" y1="11" x2="9" y2="22"></line><line x1="20" y1="11" x2="31" y2="22"></line><circle cx="9" cy="26" r="4"></circle><circle cx="31" cy="26" r="4"></circle><line x1="9" y1="30" x2="3" y2="40"></line><line x1="9" y1="30" x2="15" y2="40"></line><line x1="31" y1="30" x2="25" y2="40"></line><line x1="31" y1="30" x2="37" y2="40"></line></g>
               </g>
               <text x="336" y="222" fontFamily="IBM Plex Mono, monospace" fontSize="12" fill="#5b6673" textAnchor="middle">same trees on the mirrored file, then Side I / II swapped back</text>
               <path d="M474 68 L 588 108" stroke="#8a97a3"></path><path d="M474 168 L 588 128" stroke="#8a97a3"></path>
-              <circle cx="620" cy="118" r="30" fill="#ffffff" stroke="#1a4fa3" strokeWidth="1.5"></circle>
+              <circle cx="620" cy="118" r="30" fill="#ffffff" stroke="var(--accent)" strokeWidth="1.5"></circle>
               <text x="620" y="123" fontFamily="IBM Plex Mono, monospace" fontSize="13" fill="#1d2633" textAnchor="middle">avg</text>
-              <path d="M654 118h40" stroke="#1a4fa3" strokeWidth="2"></path><path d="M686 112l8 6-8 6" fill="none" stroke="#1a4fa3" strokeWidth="2"></path>
-              <rect x="700" y="90" width="160" height="56" rx="6" fill="#ffffff" stroke="#1a4fa3" strokeWidth="1.5"></rect>
+              <path d="M654 118h40" stroke="var(--accent)" strokeWidth="2"></path><path d="M686 112l8 6-8 6" fill="none" stroke="var(--accent)" strokeWidth="2"></path>
+              <rect x="700" y="90" width="160" height="56" rx="6" fill="#ffffff" stroke="var(--accent)" strokeWidth="1.5"></rect>
               <text x="780" y="112" fontFamily="IBM Plex Mono, monospace" fontSize="12" fill="#5b6673" textAnchor="middle">class prior</text><text x="780" y="132" fontFamily="IBM Plex Mono, monospace" fontSize="13" fill="#1d2633" textAnchor="middle">Side II × 1.25</text>
-              <path d="M864 118h40" stroke="#1a4fa3" strokeWidth="2"></path><path d="M896 112l8 6-8 6" fill="none" stroke="#1a4fa3" strokeWidth="2"></path>
+              <path d="M864 118h40" stroke="var(--accent)" strokeWidth="2"></path><path d="M896 112l8 6-8 6" fill="none" stroke="var(--accent)" strokeWidth="2"></path>
               <rect x="910" y="90" width="170" height="56" rx="6" fill="#ffffff" stroke="#a66500" strokeWidth="1.5"></rect>
               <text x="995" y="112" fontFamily="IBM Plex Mono, monospace" fontSize="12" fill="#1d2633" textAnchor="middle">argmax</text><text x="995" y="132" fontFamily="IBM Plex Mono, monospace" fontSize="12" fill="#a66500" textAnchor="middle">speed &lt; 20 → Normal</text>
             </svg>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "32px", alignItems: "start" }}>
+        <div className="ov-side" style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "32px", alignItems: "start" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
             <div className="callout"><span className="mono" style={{ fontSize: "10px", letterSpacing: ".12em", color: "#006d73" }}>SUMMARY</span><br />Rail corrugation produces a repeated vibration across the axle boxes on one side of the train, while an isolated impact affects fewer boxes. The model compares vibration coherence and level on each side.</div>
             <div className="kv">
@@ -225,37 +220,37 @@ export default function Models({  }) {
 
     {/* page 4 SHM */}
     {m === 3 && (<>
-      <div className="card" style={{ padding: "28px 32px 32px", display: "flex", flexDirection: "column", gap: "18px" }}>
+      <div className="card ov-card-lg" style={{ padding: "28px 32px 32px", display: "flex", flexDirection: "column", gap: "18px" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}><span className="mono" style={{ fontSize: "11px", color: "#5b6673" }}>page 4 / 4</span><span className="chip">0.9813 (1 − MAPE) · sparse linear · models/ps3/shm.pkl</span></div>
+          <div className="ov-row" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}><span></span><span className="chip">0.9813 (1 − MAPE) · sparse linear · models/ps3/shm.pkl</span></div>
           <h3 style={{ margin: "0", fontSize: "24px", fontWeight: "600", lineHeight: "1.2" }}>Cumulative fatigue-damage regression</h3>
         </div>
-        <div style={{ border: "1px solid #dfe3e7", borderRadius: "6px", padding: "16px 20px 10px", display: "flex", flexDirection: "column", gap: "6px", background: "#ffffff" }}>
+        <div className="ov-diagram-box" style={{ border: "1px solid #dfe3e7", borderRadius: "6px", padding: "16px 20px 10px", display: "flex", flexDirection: "column", gap: "6px", background: "#ffffff" }}>
           <div className="eyebrow">Model diagram · Lasso in log space, blended with a physics estimate</div>
-          <svg width="1094" height="232" viewBox="0 0 1094 232" style={{ width: "100%", height: "auto", display: "block" }} aria-hidden="true">
+          <svg className="ov-diagram" width="1094" height="232" viewBox="0 0 1094 232" style={{ width: "100%", height: "auto", display: "block" }} aria-hidden="true">
               <rect x="20" y="66" width="140" height="56" rx="6" fill="#ffffff" stroke="#8a97a3"></rect>
               <text x="90" y="88" fontFamily="IBM Plex Mono, monospace" fontSize="12" fill="#5b6673" textAnchor="middle">109 features</text><text x="90" y="108" fontFamily="IBM Plex Mono, monospace" fontSize="13" fill="#1d2633" textAnchor="middle">log + scale</text>
-              <path d="M164 94h40" stroke="#1a4fa3" strokeWidth="2"></path><path d="M196 88l8 6-8 6" fill="none" stroke="#1a4fa3" strokeWidth="2"></path>
-              <rect x="210" y="20" width="320" height="146" rx="6" fill="#ffffff" stroke="#1a4fa3" strokeWidth="1.5"></rect>
+              <path d="M164 94h40" stroke="var(--accent)" strokeWidth="2"></path><path d="M196 88l8 6-8 6" fill="none" stroke="var(--accent)" strokeWidth="2"></path>
+              <rect x="210" y="20" width="320" height="146" rx="6" fill="#ffffff" stroke="var(--accent)" strokeWidth="1.5"></rect>
               <text x="370" y="42" fontFamily="IBM Plex Mono, monospace" fontSize="12" fill="#5b6673" textAnchor="middle">Lasso weights: most are exactly 0</text>
               <line x1="226" y1="128" x2="514" y2="128" stroke="#dfe3e7"></line>
-              <g fill="#2f62c4"><rect x="226" y="99" width="8" height="29"></rect><rect x="241" y="125" width="8" height="3"></rect><rect x="256" y="125" width="8" height="3"></rect><rect x="271" y="80" width="8" height="48"></rect><rect x="286" y="125" width="8" height="3"></rect><rect x="301" y="125" width="8" height="3"></rect><rect x="316" y="115" width="8" height="13"></rect><rect x="331" y="125" width="8" height="3"></rect><rect x="346" y="125" width="8" height="3"></rect><rect x="361" y="67" width="8" height="61"></rect><rect x="376" y="125" width="8" height="3"></rect><rect x="391" y="125" width="8" height="3"></rect><rect x="406" y="109" width="8" height="19"></rect><rect x="421" y="125" width="8" height="3"></rect><rect x="436" y="125" width="8" height="3"></rect><rect x="451" y="93" width="8" height="35"></rect><rect x="466" y="125" width="8" height="3"></rect><rect x="481" y="125" width="8" height="3"></rect><rect x="496" y="118" width="8" height="10"></rect></g>
+              <g fill="var(--accent)"><rect x="226" y="99" width="8" height="29"></rect><rect x="241" y="125" width="8" height="3"></rect><rect x="256" y="125" width="8" height="3"></rect><rect x="271" y="80" width="8" height="48"></rect><rect x="286" y="125" width="8" height="3"></rect><rect x="301" y="125" width="8" height="3"></rect><rect x="316" y="115" width="8" height="13"></rect><rect x="331" y="125" width="8" height="3"></rect><rect x="346" y="125" width="8" height="3"></rect><rect x="361" y="67" width="8" height="61"></rect><rect x="376" y="125" width="8" height="3"></rect><rect x="391" y="125" width="8" height="3"></rect><rect x="406" y="109" width="8" height="19"></rect><rect x="421" y="125" width="8" height="3"></rect><rect x="436" y="125" width="8" height="3"></rect><rect x="451" y="93" width="8" height="35"></rect><rect x="466" y="125" width="8" height="3"></rect><rect x="481" y="125" width="8" height="3"></rect><rect x="496" y="118" width="8" height="10"></rect></g>
               <text x="370" y="154" fontFamily="IBM Plex Mono, monospace" fontSize="13" fill="#1d2633" textAnchor="middle">Σ w·x + b = log D̂</text>
-              <path d="M534 94h40" stroke="#1a4fa3" strokeWidth="2"></path><path d="M566 88l8 6-8 6" fill="none" stroke="#1a4fa3" strokeWidth="2"></path>
-              <rect x="580" y="66" width="150" height="56" rx="6" fill="#ffffff" stroke="#1a4fa3" strokeWidth="1.5"></rect>
+              <path d="M534 94h40" stroke="var(--accent)" strokeWidth="2"></path><path d="M566 88l8 6-8 6" fill="none" stroke="var(--accent)" strokeWidth="2"></path>
+              <rect x="580" y="66" width="150" height="56" rx="6" fill="#ffffff" stroke="var(--accent)" strokeWidth="1.5"></rect>
               <text x="655" y="88" fontFamily="IBM Plex Mono, monospace" fontSize="12" fill="#5b6673" textAnchor="middle">exp × bias factor</text><text x="655" y="108" fontFamily="IBM Plex Mono, monospace" fontSize="13" fill="#1d2633" textAnchor="middle">D̂ lasso</text>
               <rect x="580" y="150" width="150" height="56" rx="6" fill="#ffffff" stroke="#8a97a3"></rect>
               <text x="655" y="172" fontFamily="IBM Plex Mono, monospace" fontSize="12" fill="#5b6673" textAnchor="middle">rainflow + Miner</text><text x="655" y="192" fontFamily="IBM Plex Mono, monospace" fontSize="13" fill="#1d2633" textAnchor="middle">Miner, m = 5</text>
               <path d="M734 94 L 802 116" stroke="#8a97a3"></path><path d="M734 178 L 802 136" stroke="#8a97a3" strokeDasharray="4 3"></path>
-              <rect x="806" y="94" width="130" height="64" rx="32" fill="#ffffff" stroke="#1a4fa3" strokeWidth="1.5"></rect>
+              <rect x="806" y="94" width="130" height="64" rx="32" fill="#ffffff" stroke="var(--accent)" strokeWidth="1.5"></rect>
               <text x="871" y="121" fontFamily="IBM Plex Mono, monospace" fontSize="13" fill="#1d2633" textAnchor="middle">50 / 50 blend</text><text x="871" y="141" fontFamily="IBM Plex Mono, monospace" fontSize="12" fill="#5b6673" textAnchor="middle">if skew &gt; 0</text>
-              <path d="M940 126h40" stroke="#1a4fa3" strokeWidth="2"></path><path d="M972 120l8 6-8 6" fill="none" stroke="#1a4fa3" strokeWidth="2"></path>
+              <path d="M940 126h40" stroke="var(--accent)" strokeWidth="2"></path><path d="M972 120l8 6-8 6" fill="none" stroke="var(--accent)" strokeWidth="2"></path>
               <rect x="986" y="100" width="90" height="52" rx="6" fill="#e6f1ea" stroke="#1f8059"></rect>
               <text x="1031" y="132" fontFamily="IBM Plex Mono, monospace" fontSize="16" fill="#1f8059" textAnchor="middle">D̂</text>
               <text x="20" y="224" fontFamily="IBM Plex Sans, sans-serif" fontSize="12" fill="#5b6673">Scaler, Lasso α, bias factor and the rainflow intercept are all refit inside each training fold; nothing is tuned on a held-out file.</text>
             </svg>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "32px", alignItems: "start" }}>
+        <div className="ov-side" style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "32px", alignItems: "start" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
             <div className="callout"><span className="mono" style={{ fontSize: "10px", letterSpacing: ".12em", color: "#006d73" }}>SUMMARY</span><br />Each load cycle contributes to metal fatigue, with larger cycles contributing more. Rainflow counting measures the cycles, a power law weights them, and a sparse linear model adjusts the estimate.</div>
             <div className="kv">

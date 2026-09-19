@@ -4,11 +4,13 @@
 
 NEBULA X attempts all four released PS3 tasks: Door segmentation/classification, ACV leaking-car
 ranking, Rail corrugation classification and SHM fatigue-damage regression. The app opens on an
-Overview page (how the Train Digital Twin and its four models work, EDA, ablations, the two
-exploratory systems, the team); **Open Digital Twin** leads to the single upload → explain →
-download workflow (`?page=predict`), which offers a guided tutorial on first visit and from the
-header's TUTORIAL button. The site is built for desktop browsers and scales to fill the screen;
-phones and tablets get it under a "limited support" notice.
+Overview page: a short responsive landing page (results, the four-step workflow, where each
+subsystem sits on the train) with the detail (each model, EDA, ablations, the two exploratory
+systems) in collapsed sections; **Open the prediction workspace** leads to the single
+upload → explain → download workflow (`?page=predict`), with a guided tutorial from the header's
+TUTORIAL button. The overview works on any screen; the workspace is a fixed desktop console that
+scales to fill the screen, and phones, tablets and very narrow windows get a notice with an
+"open anyway" option.
 
 From the repository root, with Node.js and Python 3.11 or Conda available:
 

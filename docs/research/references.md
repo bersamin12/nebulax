@@ -133,7 +133,7 @@ R47. Tan, C. W., Dempster, A., Bergmeir, C. and Webb, G. I. **MultiRocket: multi
 
 R48. Dempster, A., Schmidt, D. F. and Webb, G. I. **Hydra: competing convolutional kernels for fast and accurate time series classification.** DMKD 37:1779-1805, 2023. https://doi.org/10.1007/s10618-023-00939-3 — preprint arXiv:2203.13652 — code https://github.com/angus924/hydra.
 
-R49. Dempster, A., Schmidt, D. F. and Webb, G. I. **QUANT: a minimalist interval method for time series classification.** DMKD 38:2377-2402, 2024. https://arxiv.org/abs/2308.00928 — code https://github.com/angus924/quant (repo not opened; QUANT ships in aeon as `QUANTClassifier`).
+R49. Dempster, A., Schmidt, D. F. and Webb, G. I. **QUANT: a minimalist interval method for time series classification.** DMKD 38:2377-2402, 2024. https://doi.org/10.1007/s10618-024-01036-9 — preprint https://arxiv.org/abs/2308.00928 — code https://github.com/angus924/quant (repo not opened; QUANT ships in aeon as `QUANTClassifier`).
 
 R50. Faouzi, J. **MomentQuant: an even more minimalist interval method with linear time complexity for time series classification.** arXiv, 4 Sep 2026. https://arxiv.org/abs/2609.05136. No head-to-head vs Hydra/HC2 in the abstract — `NUMBERS UNVERIFIED`.
 
@@ -141,7 +141,7 @@ R51. Schäfer, P. and Leser, U. **WEASEL 2.0: a random dilated dictionary transf
 
 R52. Middlehurst, M., Large, J., Flynn, M., Lines, J., Bostrom, A. and Bagnall, A. **HIVE-COTE 2.0: a new meta ensemble for time series classification.** Machine Learning, 2021. https://doi.org/10.1007/s10994-021-06057-9 — preprint arXiv:2104.07551.
 
-R53. Ismail-Fawaz, A., Devanne, M., Berretti, S., Forestier, G. et al. **LITE / LITETime — Light Inception with boosTing tEchniques.** IEEE DSAA 2023. https://germain-forestier.info/publis/dsaa2023.pdf — follow-up "Look Into the LITE" arXiv:2409.02869 — code https://github.com/MSD-IRIMAS/LITE (repo not opened; LITETime ships in aeon).
+R53. Ismail-Fawaz, A., Devanne, M., Berretti, S., Forestier, G. et al. **LITE / LITETime — Light Inception with boosTing tEchniques.** IEEE DSAA 2023. https://doi.org/10.1109/DSAA60987.2023.10302569 — author pdf https://germain-forestier.info/publis/dsaa2023.pdf — follow-up "Look Into the LITE" arXiv:2409.02869 — code https://github.com/MSD-IRIMAS/LITE (repo not opened; LITETime ships in aeon).
 
 R54. Foumani, N. M., Tan, C. W., Webb, G. I. and Salehi, M. **ConvTran: Improving position encoding of transformers for multivariate time series classification.** DMKD 38(1):22-48, 2024. https://arxiv.org/abs/2305.16642 — code https://github.com/Navidfoumani/ConvTran.
 
@@ -215,7 +215,7 @@ R86. Cranfield University. **Detection and Diagnosis of Faults in Linear Actuato
 
 R87. Veloso, B., Ribeiro, R. P., Gama, J. and Pereira, P. M. **The MetroPT dataset for predictive maintenance.** Scientific Data 9, 2022. https://doi.org/10.1038/s41597-022-01877-3 (CC BY 4.0) — open text Europe PMC PMC9747912 — preprint arXiv:2207.05466.
 
-R88. Davari, N., Veloso, B., Ribeiro, R. P. and Gama, J. **MetroPT-3 Dataset.** UCI Machine Learning Repository #791, 2023. https://doi.org/10.24432/C5VW3R — https://archive.ics.uci.edu/dataset/791/metropt+3+dataset (CC BY 4.0).
+R88. Davari, N., Veloso, B., Ribeiro, R. P. and Gama, J. **MetroPT-3 Dataset.** UCI Machine Learning Repository, dataset 791 (no year: the record was donated in 2023 but the repository's generated citation says 2021). https://doi.org/10.24432/C5VW3R — https://archive.ics.uci.edu/dataset/791/metropt+3+dataset (CC BY 4.0).
 
 R89. Veloso, B., Gama, J., Ribeiro, R. P. and Pereira, P. M. **MetroPT2: A Benchmark dataset for predictive maintenance.** Zenodo, 2022. https://doi.org/10.5281/zenodo.7766691 (CC BY 4.0).
 
@@ -269,7 +269,7 @@ R113. CEN / BSI. **EN 15437-1:2009+A1:2022 — Railway applications. Axlebox con
 
 R114. CEN. **EN 15437-2:2012+A1:2022 — Axlebox condition monitoring, Part 2: Performance and design requirements of on-board systems for temperature monitoring.** https://standards.iteh.ai/catalog/standards/cen/9b0a02fb-fad2-4fe9-b0ab-49a1f84550ee/en-15437-2-2012a1-2022. Catalogue page only; cite by number, do not paraphrase clauses.
 
-R115. Vieira, ..., Bauler, ..., Rosa, ... and Silva, ... **Towards a more realistic evaluation of machine learning models for bearing fault diagnosis.** Mechanical Systems and Signal Processing vol. 258, 2026 — preprint https://arxiv.org/abs/2509.22267.
+R115. Vieira, J. P., Bauler, V. A., Rosa, R. K. and Silva, D. **Towards a more realistic evaluation of machine learning models for bearing fault diagnosis.** Mechanical Systems and Signal Processing 258:114640, 2026. https://doi.org/10.1016/j.ymssp.2026.114640 — preprint https://arxiv.org/abs/2509.22267. The published paper explicitly recommends bearing-wise splitting.
 
 R116. Zhao, Z., Zhang, Q., Yu, X., Sun, C., Wang, S., Yan, R. and Chen, X. **Applications of Unsupervised Deep Transfer Learning to Intelligent Fault Diagnosis: A Survey and Comparative Study (UDTL benchmark).** IEEE TIM 2021 — preprint https://arxiv.org/abs/1912.12528 — code https://github.com/ZhaoZhibin/UDTL (repo licence UNVERIFIED).
 
@@ -277,7 +277,7 @@ R117. Randall, R. B. and Antoni, J. **Rolling element bearing diagnostics — A 
 
 R118. Huang, H. and Baddour, N. **Bearing Vibration Data under Time-varying Rotational Speed Conditions.** Mendeley Data, 2018/2019. https://doi.org/10.17632/v43hmbwxpm.2 — record https://data.mendeley.com/datasets/v43hmbwxpm/2 — data paper https://www.sciencedirect.com/science/article/pii/S2352340918314124.
 
-R119. Sehri, M., Dumond, P. et al. **University of Ottawa constant load and speed rolling-element bearing vibration and acoustic fault signature datasets (UORED-VAFCLS).** Data in Brief, 2023. https://www.sciencedirect.com/science/article/pii/S2352340923004456 (CC BY) — Mendeley record https://data.mendeley.com/datasets/y2px5tg92h/5 — open mirror PMC10331275.
+R119. Sehri, M., Dumond, P. et al. **University of Ottawa constant load and speed rolling-element bearing vibration and acoustic fault signature datasets (UORED-VAFCLS).** Data in Brief, 2023. https://doi.org/10.1016/j.dib.2023.109327 (CC BY) — Mendeley record https://data.mendeley.com/datasets/y2px5tg92h/5 — open mirror PMC10331275.
 
 R120. Kreuzer, M., Schmidt, D. and Kellermann, W. **Novel features for the detection of bearing faults in railway vehicles.** Inter-Noise 2021 — preprint https://arxiv.org/abs/2304.08249.
 

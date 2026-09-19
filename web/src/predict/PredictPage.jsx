@@ -18,7 +18,7 @@ import ExplanationPanel from "./ExplanationPanel.jsx";
 import ResultsTable from "./ResultsTable.jsx";
 import ResearchExamplePanel from "./ResearchExamplePanel.jsx";
 import TaskColumn from "./TaskColumn.jsx";
-import Tutorial, { tourSeen } from "./Tutorial.jsx";
+import Tutorial from "./Tutorial.jsx";
 import researchExamples from "./researchExamples.json";
 import { explanationFor, selectionFor } from "./selection.js";
 import { columnsFor, INFO_META, SYSTEM_ORDER, TASK_META, TASK_ORDER } from "./taskMeta.js";
@@ -39,8 +39,9 @@ function readTask() {
 
 export default function PredictPage({ height = 844, tourKey = 0 }) {
   const p = usePs3Predict(TASK_ORDER.includes(readTask()) ? readTask() : null);
-  // the tutorial runs on a first visit, and again whenever the header / overview asks (tourKey)
-  const [tour, setTour] = useState(() => tourKey > 0 || !tourSeen());
+  // the tutorial is opt-in: the header's TUTORIAL button, the overview's "Take the tour" or
+  // `?tour=N` (tourKey); it never starts by itself
+  const [tour, setTour] = useState(() => tourKey > 0);
   useEffect(() => {
     if (tourKey > 0) setTour(true);
   }, [tourKey]);
@@ -243,6 +244,8 @@ export default function PredictPage({ height = 844, tourKey = 0 }) {
           total={p.total}
           notice={p.notice}
           error={p.error}
+          dropFields={p.dropFields}
+          toggleDropField={p.toggleDropField}
           width={LEFT_W}
           height={innerH}
         />
