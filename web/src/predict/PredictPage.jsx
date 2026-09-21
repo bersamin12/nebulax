@@ -22,7 +22,7 @@ import Tutorial from "./Tutorial.jsx";
 import researchExamples from "./researchExamples.json";
 import { explanationFor, selectionFor } from "./selection.js";
 import { columnsFor, INFO_META, SYSTEM_ORDER, TASK_META, TASK_ORDER } from "./taskMeta.js";
-import { usePs3Predict } from "./usePs3Predict.js";
+
 
 const VIEWPORT_H = 268;
 const FOOTER_H = 68;
@@ -37,15 +37,15 @@ function readTask() {
   return SYSTEM_ORDER.includes(t) ? t : null;
 }
 
-export default function PredictPage({ height = 844, tourKey = 0 }) {
-  const p = usePs3Predict(TASK_ORDER.includes(readTask()) ? readTask() : null);
+export default function PredictPage({ height = 844, tourKey = 0, predictor }) {
+  const p = predictor;
   // the tutorial is opt-in: the header's TUTORIAL button, the overview's "Take the tour" or
   // `?tour=N` (tourKey); it never starts by itself
   const [tour, setTour] = useState(() => tourKey > 0);
   useEffect(() => {
     if (tourKey > 0) setTour(true);
   }, [tourKey]);
-  const [task, setActiveSystem] = useState(() => readTask() || TASK_ORDER[0]);
+  const [task, setActiveSystem] = useState(() => readTask() || p.task);
   const [resetKey, setResetKey] = useState(0);
   const [acvCar, setAcvCar] = useState(null);
   const info = INFO_META[task] || null;
@@ -231,6 +231,7 @@ export default function PredictPage({ height = 844, tourKey = 0 }) {
           tasks={p.tasks}
           task={task}
           setTask={selectSystem}
+          cloud={p}
           resetKey={resetKey}
           meta={info ? null : p.meta}
           files={files}

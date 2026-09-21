@@ -157,11 +157,13 @@ async function checkAcv(file, signal) {
  * Check one picked File for `task`. Never throws: an unreadable file is reported as a problem.
  * @returns {{name:string,size:number,ok:boolean,columns:string[],found:object,missing:string[],problems:string[],detail:string}}
  */
-export async function checkFile(task, file, { signal } = {}) {
+export async function checkFile(task, file, { signal, directUploads = false } = {}) {
   const base = { name: file.name, size: file.size };
   try {
     let r;
-    if (task === "acv") r = await checkAcv(file, signal);
+    if (task === "acv" && directUploads && /\.xlsx$/i.test(file.name)) {
+      r = { columns: [], found: {}, missing: [], problems: [], detail: "Workbook contents will be validated after upload when you run the model." };
+    } else if (task === "acv") r = await checkAcv(file, signal);
     else {
       const lines = await headLines(file);
       r = task === "door" ? checkDoor(lines) : task === "rail" ? checkRail(lines) : task === "shm" ? checkShm(lines) : { columns: [], found: {}, missing: [], problems: [], detail: "" };
@@ -174,8 +176,8 @@ export async function checkFile(task, file, { signal } = {}) {
 }
 
 /** Check every picked file, in order; the ACV files each round-trip to the server. */
-export async function checkFiles(task, files, { signal } = {}) {
+export async function checkFiles(task, files, { signal, directUploads = false } = {}) {
   const out = [];
-  for (const f of files) out.push(await checkFile(task, f, { signal }));
+  for (const f of files) out.push(await checkFile(task, f, { signal, directUploads }));
   return out;
 }

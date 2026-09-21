@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: nebulax-free
+    runtime: docker
+    plan: free
+    region: singapore
+    branch: migration/hf-r2
+    dockerfilePath: ./deploy/render/Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    autoDeployTrigger: "off"
+    envVars:
+      - key: NEBULAX_STORAGE_PROVIDER
+        value: r2
+      - key: NEBULAX_RUN_BUCKET
+        sync: false
+      - key: R2_ENDPOINT_URL
+        sync: false
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false

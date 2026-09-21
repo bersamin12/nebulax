@@ -36,6 +36,9 @@ import shutil
 import tempfile
 import time
 import uuid
+import hashlib
+import logging
+import threading
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
@@ -46,6 +49,7 @@ from fastapi.concurrency import run_in_threadpool
 from starlette.datastructures import UploadFile as _StarletteUpload
 
 from nebulax.ps3 import common
+from nebulax.api import run_store
 from nebulax.ps3.common import (
     ACCEPTED_SUFFIXES,
     OUTPUT_FILENAMES,
@@ -450,6 +454,15 @@ class _Session:
     files: list[str] = field(default_factory=list)
     expected_cars: dict[str, list[str]] = field(default_factory=dict)
     n_batches: int = 0
+    archive: dict = field(default_factory=dict)
+    input_paths: dict = field(default_factory=dict)
+    cloud_inputs: dict = field(default_factory=dict)
+    explanations: list = field(default_factory=list)
+    archive_errors: list = field(default_factory=list)
+    input_options: dict = field(default_factory=dict)
+    archive_cache: dict = field(default_factory=dict)
+    storage: dict = field(default_factory=lambda: {"status": "disabled"})
+    archive_lock: Any = field(default_factory=threading.Lock)
 
     @property
     def dir(self) -> Path:
@@ -638,6 +651,7 @@ def ps3_tasks(request: Request) -> list[dict[str, Any]]:
                 "cv": cv_summary(name),
                 "model_loaded": common.model_path(name, model_dir=_model_dir()).exists(),
                 "max_file_bytes": MAX_UPLOAD_BYTES,
+                "direct_uploads": run_store.enabled(),
                 "max_files_per_request": MAX_BATCH_FILES,
                 "droppable_fields": list(droppable_fields(name)),
                 "local_paths": local_paths,
@@ -736,6 +750,8 @@ async def _run_predict_batch(
     uploads: list[UploadFile],
     session: str | None,
     drop: list[str] | None = None,
+    run_name: str | None = None,
+    archive_now: bool = True,
 ) -> tuple[_Session, list[dict[str, Any]], list[dict[str, str]], list[Path], Any]:
     try:
         task_obj = resolve_task(key)
@@ -754,6 +770,8 @@ async def _run_predict_batch(
         now = time.time()
         token = uuid.uuid4().hex
         sess = _Session(token=token, task=key, created=now, touched=now)
+        if run_store.enabled():
+            sess.archive = run_store.new_run(key, run_name)
         _SESSIONS[token] = sess
     sess.touched = time.time()
     sess.n_batches += 1
@@ -784,6 +802,12 @@ async def _run_predict_batch(
             continue
         dest = batch_dir / name
         await _save_upload(upload, dest)
+        if sess.archive:
+            original = sess.dir / "originals" / name
+            original.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(dest, original)
+            sess.input_paths[name] = original
+            sess.input_options[name] = {"drop_columns": drop}
         try:
             # simulated missing columns: removed from the saved file, so the loader's own
             # fallbacks apply (nebulax.ps3.dropout)
@@ -813,6 +837,10 @@ async def _run_predict_batch(
                 pass
         n_ok += 1
 
+    sess.explanations.extend(explanations)
+    sess.archive_errors.extend(errors)
+    if sess.archive and archive_now:
+        await run_in_threadpool(_archive_session, sess)
     if n_ok == 0:
         raise HTTPException(
             status_code=400,
@@ -820,6 +848,165 @@ async def _run_predict_batch(
             + "; ".join(f"{e['file']}: {e['message']}" for e in errors),
         )
     return sess, explanations, errors, saved_paths, model
+
+
+def _archive_session(sess):
+    with sess.archive_lock:
+        try:
+            model_path = (_model_dir() or common.MODEL_DIR) / f"{sess.task}.pkl"
+            payload = {"task": sess.task, "rows": sess.rows, "explanations": sess.explanations,
+                       "files": sess.files, "n_done": len(sess.files), "errors": sess.archive_errors,
+                       "input_options": sess.input_options, "output_filename": OUTPUT_FILENAMES[sess.task],
+                       "model_sha256": hashlib.sha256(model_path.read_bytes()).hexdigest() if model_path.exists() else None}
+            csv_text = render_csv(sess.task, sess.rows)
+            if sess.rows:
+                check = sess.dir / "archive-check.csv"
+                check.write_text(csv_text, encoding="utf-8", newline="")
+                report = validate_csv(sess.task, check, None, expected_cars=sess.expected_cars or None)
+                if not report.ok:
+                    raise ValueError("Prediction CSV validation failed: " + "; ".join(report.errors))
+            manifest = run_store.save(sess.archive, sess.input_paths, payload, csv_text, OUTPUT_FILENAMES[sess.task], sess.archive_cache, sess.cloud_inputs)
+            sess.storage = {"status": "saved", "run": manifest}
+        except Exception:
+            logging.getLogger(__name__).exception("Run archive save failed")
+            sess.storage = {"status": "error", "message": "Predictions are available, but cloud saving failed. Retry saving before clearing this session."}
+    return sess.storage
+
+
+@router.post("/{task}/uploads")
+def create_direct_upload(task: str, body: dict = Body(...)):
+    key = _task_or_404(task)
+    return run_store.create_upload_batch(key, body.get("run_name"), body.get("files"),
+                                         MAX_UPLOAD_BYTES, ACCEPTED_SUFFIXES[key])
+
+
+@router.post("/uploads/{batch_id}/session")
+def direct_upload_session(batch_id: str, request: Request, response: Response, body: dict = Body(...)):
+    response.headers["Cache-Control"] = "no-store"
+    return run_store.upload_session(batch_id, str(body.get("file", "")), request.headers.get("origin"))
+
+
+_DIRECT_LOCKS: dict[str, Any] = {}
+
+
+@router.post("/uploads/{batch_id}/complete")
+def complete_direct_upload(batch_id: str, body: dict = Body(...)):
+    return run_store.complete_upload(batch_id, str(body.get("file", "")))
+
+
+@router.post("/uploads/{batch_id}/predict")
+async def predict_direct_upload(batch_id: str, body: dict = Body(...)):
+    name = str(body.get("file", ""))
+    entry, selected, blob = await run_in_threadpool(run_store.upload_input, batch_id, name)
+    key = _task_or_404(entry["task"])
+    drop = _drop_list_or_400(key, body.get("drop_columns"))
+    run_id = body.get("run_id") or batch_id
+    if run_id != batch_id:
+        entry = await run_in_threadpool(run_store.read_index, run_id)
+        if entry["task"] != key:
+            raise HTTPException(400, "Run belongs to another model")
+    lock = _DIRECT_LOCKS.setdefault(run_id, threading.Lock())
+    if not lock.acquire(blocking=False):
+        raise HTTPException(409, "This batch is already processing a file; retry shortly")
+    try:
+        # Restore from durable results after a container restart or a lost response.
+        sess = next((s for s in _SESSIONS.values() if s.archive.get("id") == run_id), None)
+        if sess is None:
+            now = time.time()
+            sess = _Session(token=uuid.uuid4().hex, task=key, created=now, touched=now)
+            sess.archive = {k: entry[k] for k in ("id", "name", "task", "created_at", "prefix")}
+            try:
+                previous = await run_in_threadpool(run_store.result, run_id)
+            except HTTPException as exc:
+                if exc.status_code != 404:
+                    raise
+            else:
+                sess.rows = previous["rows"]
+                sess.files = previous["files"]
+                sess.explanations = previous.get("explanations", [])
+                sess.input_options = previous.get("input_options", {})
+                sess.cloud_inputs = {f["name"]: f for f in previous["run"]["files"]}
+                sess.storage = previous["storage"]
+            _SESSIONS[sess.token] = sess
+        sess.touched = time.time()
+        if name in sess.files:
+            if sess.input_options.get(name, {}).get("drop_columns", []) != drop:
+                raise HTTPException(409, "Start a new batch to change column settings")
+            if sess.storage.get("status") != "saved":
+                await run_in_threadpool(_archive_session, sess)
+        else:
+            try:
+                await run_in_threadpool(blob.reload)
+            except Exception as exc:
+                if getattr(exc, "code", None) == 404:
+                    raise HTTPException(409, "Upload has not finished") from exc
+                raise
+            if int(blob.size) != selected["size"] or int(blob.size) > MAX_UPLOAD_BYTES:
+                raise HTTPException(413, "Stored file size does not match the upload manifest")
+            record = {**selected, "generation": str(blob.generation), "crc32c": blob.crc32c}
+            with tempfile.TemporaryFile() as fh:
+                await run_in_threadpool(blob.download_to_file, fh, if_generation_match=blob.generation)
+                fh.seek(0)
+                sess.cloud_inputs[name] = record
+                try:
+                    await _run_predict_batch(key, [UploadFile(file=fh, filename=name)], sess.token, drop)
+                finally:
+                    # The immutable storage object is the original; don't accumulate local copies.
+                    original = sess.input_paths.pop(name, None)
+                    if original:
+                        original.unlink(missing_ok=True)
+                    (sess.dir / f"batch{sess.n_batches:03d}" / name).unlink(missing_ok=True)
+        return {"session": sess.token, "task": key, "rows": sess.rows, "explanations": sess.explanations,
+                "files": sess.files, "n_done": len(sess.files), "errors": [], "storage": sess.storage,
+                "output_filename": OUTPUT_FILENAMES[key], "csv_url": f"/api/ps3/results/{sess.token}.csv"}
+    finally:
+        lock.release()
+
+
+@router.get("/runs")
+def saved_runs(task: str | None = None, start: str | None = None, end: str | None = None):
+    if task:
+        _task_or_404(task)
+    return {"enabled": run_store.enabled(), "runs": run_store.list_runs(task, start, end) if run_store.enabled() else []}
+
+
+@router.get("/runs/{run_id}")
+def saved_run(run_id: str):
+    return run_store.result(run_id)
+
+
+@router.get("/runs/{run_id}/csv")
+def saved_run_csv(run_id: str):
+    entry = run_store.read_index(run_id)
+    return Response(run_store.bucket().blob(entry["csv_object"]).download_as_bytes(), media_type="text/csv",
+                    headers={"Content-Disposition": f'attachment; filename="{entry["output_filename"]}"'})
+
+
+@router.post("/results/{session}/save")
+def retry_run_save(session: str):
+    sess = _session_or_404(session)
+    if not sess.archive:
+        raise HTTPException(503, "Cloud storage is not configured for this session")
+    return _archive_session(sess)
+
+
+@router.post("/runs/{run_id}/predict")
+async def predict_saved_input(run_id: str, body: dict = Body(...)):
+    """Read an archived input server-side; no download/re-upload through the browser."""
+    name = str(body.get("file", ""))
+    entry, selected, blob = await run_in_threadpool(run_store.input_blob, run_id, name)
+    if selected["size"] > MAX_UPLOAD_BYTES:
+        raise HTTPException(413, "Saved input exceeds the prediction file limit")
+    key = _task_or_404(entry["task"])
+    with tempfile.TemporaryFile() as fh:
+        await run_in_threadpool(blob.download_to_file, fh)
+        fh.seek(0)
+        upload = UploadFile(file=fh, filename=name)
+        sess, explanations, errors, _, _ = await _run_predict_batch(
+            key, [upload], body.get("session"), _drop_list_or_400(key, body.get("drop_columns")), body.get("run_name"))
+    return {"session": sess.token, "task": key, "rows": sess.rows, "explanations": explanations,
+            "files": sess.files, "n_done": len(sess.files), "errors": errors, "storage": sess.storage,
+            "output_filename": OUTPUT_FILENAMES[key], "csv_url": f"/api/ps3/results/{sess.token}.csv"}
 
 
 def _local_paths(request: Request, task: str, raw_path: str) -> list[Path]:
@@ -889,7 +1076,8 @@ async def ps3_local_stream(task: str, request: Request, body: dict[str, Any] = B
     path = paths[0]
     with path.open("rb") as fh:
         upload = UploadFile(file=fh, filename=path.name)
-        return await ps3_stream(key, request, files=[upload], session=body.get("session"))
+        return await ps3_stream(key, request, files=[upload], session=body.get("session"),
+                                drop_columns=body.get("drop_columns"), run_name=body.get("run_name"))
 
 
 @router.post("/{task}/predict")
@@ -899,6 +1087,7 @@ async def ps3_predict(
     files: list[UploadFile] | None = File(default=None),
     session: str | None = Form(default=None),
     drop_columns: str | None = Form(default=None),
+    run_name: str | None = Form(default=None),
 ) -> dict[str, Any]:
     """Predict one **batch** of uploads, appending to a session.
 
@@ -925,9 +1114,10 @@ async def ps3_predict(
         )
 
     drop = _drop_list_or_400(key, drop_columns)
-    sess, explanations, errors, _, _ = await _run_predict_batch(key, uploads, session, drop)
+    sess, explanations, errors, _, _ = await _run_predict_batch(key, uploads, session, drop, run_name)
     return {
         "session": sess.token,
+        "storage": sess.storage,
         "task": key,
         "output_filename": OUTPUT_FILENAMES[key],
         "rows": [dict(r) for r in sess.rows],
@@ -947,6 +1137,7 @@ async def ps3_stream(
     files: list[UploadFile] | None = File(default=None),
     session: str | None = Form(default=None),
     drop_columns: str | None = Form(default=None),
+    run_name: str | None = Form(default=None),
 ) -> dict[str, Any]:
     """Predict and stream exactly one file, returning preview frames plus the session rows."""
     from nebulax.ps3.stream import stream_file
@@ -963,12 +1154,13 @@ async def ps3_stream(
 
     previous = _session_or_404(session) if session else None
     snapshot = (
-        (list(previous.rows), list(previous.files), dict(previous.expected_cars), previous.n_batches, previous.touched)
+        (list(previous.rows), list(previous.files), dict(previous.expected_cars), previous.n_batches, previous.touched,
+         list(previous.explanations), dict(previous.input_paths), dict(previous.input_options), list(previous.archive_errors))
         if previous else None
     )
     old_tokens = set(_SESSIONS)
     try:
-        sess, explanations, errors, saved_paths, model = await _run_predict_batch(key, uploads, session, drop)
+        sess, explanations, errors, saved_paths, model = await _run_predict_batch(key, uploads, session, drop, run_name, archive_now=False)
         # a refused upload (wrong suffix, or a name already predicted in this session after the
         # page's STOP cut the reply off) has no saved path: report it in `errors`, with no frames
         frames = (
@@ -978,13 +1170,16 @@ async def ps3_stream(
     except Exception:
         if previous and snapshot:
             batch_number = previous.n_batches
-            previous.rows, previous.files, previous.expected_cars, previous.n_batches, previous.touched = snapshot
+            (previous.rows, previous.files, previous.expected_cars, previous.n_batches, previous.touched,
+             previous.explanations, previous.input_paths, previous.input_options, previous.archive_errors) = snapshot
             shutil.rmtree(previous.dir / f"batch{batch_number:03d}", ignore_errors=True)
         else:
             for token in set(_SESSIONS) - old_tokens:
                 shutil.rmtree(_SESSIONS[token].dir, ignore_errors=True)
                 _SESSIONS.pop(token, None)
         raise
+    if sess.archive:
+        await run_in_threadpool(_archive_session, sess)
     return {
         "session": sess.token,
         "task": key,
@@ -996,6 +1191,7 @@ async def ps3_stream(
         "files": list(sess.files),
         "errors": errors,
         "frames": [f.as_dict() for f in frames],
+        "storage": sess.storage,
         "expires_at": sess.touched + SESSION_TTL_S,
     }
 

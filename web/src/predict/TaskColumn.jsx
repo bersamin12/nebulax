@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { C } from "../lib/format.js";
 import { inspectPs3LocalPath } from "../api.js";
 import ColumnToggles from "./ColumnToggles.jsx";
+import CloudRuns from "./CloudRuns.jsx";
 import FileConfirm from "./FileConfirm.jsx";
 import { checkFiles } from "./fileCheck.js";
 import { cvScore, fmtBytes, INFO_META, SYSTEM_ORDER, TASK_META, TASK_SUFFIXES } from "./taskMeta.js";
@@ -70,6 +71,7 @@ function SystemInfo({ name, entry }) {
 }
 
 export default function TaskColumn({
+  cloud,
   tasks,
   task,
   setTask,
@@ -134,6 +136,10 @@ export default function TaskColumn({
    */
   const queuePicked = useCallback(async (list) => {
     if (!list.length) return;
+    if (!meta) {
+      setCheckMessage("Model configuration is still loading. Please select the files again shortly.");
+      return;
+    }
     checkAbort.current?.abort();
     const ctrl = new AbortController();
     checkAbort.current = ctrl;
@@ -142,7 +148,7 @@ export default function TaskColumn({
     setCheckFailed(false);
     setPending({ items: list.map((file) => ({ file, report: { name: file.name, size: file.size, ok: false, columns: [], found: {}, missing: [], problems: [], detail: "" } })) });
     try {
-      const reports = await checkFiles(task, list, { signal: ctrl.signal });
+      const reports = await checkFiles(task, list, { signal: ctrl.signal, directUploads: meta?.direct_uploads });
       if (ctrl.signal.aborted || checkAbort.current !== ctrl) return;
       setPending({ items: list.map((file, i) => ({ file, report: reports[i] })) });
     } catch (err) {
@@ -156,7 +162,7 @@ export default function TaskColumn({
         setChecking(false);
       }
     }
-  }, [task]);
+  }, [task, meta]);
 
   const confirmPicked = useCallback((valid) => {
     const total = pending ? pending.items.length : valid.length;
@@ -299,7 +305,7 @@ export default function TaskColumn({
   }
 
   return (
-    <div style={{ width, height, display: "flex", flexDirection: "column", gap: 8, minHeight: 0 }}>
+    <div style={{ width, height, display: "flex", flexDirection: "column", gap: 8, minHeight: 0, overflowY: "auto" }}>
       {systemPicker}
 
       <div
@@ -322,7 +328,7 @@ export default function TaskColumn({
       >
         <div style={{ fontSize: 10.5, color: hover ? C.accentBright : C.dim }}>
           Drop {tmeta.multiple ? "files or a folder" : "the file"} here ({accept}
-          {meta && meta.max_files_per_request ? `, ${meta.max_files_per_request} per request` : ""})
+          {meta?.direct_uploads ? ", uploads directly to cloud storage" : meta && meta.max_files_per_request ? `, ${meta.max_files_per_request} per request` : ""})
         </div>
         <div style={{ display: "flex", gap: 6 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -331,6 +337,7 @@ export default function TaskColumn({
               key={`file-${task}-${resetKey}`}
               ref={fileRef}
               type="file"
+              disabled={!meta || running}
               multiple={tmeta.multiple !== false}
               accept={accept}
               onClick={(e) => { e.currentTarget.value = ""; }}
@@ -347,6 +354,7 @@ export default function TaskColumn({
                 key={`folder-${task}-${resetKey}`}
                 ref={dirRef}
                 type="file"
+                disabled={!meta || running}
                 multiple
                 webkitdirectory=""
                 directory=""
@@ -380,11 +388,12 @@ export default function TaskColumn({
       </div>
 
       {columnStrip}
+      {cloud && <CloudRuns p={cloud} task={task} />}
 
       <div
         style={{
           flex: "1 1 auto",
-          minHeight: 0,
+          minHeight: 120,
           background: C.panel,
           border: `1px solid ${C.line}`,
           display: "flex",
@@ -475,7 +484,7 @@ export default function TaskColumn({
             className="nx-btn"
             data-tour="run"
             onClick={run}
-            disabled={running || checking || !queued || unavailable}
+            disabled={running || checking || !queued || unavailable || !meta}
             style={{ borderColor: C.accent, background: C.accentBg, color: C.accentBright, height: 26, fontSize: 10.5 }}
           >
             {running ? `PROCESSING ${done} OF ${total}` : queued ? `RUN ${queued} FILE${queued === 1 ? "" : "S"}` : "RUN"}

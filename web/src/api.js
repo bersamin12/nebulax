@@ -67,13 +67,14 @@ async function request(path, { method = "GET", body, timeout = DEFAULT_TIMEOUT_M
  *     -> {session, task, output_filename, rows, explanations, csv_url, n_done, files, errors,
  *         frames, expires_at}
  */
-export async function postPs3Stream(task, file, session = null, { timeout = 600000, signal, onUploadProgress, dropFields } = {}) {
+export async function postPs3Stream(task, file, session = null, { timeout = 600000, signal, onUploadProgress, dropFields, runName } = {}) {
   const fd = new FormData();
   if (file) {
     const f = Array.isArray(file) ? file[0] : file;
     fd.append("files", f, f.name);
   }
   if (session) fd.append("session", session);
+  if (runName) fd.append("run_name", runName);
   if (dropFields && dropFields.length) fd.append("drop_columns", dropFields.join(","));
   const ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
   const timer = ctrl && timeout ? setTimeout(() => ctrl.abort(), timeout) : null;
@@ -172,9 +173,9 @@ export const getPs3Tasks = () => request("/ps3/tasks");
 export const inspectPs3LocalPath = (task, path, { signal } = {}) =>
   request(`/ps3/${enc(task)}/local/inspect`, { method: "POST", body: { path }, timeout: 30000, signal });
 
-export const postPs3LocalStream = (task, path, session = null, { signal } = {}) =>
+export const postPs3LocalStream = (task, path, session = null, { signal, runName, dropFields } = {}) =>
   request(`/ps3/${enc(task)}/local/stream`, {
-    method: "POST", body: { path, session }, timeout: 600000, signal,
+    method: "POST", body: { path, session, run_name: runName, drop_columns: (dropFields || []).join(",") }, timeout: 600000, signal,
   });
 
 /** Check ACV workbook structure before adding it to the prediction queue. */
@@ -211,10 +212,11 @@ export const getPs3Cv = (task) => request(`/ps3/${enc(task)}/cv`);
  * The timeout is per batch and generous: a rail file is ~17 MB and is predicted server-side
  * before the response comes back.
  */
-export async function postPs3Predict(task, files, session = null, { timeout = 600000, signal, onUploadProgress, dropFields } = {}) {
+export async function postPs3Predict(task, files, session = null, { timeout = 600000, signal, onUploadProgress, dropFields, runName } = {}) {
   const fd = new FormData();
   for (const f of files || []) fd.append("files", f, f.name);
   if (session) fd.append("session", session);
+  if (runName) fd.append("run_name", runName);
   // simulated missing columns (Door / ACV): canonical fields from GET /tasks `droppable_fields`
   if (dropFields && dropFields.length) fd.append("drop_columns", dropFields.join(","));
   const ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
@@ -261,3 +263,22 @@ export const ps3CsvUrl = (session) => `${BASE}/ps3/results/${enc(session)}.csv`;
 /** DELETE /api/ps3/results/{session} -> {session, deleted, n_files, n_rows}. */
 export const deletePs3Session = (session) =>
   request(`/ps3/results/${enc(session)}`, { method: "DELETE", timeout: 30000 });
+
+export const getSavedRuns = (task, start = "", end = "") =>
+  request(`/ps3/runs?${new URLSearchParams({ task, start, end })}`, { timeout: 60000 });
+export const getSavedRun = (id) => request(`/ps3/runs/${enc(id)}`, { timeout: 60000 });
+export const retryRunSave = (session) => request(`/ps3/results/${enc(session)}/save`, { method: "POST", timeout: 180000 });
+export const predictSavedInput = (task, item, session, { signal, runName, dropFields } = {}) =>
+  request(`/ps3/runs/${enc(item.cloudRun)}/predict`, { method: "POST", timeout: 600000, signal,
+    body: { file: item.name, session, run_name: runName, drop_columns: (dropFields || []).join(",") } });
+
+export const createUploadBatch = (task, files, runName, signal) =>
+  request(`/ps3/${enc(task)}/uploads`, { method: "POST", signal, timeout: 60000,
+    body: { run_name: runName, files: files.map(({ name, size }) => ({ name, size })) } });
+export const getUploadSession = (batchId, file, signal) =>
+  request(`/ps3/uploads/${enc(batchId)}/session`, { method: "POST", signal, timeout: 60000, body: { file } });
+export const completeUpload = (batchId, file, signal) =>
+  request(`/ps3/uploads/${enc(batchId)}/complete`, { method: "POST", signal, timeout: 60000, body: { file } });
+export const predictUploadedFile = (batchId, file, dropFields, signal, runId) =>
+  request(`/ps3/uploads/${enc(batchId)}/predict`, { method: "POST", signal, timeout: 600000,
+    body: { file, run_id: runId, drop_columns: (dropFields || []).join(",") } });

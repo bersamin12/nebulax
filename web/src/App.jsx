@@ -9,6 +9,7 @@
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import "./styles.css";
 
+import { usePs3Predict } from "./predict/usePs3Predict.js";
 import PredictPage from "./predict/PredictPage.jsx";
 import { setConsoleScale } from "./lib/consoleScale.js";
 import OverviewPage from "./overview/OverviewPage.jsx";
@@ -126,7 +127,7 @@ function SmallScreenGate({ onBack, onContinue }) {
 }
 
 /** The fixed 1440x900 console, scaled to the window. */
-function Console({ handheld, page, onPage, tourKey }) {
+function Console({ handheld, page, onPage, tourKey, predictor }) {
   const scale = useConsoleScale(handheld, true);
   return (
     <div className="nx-stage" style={handheld ? { paddingTop: NOTICE_H } : undefined}>
@@ -134,7 +135,7 @@ function Console({ handheld, page, onPage, tourKey }) {
       <div style={{ width: W * scale, height: H * scale, flex: "none" }}>
         <div className="nx-console" style={{ transform: `scale(${scale})` }}>
           <Header page={page} onPage={onPage} />
-          <PredictPage height={H - 56} tourKey={tourKey} />
+          <PredictPage height={H - 56} tourKey={tourKey} predictor={predictor} />
         </div>
       </div>
     </div>
@@ -142,6 +143,7 @@ function Console({ handheld, page, onPage, tourKey }) {
 }
 
 export default function App() {
+  const predictor = usePs3Predict(new URLSearchParams(window.location.search).get("task"));
   const [handheld] = useState(isHandheld);
   const small = useSmallWindow();
   const [page, setPage] = useState(readPage);
@@ -201,5 +203,5 @@ export default function App() {
   if ((handheld || small) && !forceConsole) {
     return <SmallScreenGate onBack={() => onPage("overview")} onContinue={() => setForceConsole(true)} />;
   }
-  return <Console handheld={handheld || small} page={page} onPage={onPage} tourKey={tourKey} />;
+  return <Console predictor={predictor} handheld={handheld || small} page={page} onPage={onPage} tourKey={tourKey} />;
 }

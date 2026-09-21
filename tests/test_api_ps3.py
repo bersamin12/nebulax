@@ -213,6 +213,7 @@ def test_predict_rail_two_batches_accumulate_one_session(client: TestClient, tas
     assert r1.status_code == 200, r1.text
     b1 = r1.json()
     assert set(b1) == {
+        "storage",
         "session",
         "task",
         "output_filename",

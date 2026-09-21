@@ -1,6 +1,7 @@
 // The predict page's state machine: the task list, the upload queue, and the batched session.
 //
-// Why batches: `POST /api/ps3/{task}/predict` takes bounded multipart requests and predicts the
+// Cloud deployments upload directly to GCS with resumable sessions, then send file references.
+// Local fallback: `POST /api/ps3/{task}/predict` takes bounded multipart requests and predicts the
 // files one at a time, appending the rows to an upload *session*. Cloud Run HTTP/1 rejects a
 // whole request above 32 MiB, so batches are capped by both file count and 30 MiB of file data.
 // The page sends the first batch with no session and passes its token with every following batch.
@@ -16,8 +17,12 @@
 // predicted", which the page reads as done rather than as an error.
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { deletePs3Session, getPs3Tasks, postPs3LocalStream, postPs3Predict, postPs3Stream, ps3CsvUrl } from "../api.js";
+import { getSavedRun, predictSavedInput, retryRunSave, deletePs3Session, getPs3Tasks, postPs3LocalStream, postPs3Predict, postPs3Stream, ps3CsvUrl } from "../api.js";
 import { TASK_ORDER, TASK_SUFFIXES } from "./taskMeta.js";
+import { createUploadBatch, getUploadSession, predictUploadedFile } from "../api.js";
+import { resumableUpload } from "./resumableUpload.js";
+import { r2MultipartUpload } from "./r2MultipartUpload.js";
+import { completeUpload } from "../api.js";
 
 let SEQ = 0;
 const nextId = () => `f${++SEQ}`;
@@ -95,6 +100,7 @@ export function usePs3Predict(initialTask) {
   // simulated missing columns per task (Door / ACV): canonical fields sent as `drop_columns`
   const [dropFields, setDropFieldsState] = useState(() => Object.fromEntries(TASK_ORDER.map((t) => [t, []])));
   const abort = useRef(null);
+  const uploads = useRef(new Map());
 
   const reload = useCallback(() => {
     setTasksError(null);
@@ -148,6 +154,7 @@ export function usePs3Predict(initialTask) {
         let ignored = 0;
         for (const file of list) {
           const name = String(file.name || "").split(/[\\/]/).pop();
+          const cloudRun = file.cloudRun || null;
           const localPath = typeof file.localPath === "string" ? file.localPath : null;
           if (!name || seen.has(name)) {
             ignored += name ? 1 : 0;
@@ -161,7 +168,8 @@ export function usePs3Predict(initialTask) {
           const tooBig = file.size > maxBytes;
           add.push({
             id: nextId(),
-            file: localPath ? null : file,
+            file: localPath || cloudRun ? null : file,
+            cloudRun,
             localPath,
             name,
             size: file.size,
@@ -206,7 +214,7 @@ export function usePs3Predict(initialTask) {
     const name = task;
     const snapshot = state[name];
     const queued = snapshot.files.filter((f) => f.status === "queued");
-    if (!queued.length || running) return;
+    if (!queued.length || running || !meta) return;
     const drop = dropFields[name] || [];
     const ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
     abort.current = ctrl;
@@ -220,18 +228,61 @@ export function usePs3Predict(initialTask) {
     }));
 
     let session = snapshot.session;
+    let runId = snapshot.storage?.run?.id;
     let stopped = null;
 
-    if (queued.some((item) => item.localPath)) {
+    const direct = !!meta?.direct_uploads;
+    if (direct) {
+      const fresh = queued.filter((f) => f.file && !uploads.current.has(f.id));
+      if (fresh.length) {
+        try {
+          const batch = await createUploadBatch(name, fresh, snapshot.runName, ctrl?.signal);
+          for (const item of fresh) uploads.current.set(item.id, { batchId: batch.id });
+        } catch (err) {
+          patch(name, (s) => ({ ...stoppedState(s, queued.map((f) => f.id)), error: ctrl?.signal.aborted ? "" : err.message }));
+          abort.current = null;
+          setRunning(false);
+          return;
+        }
+      }
+    }
+
+    if (direct || queued.some((item) => item.localPath || item.cloudRun)) {
       for (const item of queued) {
         patch(name, (s) => ({
           files: s.files.map((f) => (f.id === item.id ? { ...f, status: "running" } : f)),
         }));
         let res;
         try {
-          res = item.localPath
-            ? await postPs3LocalStream(name, item.localPath, session, { signal: ctrl ? ctrl.signal : undefined })
-            : await postPs3Stream(name, item.file, session, { signal: ctrl ? ctrl.signal : undefined, dropFields: drop });
+          if (direct && item.file) {
+            const upload = uploads.current.get(item.id);
+            if (!upload.complete) {
+              if (!upload.url) Object.assign(upload, await getUploadSession(upload.batchId, item.name, ctrl?.signal));
+              if (!upload.complete) {
+                try {
+                  const options = { signal: ctrl?.signal,
+                    onProgress: (sent, total) => patch(name, (s) => ({ files: s.files.map((f) => f.id === item.id
+                      ? { ...f, message: `Uploading to storage: ${Math.floor(sent / total * 100)}%` } : f) })) };
+                  if (upload.provider === "r2") await r2MultipartUpload(item.file, { ...options,
+                    getSession: () => getUploadSession(upload.batchId, item.name, ctrl?.signal),
+                    complete: () => completeUpload(upload.batchId, item.name, ctrl?.signal) });
+                  else await resumableUpload(item.file, upload.url, options);
+                  upload.complete = true;
+                  delete upload.url;
+                } catch (err) {
+                  if (err.expired) delete upload.url;
+                  throw err;
+                }
+              }
+            }
+            patch(name, (s) => ({ files: s.files.map((f) => f.id === item.id ? { ...f, message: "Predicting from cloud storage" } : f) }));
+            res = await predictUploadedFile(upload.batchId, item.name, drop, ctrl?.signal, runId);
+            runId = res.storage?.run?.id || runId || upload.batchId;
+          } else res = item.cloudRun
+            ? await predictSavedInput(name, item, session, { signal: ctrl?.signal, runName: snapshot.runName, dropFields: drop })
+            : item.localPath
+            ? await postPs3LocalStream(name, item.localPath, session, { signal: ctrl ? ctrl.signal : undefined, runName: snapshot.runName, dropFields: drop })
+            : await postPs3Stream(name, item.file, session, { signal: ctrl ? ctrl.signal : undefined, dropFields: drop, runName: snapshot.runName });
         } catch (err) {
           if (err.cancelled || (ctrl && ctrl.signal.aborted)) {
             stopped = err;
@@ -246,7 +297,7 @@ export function usePs3Predict(initialTask) {
               f.id === item.id
                 ? finished
                   ? { ...f, status: "done", message: "predicted before the stop" }
-                  : { ...f, status: "error", message: msg }
+                  : { ...f, status: direct && item.file && !perFile ? "queued" : "error", message: msg }
                 : f.status === "waiting" && !perFile
                   ? { ...f, status: "queued" }
                   : f
@@ -256,13 +307,14 @@ export function usePs3Predict(initialTask) {
           }));
           if (perFile) continue;
           stopped = err;
-          if (!err.status) setFatal(err);
+          if (!err.status && !(direct && item.file)) setFatal(err);
           break;
         }
 
         const failed = new Map((res.errors || []).map((e) => [String(e.file), String(e.message)]));
         patch(name, (s) => ({
           session: res.session,
+          storage: res.storage || s.storage,
           csvUrl: res.csv_url || ps3CsvUrl(res.session),
           outputFilename: res.output_filename || s.outputFilename,
           rows: Array.isArray(res.rows) ? res.rows : s.rows,
@@ -282,6 +334,7 @@ export function usePs3Predict(initialTask) {
           ),
         }));
         session = res.session;
+        runId = res.storage?.run?.id || runId;
         setFatal(null);
       }
     } else {
@@ -296,6 +349,7 @@ export function usePs3Predict(initialTask) {
           res = await postPs3Predict(name, batch.map((f) => f.file), session, {
             signal: ctrl ? ctrl.signal : undefined,
             dropFields: drop,
+            runName: snapshot.runName,
           });
         } catch (err) {
           if (err.cancelled || (ctrl && ctrl.signal.aborted)) {
@@ -325,6 +379,7 @@ export function usePs3Predict(initialTask) {
         const failed = new Map((res.errors || []).map((e) => [String(e.file), String(e.message)]));
         patch(name, (s) => ({
           session: res.session,
+          storage: res.storage || s.storage,
           csvUrl: res.csv_url || ps3CsvUrl(res.session),
           outputFilename: res.output_filename || s.outputFilename,
           rows: Array.isArray(res.rows) ? res.rows : s.rows,
@@ -364,7 +419,33 @@ export function usePs3Predict(initialTask) {
     patch(name, () => blank());
   }, [patch, state, task]);
 
+  const setRunName = useCallback((value) => patch(task, () => ({ runName: value })), [patch, task]);
+  const openSavedRun = useCallback(async (id) => {
+    const name = task;
+    const res = await getSavedRun(id);
+    if (res.task !== name) throw new Error("This run belongs to another model");
+    patch(name, () => ({ ...blank(), rows: res.rows || [], explanations: res.explanations || [],
+      files: (res.run.files || []).map((f) => ({ ...f, id: nextId(), cloudRun: id, status: "done", message: "saved input" })),
+      csvUrl: res.csv_url, outputFilename: res.output_filename, nDone: res.n_done,
+      runName: res.run.name, storage: res.storage,
+      notice: res.imported_batch ? "Imported batch results loaded without inference. No explanations were stored for this older run." : "Saved results loaded without running the model. Clear to start a new run." }));
+  }, [patch, task]);
+  const queueSavedRun = useCallback(async (id) => {
+    const name = task;
+    const res = await getSavedRun(id);
+    if (res.task !== name) throw new Error("This run belongs to another model");
+    patch(name, () => ({ ...blank(), runName: `${res.run.name} rerun`.slice(0, 80),
+      files: res.run.files.map((f) => ({ ...f, id: nextId(), cloudRun: id, status: "queued", message: "from cloud storage" })),
+      notice: "Saved inputs queued. Run will use the current model and column settings." }));
+  }, [patch, task]);
+  const retrySave = useCallback(async () => {
+    const name = task;
+    const storage = await retryRunSave(state[name].session);
+    patch(name, () => ({ storage }));
+  }, [patch, task, state]);
+
   return {
+    setRunName, openSavedRun, queueSavedRun, retrySave,
     tasks,
     tasksError,
     reload,
@@ -404,6 +485,8 @@ function donePreviously(message) {
 
 function blank() {
   return {
+    runName: "",
+    storage: null,
     files: [],
     rows: [],
     explanations: [],
